@@ -1,0 +1,805 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Users\Victor Chilomo\AppData\Roaming\npm\node_modules\npm\bin\npm-cli.js
+1 info using npm@11.6.1
+2 info using node@v22.20.0
+3 silly config load:file:C:\Users\Victor Chilomo\AppData\Roaming\npm\node_modules\npm\npmrc
+4 silly config load:file:C:\Users\Victor Chilomo\OneDrive\Desktop\EduPayTrack\backend\.npmrc
+5 silly config load:file:C:\Users\Victor Chilomo\.npmrc
+6 silly config load:file:C:\Users\Victor Chilomo\AppData\Roaming\npm\etc\npmrc
+7 verbose title npm install
+8 verbose argv "install" "--cache" ".npm-cache"
+9 verbose logfile logs-max:10 dir:C:\Users\Victor Chilomo\OneDrive\Desktop\EduPayTrack\backend\.npm-cache\_logs\2026-03-18T12_16_17_723Z-
+10 verbose logfile C:\Users\Victor Chilomo\OneDrive\Desktop\EduPayTrack\backend\.npm-cache\_logs\2026-03-18T12_16_17_723Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:2197815296 maxSize:549453824 maxEntrySize:274726912
+13 silly idealTree buildDeps
+14 silly fetch manifest @prisma/client@^6.5.0
+15 silly packumentCache full:https://registry.npmjs.org/@prisma%2fclient cache-miss
+16 http fetch GET 200 https://registry.npmjs.org/@prisma%2fclient 7202ms (cache miss)
+17 silly packumentCache full:https://registry.npmjs.org/@prisma%2fclient set size:undefined disposed:false
+18 silly fetch manifest prisma@^6.5.0
+19 silly packumentCache full:https://registry.npmjs.org/prisma cache-miss
+20 http fetch GET 200 https://registry.npmjs.org/prisma 639ms (cache revalidated)
+21 silly packumentCache full:https://registry.npmjs.org/prisma set size:42824333 disposed:false
+22 silly fetch manifest typescript@^5.5.3
+23 silly packumentCache full:https://registry.npmjs.org/typescript cache-miss
+24 http fetch GET 200 https://registry.npmjs.org/typescript 328ms (cache revalidated)
+25 silly packumentCache full:https://registry.npmjs.org/typescript set size:15369697 disposed:false
+26 silly fetch manifest bcryptjs@^2.4.3
+27 silly packumentCache full:https://registry.npmjs.org/bcryptjs cache-miss
+28 http fetch GET 200 https://registry.npmjs.org/bcryptjs 112ms (cache revalidated)
+29 silly packumentCache full:https://registry.npmjs.org/bcryptjs set size:80409 disposed:false
+30 silly fetch manifest zod@^3.24.2
+31 silly packumentCache full:https://registry.npmjs.org/zod cache-miss
+32 http fetch GET 200 https://registry.npmjs.org/zod 130ms (cache revalidated)
+33 silly packumentCache full:https://registry.npmjs.org/zod set size:3489329 disposed:false
+34 silly fetch manifest @types/jsonwebtoken@^9.0.9
+35 silly packumentCache full:https://registry.npmjs.org/@types%2fjsonwebtoken cache-miss
+36 http fetch GET 200 https://registry.npmjs.org/@types%2fjsonwebtoken 147ms (cache revalidated)
+37 silly packumentCache full:https://registry.npmjs.org/@types%2fjsonwebtoken set size:129919 disposed:false
+38 silly placeDep ROOT @prisma/client@6.19.2 REPLACE for: edupaytrack-backend@1.0.0 want: ^6.5.0
+39 silly placeDep ROOT @types/jsonwebtoken@9.0.10 OK for: edupaytrack-backend@1.0.0 want: ^9.0.9
+40 silly placeDep ROOT bcryptjs@2.4.3 REPLACE for: edupaytrack-backend@1.0.0 want: ^2.4.3
+41 silly placeDep ROOT prisma@6.19.2 REPLACE for: edupaytrack-backend@1.0.0 want: ^6.5.0
+42 silly placeDep ROOT zod@3.25.76 REPLACE for: edupaytrack-backend@1.0.0 want: ^3.24.2
+43 silly fetch manifest @types/ms@*
+44 silly packumentCache full:https://registry.npmjs.org/@types%2fms cache-miss
+45 silly fetch manifest @prisma/config@6.19.2
+46 silly packumentCache full:https://registry.npmjs.org/@prisma%2fconfig cache-miss
+47 silly fetch manifest @prisma/engines@6.19.2
+48 silly packumentCache full:https://registry.npmjs.org/@prisma%2fengines cache-miss
+49 http fetch GET 200 https://registry.npmjs.org/@types%2fms 130ms (cache revalidated)
+50 silly packumentCache full:https://registry.npmjs.org/@types%2fms set size:24399 disposed:false
+51 http fetch GET 200 https://registry.npmjs.org/@prisma%2fengines 764ms (cache revalidated)
+52 silly packumentCache full:https://registry.npmjs.org/@prisma%2fengines set size:21575961 disposed:false
+53 http fetch GET 200 https://registry.npmjs.org/@prisma%2fconfig 1786ms (cache revalidated)
+54 silly packumentCache full:https://registry.npmjs.org/@prisma%2fconfig set size:3588675 disposed:false
+55 silly placeDep ROOT @types/ms@2.1.0 OK for: @types/jsonwebtoken@9.0.10 want: *
+56 silly placeDep ROOT @prisma/config@6.19.2 OK for: prisma@6.19.2 want: 6.19.2
+57 silly placeDep ROOT @prisma/engines@6.19.2 OK for: prisma@6.19.2 want: 6.19.2
+58 silly fetch manifest c12@3.1.0
+59 silly packumentCache full:https://registry.npmjs.org/c12 cache-miss
+60 silly fetch manifest effect@3.18.4
+61 silly packumentCache full:https://registry.npmjs.org/effect cache-miss
+62 silly fetch manifest empathic@2.0.0
+63 silly packumentCache full:https://registry.npmjs.org/empathic cache-miss
+64 http fetch GET 200 https://registry.npmjs.org/effect 192ms (cache revalidated)
+65 silly packumentCache full:https://registry.npmjs.org/effect set size:9739544 disposed:false
+66 silly fetch manifest deepmerge-ts@7.1.5
+67 silly packumentCache full:https://registry.npmjs.org/deepmerge-ts cache-miss
+68 http fetch GET 200 https://registry.npmjs.org/c12 460ms (cache revalidated)
+69 silly packumentCache full:https://registry.npmjs.org/c12 set size:183401 disposed:false
+70 silly fetch manifest @prisma/debug@6.19.2
+71 silly packumentCache full:https://registry.npmjs.org/@prisma%2fdebug cache-miss
+72 http fetch GET 200 https://registry.npmjs.org/empathic 475ms (cache revalidated)
+73 silly packumentCache full:https://registry.npmjs.org/empathic set size:18290 disposed:false
+74 silly fetch manifest @prisma/fetch-engine@6.19.2
+75 silly packumentCache full:https://registry.npmjs.org/@prisma%2ffetch-engine cache-miss
+76 http cache https://registry.npmjs.org/@prisma%2fdebug 177ms (cache hit)
+77 silly packumentCache full:https://registry.npmjs.org/@prisma%2fdebug set size:28536196 disposed:false
+78 silly fetch manifest @prisma/get-platform@6.19.2
+79 silly packumentCache full:https://registry.npmjs.org/@prisma%2fget-platform cache-miss
+80 http cache https://registry.npmjs.org/@prisma%2ffetch-engine 738ms (cache hit)
+81 silly packumentCache full:https://registry.npmjs.org/@prisma%2ffetch-engine set size:32084534 disposed:false
+82 silly fetch manifest @prisma/engines-version@7.1.1-3.c2990dca591cba766e3b7ef5d9e8a84796e47ab7
+83 silly packumentCache full:https://registry.npmjs.org/@prisma%2fengines-version cache-miss
+84 http fetch GET 200 https://registry.npmjs.org/deepmerge-ts 1456ms (cache revalidated)
+85 silly packumentCache full:https://registry.npmjs.org/deepmerge-ts set size:334522 disposed:false
+86 http cache https://registry.npmjs.org/@prisma%2fengines-version 95ms (cache hit)
+87 silly packumentCache full:https://registry.npmjs.org/@prisma%2fengines-version set size:9903469 disposed:false
+88 http cache https://registry.npmjs.org/@prisma%2fget-platform 1196ms (cache hit)
+89 silly packumentCache full:https://registry.npmjs.org/@prisma%2fget-platform set size:28211111 disposed:false
+90 silly fetch manifest magicast@^0.3.5
+91 silly packumentCache full:https://registry.npmjs.org/magicast cache-miss
+92 http cache https://registry.npmjs.org/magicast 40ms (cache hit)
+93 silly packumentCache full:https://registry.npmjs.org/magicast set size:81021 disposed:false
+94 silly placeDep ROOT c12@3.1.0 OK for: @prisma/config@6.19.2 want: 3.1.0
+95 silly placeDep ROOT deepmerge-ts@7.1.5 OK for: @prisma/config@6.19.2 want: 7.1.5
+96 silly placeDep ROOT effect@3.18.4 OK for: @prisma/config@6.19.2 want: 3.18.4
+97 silly placeDep ROOT empathic@2.0.0 OK for: @prisma/config@6.19.2 want: 2.0.0
+98 silly fetch manifest rc9@^2.1.2
+99 silly packumentCache full:https://registry.npmjs.org/rc9 cache-miss
+100 silly fetch manifest defu@^6.1.4
+101 silly packumentCache full:https://registry.npmjs.org/defu cache-miss
+102 silly fetch manifest jiti@^2.4.2
+103 silly packumentCache full:https://registry.npmjs.org/jiti cache-miss
+104 http cache https://registry.npmjs.org/rc9 27ms (cache hit)
+105 silly packumentCache full:https://registry.npmjs.org/rc9 set size:60646 disposed:false
+106 silly fetch manifest giget@^2.0.0
+107 silly packumentCache full:https://registry.npmjs.org/giget cache-miss
+108 http cache https://registry.npmjs.org/defu 38ms (cache hit)
+109 silly packumentCache full:https://registry.npmjs.org/defu set size:85562 disposed:false
+110 silly fetch manifest ohash@^2.0.11
+111 silly packumentCache full:https://registry.npmjs.org/ohash cache-miss
+112 http cache https://registry.npmjs.org/jiti 46ms (cache hit)
+113 silly packumentCache full:https://registry.npmjs.org/jiti set size:382310 disposed:false
+114 silly fetch manifest pathe@^2.0.3
+115 silly packumentCache full:https://registry.npmjs.org/pathe cache-miss
+116 http cache https://registry.npmjs.org/giget 62ms (cache hit)
+117 silly packumentCache full:https://registry.npmjs.org/giget set size:93314 disposed:false
+118 silly fetch manifest confbox@^0.2.2
+119 silly packumentCache full:https://registry.npmjs.org/confbox cache-miss
+120 http cache https://registry.npmjs.org/ohash 62ms (cache hit)
+121 silly packumentCache full:https://registry.npmjs.org/ohash set size:69122 disposed:false
+122 silly fetch manifest exsolve@^1.0.7
+123 silly packumentCache full:https://registry.npmjs.org/exsolve cache-miss
+124 http cache https://registry.npmjs.org/pathe 50ms (cache hit)
+125 silly packumentCache full:https://registry.npmjs.org/pathe set size:68788 disposed:false
+126 silly fetch manifest chokidar@^4.0.3
+127 silly packumentCache full:https://registry.npmjs.org/chokidar cache-miss
+128 http cache https://registry.npmjs.org/confbox 40ms (cache hit)
+129 silly packumentCache full:https://registry.npmjs.org/confbox set size:44789 disposed:false
+130 silly fetch manifest pkg-types@^2.2.0
+131 silly packumentCache full:https://registry.npmjs.org/pkg-types cache-miss
+132 http cache https://registry.npmjs.org/exsolve 37ms (cache hit)
+133 silly packumentCache full:https://registry.npmjs.org/exsolve set size:56620 disposed:false
+134 silly fetch manifest perfect-debounce@^1.0.0
+135 silly packumentCache full:https://registry.npmjs.org/perfect-debounce cache-miss
+136 http cache https://registry.npmjs.org/chokidar 37ms (cache hit)
+137 silly packumentCache full:https://registry.npmjs.org/chokidar set size:255902 disposed:false
+138 silly fetch manifest fast-check@^3.23.1
+139 silly packumentCache full:https://registry.npmjs.org/fast-check cache-miss
+140 http cache https://registry.npmjs.org/pkg-types 54ms (cache hit)
+141 silly packumentCache full:https://registry.npmjs.org/pkg-types set size:85931 disposed:false
+142 silly fetch manifest @standard-schema/spec@^1.0.0
+143 silly packumentCache full:https://registry.npmjs.org/@standard-schema%2fspec cache-miss
+144 http cache https://registry.npmjs.org/perfect-debounce 56ms (cache hit)
+145 silly packumentCache full:https://registry.npmjs.org/perfect-debounce set size:28201 disposed:false
+146 http cache https://registry.npmjs.org/fast-check 50ms (cache hit)
+147 silly packumentCache full:https://registry.npmjs.org/fast-check set size:933673 disposed:false
+148 http cache https://registry.npmjs.org/@standard-schema%2fspec 58ms (cache hit)
+149 silly packumentCache full:https://registry.npmjs.org/@standard-schema%2fspec set size:27284 disposed:false
+150 silly placeDep ROOT @prisma/debug@6.19.2 OK for: @prisma/engines@6.19.2 want: 6.19.2
+151 silly placeDep ROOT @prisma/engines-version@7.1.1-3.c2990dca591cba766e3b7ef5d9e8a84796e47ab7 OK for: @prisma/engines@6.19.2 want: 7.1.1-3.c2990dca591cba766e3b7ef5d9e8a84796e47ab7
+152 silly placeDep ROOT @prisma/fetch-engine@6.19.2 OK for: @prisma/engines@6.19.2 want: 6.19.2
+153 silly placeDep ROOT @prisma/get-platform@6.19.2 OK for: @prisma/engines@6.19.2 want: 6.19.2
+154 silly placeDep node_modules/c12 chokidar@4.0.3 OK for: c12@3.1.0 want: ^4.0.3
+155 silly placeDep ROOT confbox@0.2.4 OK for: c12@3.1.0 want: ^0.2.2
+156 silly placeDep ROOT defu@6.1.4 OK for: c12@3.1.0 want: ^6.1.4
+157 silly placeDep ROOT exsolve@1.0.8 OK for: c12@3.1.0 want: ^1.0.7
+158 silly placeDep ROOT giget@2.0.0 OK for: c12@3.1.0 want: ^2.0.0
+159 silly placeDep ROOT jiti@2.6.1 OK for: c12@3.1.0 want: ^2.4.2
+160 silly placeDep ROOT ohash@2.0.11 OK for: c12@3.1.0 want: ^2.0.11
+161 silly placeDep ROOT pathe@2.0.3 OK for: c12@3.1.0 want: ^2.0.3
+162 silly placeDep ROOT perfect-debounce@1.0.0 OK for: c12@3.1.0 want: ^1.0.0
+163 silly placeDep ROOT pkg-types@2.3.0 OK for: c12@3.1.0 want: ^2.2.0
+164 silly placeDep ROOT rc9@2.1.2 OK for: c12@3.1.0 want: ^2.1.2
+165 silly fetch manifest readdirp@^4.0.1
+166 silly packumentCache full:https://registry.npmjs.org/readdirp cache-miss
+167 silly fetch manifest nypm@^0.6.0
+168 silly packumentCache full:https://registry.npmjs.org/nypm cache-miss
+169 silly fetch manifest citty@^0.1.6
+170 silly packumentCache full:https://registry.npmjs.org/citty cache-miss
+171 http cache https://registry.npmjs.org/nypm 36ms (cache hit)
+172 silly packumentCache full:https://registry.npmjs.org/nypm set size:82586 disposed:false
+173 silly fetch manifest consola@^3.4.0
+174 silly packumentCache full:https://registry.npmjs.org/consola cache-miss
+175 http cache https://registry.npmjs.org/readdirp 47ms (cache hit)
+176 silly packumentCache full:https://registry.npmjs.org/readdirp set size:107589 disposed:false
+177 silly fetch manifest node-fetch-native@^1.6.6
+178 silly packumentCache full:https://registry.npmjs.org/node-fetch-native cache-miss
+179 http cache https://registry.npmjs.org/citty 58ms (cache hit)
+180 silly packumentCache full:https://registry.npmjs.org/citty set size:31399 disposed:false
+181 silly fetch manifest destr@^2.0.3
+182 silly packumentCache full:https://registry.npmjs.org/destr cache-miss
+183 http cache https://registry.npmjs.org/node-fetch-native 47ms (cache hit)
+184 silly packumentCache full:https://registry.npmjs.org/node-fetch-native set size:114626 disposed:false
+185 http cache https://registry.npmjs.org/destr 49ms (cache hit)
+186 silly packumentCache full:https://registry.npmjs.org/destr set size:65344 disposed:false
+187 http cache https://registry.npmjs.org/consola 72ms (cache hit)
+188 silly packumentCache full:https://registry.npmjs.org/consola set size:324648 disposed:false
+189 silly placeDep ROOT @standard-schema/spec@1.1.0 OK for: effect@3.18.4 want: ^1.0.0
+190 silly placeDep ROOT fast-check@3.23.2 OK for: effect@3.18.4 want: ^3.23.1
+191 silly fetch manifest pure-rand@^6.1.0
+192 silly packumentCache full:https://registry.npmjs.org/pure-rand cache-miss
+193 http cache https://registry.npmjs.org/pure-rand 25ms (cache hit)
+194 silly packumentCache full:https://registry.npmjs.org/pure-rand set size:176259 disposed:false
+195 silly placeDep ROOT pure-rand@6.1.0 OK for: fast-check@3.23.2 want: ^6.1.0
+196 silly placeDep ROOT citty@0.1.6 OK for: giget@2.0.0 want: ^0.1.6
+197 silly placeDep ROOT consola@3.4.2 OK for: giget@2.0.0 want: ^3.4.0
+198 silly placeDep ROOT node-fetch-native@1.6.7 OK for: giget@2.0.0 want: ^1.6.6
+199 silly placeDep ROOT nypm@0.6.5 OK for: giget@2.0.0 want: ^0.6.0
+200 silly fetch manifest consola@^3.2.3
+201 silly packumentCache full:https://registry.npmjs.org/consola cache-hit
+202 silly fetch manifest citty@^0.2.0
+203 silly packumentCache full:https://registry.npmjs.org/citty cache-hit
+204 silly fetch manifest tinyexec@^1.0.2
+205 silly packumentCache full:https://registry.npmjs.org/tinyexec cache-miss
+206 http cache https://registry.npmjs.org/tinyexec 10ms (cache hit)
+207 silly packumentCache full:https://registry.npmjs.org/tinyexec set size:43341 disposed:false
+208 silly placeDep node_modules/nypm citty@0.2.1 OK for: nypm@0.6.5 want: ^0.2.0
+209 silly placeDep ROOT tinyexec@1.0.4 OK for: nypm@0.6.5 want: ^1.0.2
+210 silly placeDep ROOT destr@2.0.5 OK for: rc9@2.1.2 want: ^2.0.3
+211 silly placeDep node_modules/c12 readdirp@4.1.2 OK for: chokidar@4.0.3 want: ^4.0.1
+212 silly reify mark retired [
+212 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@chevrotain\\cst-dts-gen'
+212 silly reify ]
+213 silly reify mark retired [
+213 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@chevrotain\\gast'
+213 silly reify ]
+214 silly reify mark retired [
+214 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@chevrotain\\types'
+214 silly reify ]
+215 silly reify mark retired [
+215 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@chevrotain\\utils'
+215 silly reify ]
+216 silly reify mark retired [
+216 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@electric-sql\\pglite'
+216 silly reify ]
+217 silly reify mark retired [
+217 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@electric-sql\\pglite-socket',
+217 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\pglite-server',
+217 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\pglite-server.cmd',
+217 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\pglite-server.ps1'
+217 silly reify ]
+218 silly reify mark retired [
+218 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@electric-sql\\pglite-tools'
+218 silly reify ]
+219 silly reify mark retired [
+219 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@hono\\node-server'
+219 silly reify ]
+220 silly reify mark retired [
+220 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@mrleebo\\prisma-ast'
+220 silly reify ]
+221 silly reify mark retired [
+221 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\client'
+221 silly reify ]
+222 silly reify mark retired [
+222 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\client-runtime-utils'
+222 silly reify ]
+223 silly reify mark retired [
+223 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\config'
+223 silly reify ]
+224 silly reify mark retired [
+224 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\debug'
+224 silly reify ]
+225 silly reify mark retired [
+225 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\dev'
+225 silly reify ]
+226 silly reify mark retired [
+226 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\engines'
+226 silly reify ]
+227 silly reify mark retired [
+227 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\engines-version'
+227 silly reify ]
+228 silly reify mark retired [
+228 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\fetch-engine'
+228 silly reify ]
+229 silly reify mark retired [
+229 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\get-platform'
+229 silly reify ]
+230 silly reify mark retired [
+230 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\query-plan-executor'
+230 silly reify ]
+231 silly reify mark retired [
+231 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\studio-core'
+231 silly reify ]
+232 silly reify mark retired [
+232 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@types\\react'
+232 silly reify ]
+233 silly reify mark retired [
+233 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\aws-ssl-profiles'
+233 silly reify ]
+234 silly reify mark retired [
+234 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\bcryptjs',
+234 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\bcrypt',
+234 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\bcrypt.cmd',
+234 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\bcrypt.ps1'
+234 silly reify ]
+235 silly reify mark retired [
+235 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\chevrotain'
+235 silly reify ]
+236 silly reify mark retired [
+236 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\cross-spawn'
+236 silly reify ]
+237 silly reify mark retired [
+237 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\csstype'
+237 silly reify ]
+238 silly reify mark retired [
+238 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\denque'
+238 silly reify ]
+239 silly reify mark retired [
+239 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\foreground-child'
+239 silly reify ]
+240 silly reify mark retired [
+240 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\generate-function'
+240 silly reify ]
+241 silly reify mark retired [
+241 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\get-port-please'
+241 silly reify ]
+242 silly reify mark retired [
+242 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\graceful-fs'
+242 silly reify ]
+243 silly reify mark retired [
+243 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\grammex'
+243 silly reify ]
+244 silly reify mark retired [
+244 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\graphmatch'
+244 silly reify ]
+245 silly reify mark retired [
+245 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\hono'
+245 silly reify ]
+246 silly reify mark retired [
+246 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\http-status-codes'
+246 silly reify ]
+247 silly reify mark retired [
+247 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\is-property'
+247 silly reify ]
+248 silly reify mark retired [
+248 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\isexe'
+248 silly reify ]
+249 silly reify mark retired [
+249 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\lilconfig'
+249 silly reify ]
+250 silly reify mark retired [
+250 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\lodash'
+250 silly reify ]
+251 silly reify mark retired [
+251 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\long'
+251 silly reify ]
+252 silly reify mark retired [
+252 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\lru.min'
+252 silly reify ]
+253 silly reify mark retired [
+253 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\mysql2'
+253 silly reify ]
+254 silly reify mark retired [
+254 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\named-placeholders'
+254 silly reify ]
+255 silly reify mark retired [
+255 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\path-key'
+255 silly reify ]
+256 silly reify mark retired [
+256 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\postgres'
+256 silly reify ]
+257 silly reify mark retired [
+257 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\prisma',
+257 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\prisma',
+257 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\prisma.cmd',
+257 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\prisma.ps1'
+257 silly reify ]
+258 silly reify mark retired [
+258 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\proper-lockfile'
+258 silly reify ]
+259 silly reify mark retired [
+259 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\react'
+259 silly reify ]
+260 silly reify mark retired [
+260 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\react-dom'
+260 silly reify ]
+261 silly reify mark retired [
+261 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\regexp-to-ast'
+261 silly reify ]
+262 silly reify mark retired [
+262 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\remeda'
+262 silly reify ]
+263 silly reify mark retired [
+263 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\retry'
+263 silly reify ]
+264 silly reify mark retired [
+264 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\scheduler'
+264 silly reify ]
+265 silly reify mark retired [
+265 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\seq-queue'
+265 silly reify ]
+266 silly reify mark retired [
+266 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\shebang-command'
+266 silly reify ]
+267 silly reify mark retired [
+267 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\shebang-regex'
+267 silly reify ]
+268 silly reify mark retired [
+268 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\signal-exit'
+268 silly reify ]
+269 silly reify mark retired [
+269 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\sqlstring'
+269 silly reify ]
+270 silly reify mark retired [
+270 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\std-env'
+270 silly reify ]
+271 silly reify mark retired [
+271 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\valibot'
+271 silly reify ]
+272 silly reify mark retired [
+272 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\which',
+272 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\node-which',
+272 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\node-which.cmd',
+272 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\node-which.ps1'
+272 silly reify ]
+273 silly reify mark retired [
+273 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\zeptomatch'
+273 silly reify ]
+274 silly reify mark retired [
+274 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\zod'
+274 silly reify ]
+275 silly reify moves {
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@chevrotain\\cst-dts-gen': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@chevrotain\\.cst-dts-gen-f62ybyXi',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@chevrotain\\gast': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@chevrotain\\.gast-y8p6JGzZ',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@chevrotain\\types': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@chevrotain\\.types-3ud7QHGK',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@chevrotain\\utils': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@chevrotain\\.utils-CWewZtQK',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@electric-sql\\pglite': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@electric-sql\\.pglite-846wU621',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@electric-sql\\pglite-socket': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@electric-sql\\.pglite-socket-fSxm8bpl',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\pglite-server': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\.pglite-server-VGRz8D0m',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\pglite-server.cmd': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\.pglite-server.cmd-XPfYJZ5Z',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\pglite-server.ps1': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\.pglite-server.ps1-fmbAeqi2',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@electric-sql\\pglite-tools': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@electric-sql\\.pglite-tools-TkVA3i4B',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@hono\\node-server': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@hono\\.node-server-9c9coIZY',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@mrleebo\\prisma-ast': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@mrleebo\\.prisma-ast-s3b0q09C',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\client': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\.client-iMn0HzB5',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\client-runtime-utils': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\.client-runtime-utils-6prXW6BH',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\config': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\.config-z25JfMcc',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\debug': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\.debug-fS2MaNU1',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\dev': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\.dev-cIB7hjTk',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\engines': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\.engines-IuM2uBvU',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\engines-version': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\.engines-version-tm3tuoli',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\fetch-engine': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\.fetch-engine-wWrUWpbJ',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\get-platform': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\.get-platform-sPVaJss7',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\query-plan-executor': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\.query-plan-executor-DoqHddMb',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\studio-core': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@prisma\\.studio-core-RrP29Gwe',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@types\\react': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\@types\\.react-RjOR8r85',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\aws-ssl-profiles': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.aws-ssl-profiles-31qd2Rvb',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\bcryptjs': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bcryptjs-Z4FoYjhK',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\bcrypt': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\.bcrypt-8Vsdonn7',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\bcrypt.cmd': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\.bcrypt.cmd-A5ud3LVR',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\bcrypt.ps1': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\.bcrypt.ps1-XFCemZqT',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\chevrotain': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.chevrotain-ntJrx0Zu',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\cross-spawn': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.cross-spawn-zN5lKYyD',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\csstype': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.csstype-kWTjVpeN',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\denque': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.denque-1OIrJ1HT',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\foreground-child': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.foreground-child-FDX7Hyvd',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\generate-function': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.generate-function-Gd1LyzcR',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\get-port-please': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.get-port-please-ygX768jU',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\graceful-fs': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.graceful-fs-pYqlMhxe',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\grammex': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.grammex-61px9bTR',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\graphmatch': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.graphmatch-DcvFYjUd',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\hono': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.hono-gjZpQ4Ux',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\http-status-codes': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.http-status-codes-rFHLbasw',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\is-property': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.is-property-tvS8WDZW',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\isexe': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.isexe-uOufrzHE',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\lilconfig': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.lilconfig-V1Gt9ubb',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\lodash': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.lodash-UzswVdnG',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\long': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.long-xfjKMpu2',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\lru.min': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.lru.min-tCuXqxsa',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\mysql2': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.mysql2-zdbxpAZE',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\named-placeholders': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.named-placeholders-9QBhHpBU',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\path-key': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.path-key-Kz8bK3Fx',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\postgres': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.postgres-51jZt5Ou',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\prisma': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.prisma-sfcklxD6',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\prisma': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\.prisma-8GYyLZYv',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\prisma.cmd': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\.prisma.cmd-8xd5Xqma',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\prisma.ps1': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\.prisma.ps1-SP5CkqzF',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\proper-lockfile': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.proper-lockfile-ANj6lYnD',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\react': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.react-UVAfXD50',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\react-dom': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.react-dom-atKf7SJ6',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\regexp-to-ast': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.regexp-to-ast-Zifsi9s1',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\remeda': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.remeda-aaV8fCdZ',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\retry': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.retry-CX1teFnK',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\scheduler': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.scheduler-Jnzf44XH',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\seq-queue': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.seq-queue-0ql8zNLx',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\shebang-command': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.shebang-command-GeyWjvTT',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\shebang-regex': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.shebang-regex-Fedtjuf9',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\signal-exit': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.signal-exit-NuO5TZaP',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\sqlstring': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.sqlstring-jJ6FEXih',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\std-env': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.std-env-ACdP96Ka',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\valibot': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.valibot-OU5i9R2U',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\which': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.which-sLqOAdM8',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\node-which': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\.node-which-8fsTN5yU',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\node-which.cmd': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\.node-which.cmd-dvRjUYyh',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\node-which.ps1': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.bin\\.node-which.ps1-JezFPLB8',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\zeptomatch': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.zeptomatch-4MxbyhY1',
+275 silly reify   'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\zod': 'C:\\Users\\Victor Chilomo\\OneDrive\\Desktop\\EduPayTrack\\backend\\node_modules\\.zod-cct26vhS'
+275 silly reify }
+276 silly audit bulk request {
+276 silly audit   '@cspotcode/source-map-support': [ '0.8.1' ],
+276 silly audit   '@jridgewell/resolve-uri': [ '3.1.2' ],
+276 silly audit   '@jridgewell/sourcemap-codec': [ '1.5.5' ],
+276 silly audit   '@jridgewell/trace-mapping': [ '0.3.9' ],
+276 silly audit   '@tsconfig/node10': [ '1.0.12' ],
+276 silly audit   '@tsconfig/node12': [ '1.0.11' ],
+276 silly audit   '@tsconfig/node14': [ '1.0.3' ],
+276 silly audit   '@tsconfig/node16': [ '1.0.4' ],
+276 silly audit   '@types/body-parser': [ '1.19.6' ],
+276 silly audit   '@types/connect': [ '3.4.38' ],
+276 silly audit   '@types/cors': [ '2.8.19' ],
+276 silly audit   '@types/express': [ '4.17.25' ],
+276 silly audit   '@types/express-serve-static-core': [ '4.19.8' ],
+276 silly audit   '@types/http-errors': [ '2.0.5' ],
+276 silly audit   '@types/mime': [ '1.3.5' ],
+276 silly audit   '@types/node': [ '20.19.37' ],
+276 silly audit   '@types/qs': [ '6.15.0' ],
+276 silly audit   '@types/range-parser': [ '1.2.7' ],
+276 silly audit   '@types/send': [ '1.2.1', '0.17.6' ],
+276 silly audit   '@types/serve-static': [ '1.15.10' ],
+276 silly audit   '@types/strip-bom': [ '3.0.0' ],
+276 silly audit   '@types/strip-json-comments': [ '0.0.30' ],
+276 silly audit   accepts: [ '1.3.8' ],
+276 silly audit   acorn: [ '8.16.0' ],
+276 silly audit   'acorn-walk': [ '8.3.5' ],
+276 silly audit   anymatch: [ '3.1.3' ],
+276 silly audit   arg: [ '4.1.3' ],
+276 silly audit   'array-flatten': [ '1.1.1' ],
+276 silly audit   'balanced-match': [ '1.0.2' ],
+276 silly audit   'binary-extensions': [ '2.3.0' ],
+276 silly audit   'body-parser': [ '1.20.4' ],
+276 silly audit   'brace-expansion': [ '1.1.12' ],
+276 silly audit   braces: [ '3.0.3' ],
+276 silly audit   'buffer-equal-constant-time': [ '1.0.1' ],
+276 silly audit   'buffer-from': [ '1.1.2' ],
+276 silly audit   bytes: [ '3.1.2' ],
+276 silly audit   chokidar: [ '3.6.0', '4.0.3' ],
+276 silly audit   readdirp: [ '3.6.0', '4.1.2' ],
+276 silly audit   'call-bind-apply-helpers': [ '1.0.2' ],
+276 silly audit   'call-bound': [ '1.0.4' ],
+276 silly audit   'concat-map': [ '0.0.1' ],
+276 silly audit   'content-disposition': [ '0.5.4' ],
+276 silly audit   'content-type': [ '1.0.5' ],
+276 silly audit   cookie: [ '0.7.2' ],
+276 silly audit   'cookie-signature': [ '1.0.7' ],
+276 silly audit   cors: [ '2.8.6' ],
+276 silly audit   'create-require': [ '1.1.1' ],
+276 silly audit   debug: [ '2.6.9' ],
+276 silly audit   depd: [ '2.0.0' ],
+276 silly audit   destroy: [ '1.2.0' ],
+276 silly audit   diff: [ '4.0.4' ],
+276 silly audit   dotenv: [ '16.6.1' ],
+276 silly audit   'dunder-proto': [ '1.0.1' ],
+276 silly audit   'dynamic-dedupe': [ '0.3.0' ],
+276 silly audit   'ecdsa-sig-formatter': [ '1.0.11' ],
+276 silly audit   'ee-first': [ '1.1.1' ],
+276 silly audit   encodeurl: [ '2.0.0' ],
+276 silly audit   'es-define-property': [ '1.0.1' ],
+276 silly audit   'es-errors': [ '1.3.0' ],
+276 silly audit   'es-object-atoms': [ '1.1.1' ],
+276 silly audit   'escape-html': [ '1.0.3' ],
+276 silly audit   etag: [ '1.8.1' ],
+276 silly audit   express: [ '4.22.1' ],
+276 silly audit   'fill-range': [ '7.1.1' ],
+276 silly audit   finalhandler: [ '1.3.2' ],
+276 silly audit   forwarded: [ '0.2.0' ],
+276 silly audit   fresh: [ '0.5.2' ],
+276 silly audit   'fs.realpath': [ '1.0.0' ],
+276 silly audit   fsevents: [ '2.3.3' ],
+276 silly audit   'function-bind': [ '1.1.2' ],
+276 silly audit   'get-intrinsic': [ '1.3.0' ],
+276 silly audit   'get-proto': [ '1.0.1' ],
+276 silly audit   glob: [ '7.2.3' ],
+276 silly audit   'glob-parent': [ '5.1.2' ],
+276 silly audit   gopd: [ '1.2.0' ],
+276 silly audit   'has-symbols': [ '1.1.0' ],
+276 silly audit   hasown: [ '2.0.2' ],
+276 silly audit   'http-errors': [ '2.0.1' ],
+276 silly audit   'iconv-lite': [ '0.4.24' ],
+276 silly audit   inflight: [ '1.0.6' ],
+276 silly audit   inherits: [ '2.0.4' ],
+276 silly audit   'ipaddr.js': [ '1.9.1' ],
+276 silly audit   'is-binary-path': [ '2.1.0' ],
+276 silly audit   'is-core-module': [ '2.16.1' ],
+276 silly audit   'is-extglob': [ '2.1.1' ],
+276 silly audit   'is-glob': [ '4.0.3' ],
+276 silly audit   'is-number': [ '7.0.0' ],
+276 silly audit   jsonwebtoken: [ '9.0.3' ],
+276 silly audit   ms: [ '2.1.3', '2.0.0' ],
+276 silly audit   jwa: [ '2.0.1' ],
+276 silly audit   jws: [ '4.0.1' ],
+276 silly audit   'lodash.includes': [ '4.3.0' ],
+276 silly audit   'lodash.isboolean': [ '3.0.3' ],
+276 silly audit   'lodash.isinteger': [ '4.0.4' ],
+276 silly audit   'lodash.isnumber': [ '3.0.3' ],
+276 silly audit   'lodash.isplainobject': [ '4.0.6' ],
+276 silly audit   'lodash.isstring': [ '4.0.1' ],
+276 silly audit   'lodash.once': [ '4.1.1' ],
+276 silly audit   'make-error': [ '1.3.6' ],
+276 silly audit   'math-intrinsics': [ '1.1.0' ],
+276 silly audit   'media-typer': [ '0.3.0' ],
+276 silly audit   'merge-descriptors': [ '1.0.3' ],
+276 silly audit   methods: [ '1.1.2' ],
+276 silly audit   mime: [ '1.6.0' ],
+276 silly audit   'mime-db': [ '1.52.0' ],
+276 silly audit   'mime-types': [ '2.1.35' ],
+276 silly audit   minimatch: [ '3.1.5' ],
+276 silly audit   minimist: [ '1.2.8' ],
+276 silly audit   mkdirp: [ '1.0.4' ],
+276 silly audit   negotiator: [ '0.6.3' ],
+276 silly audit   'normalize-path': [ '3.0.0' ],
+276 silly audit   'object-assign': [ '4.1.1' ],
+276 silly audit   'object-inspect': [ '1.13.4' ],
+276 silly audit   'on-finished': [ '2.4.1' ],
+276 silly audit   once: [ '1.4.0' ],
+276 silly audit   parseurl: [ '1.3.3' ],
+276 silly audit   'path-is-absolute': [ '1.0.1' ],
+276 silly audit   'path-parse': [ '1.0.7' ],
+276 silly audit   'path-to-regexp': [ '0.1.12' ],
+276 silly audit   picomatch: [ '2.3.1' ],
+276 silly audit   'proxy-addr': [ '2.0.7' ],
+276 silly audit   qs: [ '6.14.2' ],
+276 silly audit   'range-parser': [ '1.2.1' ],
+276 silly audit   'raw-body': [ '2.5.3' ],
+276 silly audit   resolve: [ '1.22.11' ],
+276 silly audit   rimraf: [ '2.7.1' ],
+276 silly audit   'safe-buffer': [ '5.2.1' ],
+276 silly audit   'safer-buffer': [ '2.1.2' ],
+276 silly audit   semver: [ '7.7.4' ],
+276 silly audit   send: [ '0.19.2' ],
+276 silly audit   'serve-static': [ '1.16.3' ],
+276 silly audit   setprototypeof: [ '1.2.0' ],
+276 silly audit   'side-channel': [ '1.1.0' ],
+276 silly audit   'side-channel-list': [ '1.0.0' ],
+276 silly audit   'side-channel-map': [ '1.0.1' ],
+276 silly audit   'side-channel-weakmap': [ '1.0.2' ],
+276 silly audit   'source-map': [ '0.6.1' ],
+276 silly audit   'source-map-support': [ '0.5.21' ],
+276 silly audit   statuses: [ '2.0.2' ],
+276 silly audit   'strip-bom': [ '3.0.0' ],
+276 silly audit   'strip-json-comments': [ '2.0.1' ],
+276 silly audit   'supports-preserve-symlinks-flag': [ '1.0.0' ],
+276 silly audit   'to-regex-range': [ '5.0.1' ],
+276 silly audit   toidentifier: [ '1.0.1' ],
+276 silly audit   'tree-kill': [ '1.2.2' ],
+276 silly audit   'ts-node': [ '10.9.2' ],
+276 silly audit   'ts-node-dev': [ '2.0.0' ],
+276 silly audit   tsconfig: [ '7.0.0' ],
+276 silly audit   'type-is': [ '1.6.18' ],
+276 silly audit   typescript: [ '5.9.3' ],
+276 silly audit   'undici-types': [ '6.21.0' ],
+276 silly audit   unpipe: [ '1.0.0' ],
+276 silly audit   'utils-merge': [ '1.0.1' ],
+276 silly audit   'v8-compile-cache-lib': [ '3.0.1' ],
+276 silly audit   vary: [ '1.1.2' ],
+276 silly audit   wrappy: [ '1.0.2' ],
+276 silly audit   xtend: [ '4.0.2' ],
+276 silly audit   yn: [ '3.1.1' ],
+276 silly audit   '@prisma/client': [ '6.19.2' ],
+276 silly audit   '@types/jsonwebtoken': [ '9.0.10' ],
+276 silly audit   bcryptjs: [ '2.4.3' ],
+276 silly audit   prisma: [ '6.19.2' ],
+276 silly audit   zod: [ '3.25.76' ],
+276 silly audit   '@types/ms': [ '2.1.0' ],
+276 silly audit   '@prisma/config': [ '6.19.2' ],
+276 silly audit   '@prisma/engines': [ '6.19.2' ],
+276 silly audit   c12: [ '3.1.0' ],
+276 silly audit   'deepmerge-ts': [ '7.1.5' ],
+276 silly audit   effect: [ '3.18.4' ],
+276 silly audit   empathic: [ '2.0.0' ],
+276 silly audit   '@prisma/debug': [ '6.19.2' ],
+276 silly audit   '@prisma/engines-version': [ '7.1.1-3.c2990dca591cba766e3b7ef5d9e8a84796e47ab7' ],
+276 silly audit   '@prisma/fetch-engine': [ '6.19.2' ],
+276 silly audit   '@prisma/get-platform': [ '6.19.2' ],
+276 silly audit   confbox: [ '0.2.4' ],
+276 silly audit   defu: [ '6.1.4' ],
+276 silly audit   exsolve: [ '1.0.8' ],
+276 silly audit   giget: [ '2.0.0' ],
+276 silly audit   jiti: [ '2.6.1' ],
+276 silly audit   ohash: [ '2.0.11' ],
+276 silly audit   pathe: [ '2.0.3' ],
+276 silly audit   'perfect-debounce': [ '1.0.0' ],
+276 silly audit   'pkg-types': [ '2.3.0' ],
+276 silly audit   rc9: [ '2.1.2' ],
+276 silly audit   '@standard-schema/spec': [ '1.1.0' ],
+276 silly audit   'fast-check': [ '3.23.2' ],
+276 silly audit   'pure-rand': [ '6.1.0' ],
+276 silly audit   citty: [ '0.1.6', '0.2.1' ],
+276 silly audit   consola: [ '3.4.2' ],
+276 silly audit   'node-fetch-native': [ '1.6.7' ],
+276 silly audit   nypm: [ '0.6.5' ],
+276 silly audit   tinyexec: [ '1.0.4' ],
+276 silly audit   destr: [ '2.0.5' ]
+276 silly audit }
+277 http cache @prisma/get-platform@https://registry.npmjs.org/@prisma/get-platform/-/get-platform-6.19.2.tgz 0ms (cache hit)
+278 http cache @prisma/fetch-engine@https://registry.npmjs.org/@prisma/fetch-engine/-/fetch-engine-6.19.2.tgz 1ms (cache hit)
+279 http cache @prisma/engines@https://registry.npmjs.org/@prisma/engines/-/engines-6.19.2.tgz 0ms (cache hit)
+280 http cache @types/ms@https://registry.npmjs.org/@types/ms/-/ms-2.1.0.tgz 0ms (cache hit)
+281 http cache @types/jsonwebtoken@https://registry.npmjs.org/@types/jsonwebtoken/-/jsonwebtoken-9.0.10.tgz 0ms (cache hit)
+282 http cache zod@https://registry.npmjs.org/zod/-/zod-3.25.76.tgz 0ms (cache hit)
+283 http cache prisma@https://registry.npmjs.org/prisma/-/prisma-6.19.2.tgz 0ms (cache hit)
+284 http cache bcryptjs@https://registry.npmjs.org/bcryptjs/-/bcryptjs-2.4.3.tgz 0ms (cache hit)
+285 silly tarball no local data for @prisma/get-platform@https://registry.npmjs.org/@prisma/get-platform/-/get-platform-6.19.2.tgz. Extracting by manifest.
+286 silly tarball no local data for @prisma/fetch-engine@https://registry.npmjs.org/@prisma/fetch-engine/-/fetch-engine-6.19.2.tgz. Extracting by manifest.
+287 http cache @prisma/engines-version@https://registry.npmjs.org/@prisma/engines-version/-/engines-version-7.1.1-3.c2990dca591cba766e3b7ef5d9e8a84796e47ab7.tgz 0ms (cache hit)
+288 silly tarball no local data for @prisma/engines@https://registry.npmjs.org/@prisma/engines/-/engines-6.19.2.tgz. Extracting by manifest.
+289 http cache @prisma/debug@https://registry.npmjs.org/@prisma/debug/-/debug-6.19.2.tgz 0ms (cache hit)
+290 http cache @prisma/config@https://registry.npmjs.org/@prisma/config/-/config-6.19.2.tgz 0ms (cache hit)
+291 http cache @prisma/client@https://registry.npmjs.org/@prisma/client/-/client-6.19.2.tgz 0ms (cache hit)
+292 silly tarball no local data for @types/ms@https://registry.npmjs.org/@types/ms/-/ms-2.1.0.tgz. Extracting by manifest.
+293 silly tarball no local data for @types/jsonwebtoken@https://registry.npmjs.org/@types/jsonwebtoken/-/jsonwebtoken-9.0.10.tgz. Extracting by manifest.
+294 silly tarball no local data for zod@https://registry.npmjs.org/zod/-/zod-3.25.76.tgz. Extracting by manifest.
+295 silly tarball no local data for prisma@https://registry.npmjs.org/prisma/-/prisma-6.19.2.tgz. Extracting by manifest.
+296 silly tarball no local data for bcryptjs@https://registry.npmjs.org/bcryptjs/-/bcryptjs-2.4.3.tgz. Extracting by manifest.
+297 silly tarball no local data for @prisma/engines-version@https://registry.npmjs.org/@prisma/engines-version/-/engines-version-7.1.1-3.c2990dca591cba766e3b7ef5d9e8a84796e47ab7.tgz. Extracting by manifest.
+298 silly tarball no local data for @prisma/debug@https://registry.npmjs.org/@prisma/debug/-/debug-6.19.2.tgz. Extracting by manifest.
+299 silly tarball no local data for @prisma/config@https://registry.npmjs.org/@prisma/config/-/config-6.19.2.tgz. Extracting by manifest.
+300 silly tarball no local data for @prisma/client@https://registry.npmjs.org/@prisma/client/-/client-6.19.2.tgz. Extracting by manifest.
+301 http fetch POST 200 https://registry.npmjs.org/-/npm/v1/security/advisories/bulk 554ms
+302 silly audit report {}
+303 http fetch GET 200 https://registry.npmjs.org/@prisma/fetch-engine/-/fetch-engine-6.19.2.tgz 575ms (cache miss)
+304 http fetch GET 200 https://registry.npmjs.org/@types/jsonwebtoken/-/jsonwebtoken-9.0.10.tgz 573ms (cache miss)
+305 http fetch GET 200 https://registry.npmjs.org/@prisma/get-platform/-/get-platform-6.19.2.tgz 708ms (cache miss)
+306 http fetch GET 200 https://registry.npmjs.org/@prisma/config/-/config-6.19.2.tgz 760ms (cache miss)
+307 http fetch GET 200 https://registry.npmjs.org/@types/ms/-/ms-2.1.0.tgz 1003ms (cache miss)
+308 http fetch GET 200 https://registry.npmjs.org/@prisma/engines/-/engines-6.19.2.tgz 1057ms (cache miss)
+309 http fetch GET 200 https://registry.npmjs.org/@prisma/engines-version/-/engines-version-7.1.1-3.c2990dca591cba766e3b7ef5d9e8a84796e47ab7.tgz 1059ms (cache miss)
+310 http fetch GET 200 https://registry.npmjs.org/@prisma/debug/-/debug-6.19.2.tgz 1214ms (cache miss)
+311 http fetch GET 200 https://registry.npmjs.org/bcryptjs/-/bcryptjs-2.4.3.tgz 1324ms (cache miss)
+312 http fetch GET 200 https://registry.npmjs.org/zod/-/zod-3.25.76.tgz 3878ms (cache miss)
+313 http fetch GET 200 https://registry.npmjs.org/prisma/-/prisma-6.19.2.tgz 24507ms (cache miss)
+314 http fetch GET 200 https://registry.npmjs.org/@prisma/client/-/client-6.19.2.tgz 89097ms (cache miss)
+315 info run prisma@6.19.2 preinstall node_modules/prisma node scripts/preinstall-entry.js
+316 info run prisma@6.19.2 preinstall { code: 0, signal: null }
+317 info run @prisma/client@6.19.2 postinstall node_modules/@prisma/client node scripts/postinstall.js
+318 info run @prisma/engines@6.19.2 postinstall node_modules/@prisma/engines node scripts/postinstall.js
+319 info run @prisma/engines@6.19.2 postinstall { code: 0, signal: null }
+320 info run @prisma/client@6.19.2 postinstall { code: 0, signal: null }
+321 silly ADD node_modules/@types/ms
+322 silly ADD node_modules/@types/jsonwebtoken
+323 silly CHANGE node_modules/zod
+324 silly REMOVE node_modules/zeptomatch
+325 silly REMOVE node_modules/which
+326 silly REMOVE node_modules/valibot
+327 silly REMOVE node_modules/std-env
+328 silly REMOVE node_modules/sqlstring
+329 silly REMOVE node_modules/signal-exit
+330 silly REMOVE node_modules/shebang-regex
+331 silly REMOVE node_modules/shebang-command
+332 silly REMOVE node_modules/seq-queue
+333 silly REMOVE node_modules/scheduler
+334 silly REMOVE node_modules/retry
+335 silly REMOVE node_modules/remeda
+336 silly REMOVE node_modules/regexp-to-ast
+337 silly REMOVE node_modules/react-dom
+338 silly REMOVE node_modules/react
+339 silly REMOVE node_modules/proper-lockfile
+340 silly REMOVE node_modules/proper-lockfile/node_modules/signal-exit
+341 silly CHANGE node_modules/prisma
+342 silly REMOVE node_modules/postgres
+343 silly REMOVE node_modules/path-key
+344 silly REMOVE node_modules/named-placeholders
+345 silly REMOVE node_modules/mysql2
+346 silly REMOVE node_modules/mysql2/node_modules/iconv-lite
+347 silly REMOVE node_modules/lru.min
+348 silly REMOVE node_modules/long
+349 silly REMOVE node_modules/lodash
+350 silly REMOVE node_modules/lilconfig
+351 silly REMOVE node_modules/isexe
+352 silly REMOVE node_modules/is-property
+353 silly REMOVE node_modules/http-status-codes
+354 silly REMOVE node_modules/hono
+355 silly REMOVE node_modules/graphmatch
+356 silly REMOVE node_modules/grammex
+357 silly REMOVE node_modules/graceful-fs
+358 silly REMOVE node_modules/get-port-please
+359 silly REMOVE node_modules/generate-function
+360 silly REMOVE node_modules/foreground-child
+361 silly REMOVE node_modules/denque
+362 silly REMOVE node_modules/csstype
+363 silly REMOVE node_modules/cross-spawn
+364 silly REMOVE node_modules/chevrotain
+365 silly CHANGE node_modules/bcryptjs
+366 silly REMOVE node_modules/aws-ssl-profiles
+367 silly REMOVE node_modules/@types/react
+368 silly REMOVE node_modules/@prisma/studio-core
+369 silly REMOVE node_modules/@prisma/query-plan-executor
+370 silly CHANGE node_modules/@prisma/get-platform
+371 silly REMOVE node_modules/@prisma/get-platform/node_modules/@prisma/debug
+372 silly CHANGE node_modules/@prisma/fetch-engine
+373 silly REMOVE node_modules/@prisma/fetch-engine/node_modules/@prisma/get-platform
+374 silly CHANGE node_modules/@prisma/engines-version
+375 silly CHANGE node_modules/@prisma/engines
+376 silly REMOVE node_modules/@prisma/engines/node_modules/@prisma/get-platform
+377 silly REMOVE node_modules/@prisma/dev
+378 silly CHANGE node_modules/@prisma/debug
+379 silly CHANGE node_modules/@prisma/config
+380 silly REMOVE node_modules/@prisma/client-runtime-utils
+381 silly CHANGE node_modules/@prisma/client
+382 silly REMOVE node_modules/@mrleebo/prisma-ast
+383 silly REMOVE node_modules/@hono/node-server
+384 silly REMOVE node_modules/@electric-sql/pglite-tools
+385 silly REMOVE node_modules/@electric-sql/pglite-socket
+386 silly REMOVE node_modules/@electric-sql/pglite
+387 silly REMOVE node_modules/@chevrotain/utils
+388 silly REMOVE node_modules/@chevrotain/types
+389 silly REMOVE node_modules/@chevrotain/gast
+390 silly REMOVE node_modules/@chevrotain/cst-dts-gen
+391 verbose cwd C:\Users\Victor Chilomo\OneDrive\Desktop\EduPayTrack\backend
+392 verbose os Windows_NT 10.0.22631
+393 verbose node v22.20.0
+394 verbose npm  v11.6.1
+395 verbose exit 0
+396 info ok
