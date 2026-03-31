@@ -1,4 +1,4 @@
-import { UserRole } from '@prisma/client';
+import { UserRole } from '../generated/prisma';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
@@ -67,6 +67,7 @@ export const listSystemUsers = async () => {
             id: true,
             email: true,
             role: true,
+            status: true,
             createdAt: true,
             student: {
                 select: {
@@ -116,4 +117,79 @@ export const resetUserPassword = async (userId: string, input: unknown) => {
     return {
         message: 'Password reset successfully',
     };
+};
+
+export const suspendUser = async (userId: string, reason: string) => {
+    const user = await prisma.user.update({
+        where: { id: userId },
+        data: { status: 'SUSPENDED' },
+    });
+
+    writeAuditLog({
+        action: 'user.suspended',
+        targetType: 'user',
+        targetId: user.id,
+        reason,
+        details: { email: user.email },
+    });
+
+    return { message: 'User suspended successfully' };
+};
+
+export const deactivateUser = async (userId: string, reason: string) => {
+    const user = await prisma.user.update({
+        where: { id: userId },
+        data: { status: 'DEACTIVATED' },
+    });
+
+    writeAuditLog({
+        action: 'user.deactivated',
+        targetType: 'user',
+        targetId: user.id,
+        reason,
+        details: { email: user.email },
+    });
+
+    return { message: 'User deactivated successfully' };
+};
+
+export const activateUser = async (userId: string, reason?: string) => {
+    const user = await prisma.user.update({
+        where: { id: userId },
+        data: { status: 'ACTIVE' },
+    });
+
+    writeAuditLog({
+        action: 'user.activated',
+        targetType: 'user',
+        targetId: user.id,
+        reason,
+        details: { email: user.email },
+    });
+
+    return { message: 'User access restored successfully' };
+};
+
+export const deleteUser = async (userId: string, reason: string) => {
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+    });
+
+    if (!user) {
+        throw new AppError('User not found', 404);
+    }
+
+    await prisma.user.delete({
+        where: { id: userId },
+    });
+
+    writeAuditLog({
+        action: 'user.deleted',
+        targetType: 'user',
+        targetId: userId,
+        reason,
+        details: { email: user.email },
+    });
+
+    return { message: 'User removed from system' };
 };

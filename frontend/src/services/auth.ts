@@ -9,6 +9,19 @@ export function loginUser(payload: LoginFormState) {
   });
 }
 
+export function logout(token: string) {
+  return apiRequest<{ message: string }>('/api/auth/logout', {
+    method: 'POST',
+  }, token);
+}
+
+export function terminateActiveSession(payload: LoginFormState) {
+  return apiRequest<{ message: string }>('/api/auth/terminate-session', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}
+
 export function registerStudent(payload: RegisterFormState) {
   return apiRequest<AuthResponse>('/api/auth/register/student', {
     method: 'POST',
@@ -28,6 +41,26 @@ export function changePassword(
     {
       method: 'POST',
       body: JSON.stringify(payload),
+    },
+    token,
+  );
+}
+
+export function uploadProfilePicture(token: string, file: File) {
+  const formData = new FormData();
+  formData.append('profilePicture', file);
+
+  return apiRequest<AuthResponse>('/api/auth/profile-picture', {
+    method: 'POST',
+    body: formData,
+  }, token);
+}
+
+export function deleteProfilePicture(token: string) {
+  return apiRequest<{ message: string }>(
+    '/api/auth/profile-picture',
+    {
+      method: 'DELETE',
     },
     token,
   );

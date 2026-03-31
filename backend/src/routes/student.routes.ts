@@ -1,4 +1,4 @@
-import { UserRole } from '@prisma/client';
+import { UserRole } from '../generated/prisma';
 import { Router } from 'express';
 
 import { asyncHandler } from '../lib/async-handler';

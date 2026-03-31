@@ -195,6 +195,8 @@ export function StudentsWorkspace({
           <div className="relative w-full lg:max-w-xl">
             <span className="material-symbols-outlined absolute left-5 top-1/2 -translate-y-1/2 text-[#414752] opacity-40">search</span>
             <input 
+              id="studentSearchQuery"
+              name="studentSearchQuery"
               className="w-full pl-14 pr-6 py-4 bg-slate-50 border-none rounded-2xl focus:ring-4 focus:ring-primary/10 transition-all placeholder:text-slate-400 text-sm font-bold text-[#0b1c30]" 
               placeholder="Search by ID, Name, Registration Number or Program..." 
               type="text"
@@ -204,6 +206,8 @@ export function StudentsWorkspace({
           </div>
           <div className="flex items-center gap-4 w-full lg:w-auto">
             <select 
+              id="levelFilter"
+              name="levelFilter"
               value={levelFilter}
               onChange={(e) => setLevelFilter(e.target.value)}
               className="pl-5 pr-10 py-4 bg-slate-50 border-none rounded-2xl text-[11px] font-black text-[#414752] uppercase tracking-widest focus:ring-4 focus:ring-primary/10 outline-none cursor-pointer appearance-none min-w-[160px]"
@@ -215,6 +219,8 @@ export function StudentsWorkspace({
               <option value="university">University</option>
             </select>
             <select 
+              id="studentStatusFilter"
+              name="studentStatusFilter"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
               className="pl-5 pr-10 py-4 bg-slate-50 border-none rounded-2xl text-[11px] font-black text-[#414752] uppercase tracking-widest focus:ring-4 focus:ring-primary/10 outline-none cursor-pointer appearance-none min-w-[160px]"
@@ -243,17 +249,17 @@ export function StudentsWorkspace({
       </section>
 
       {/* Detailed Data Table */}
-      <section className="bg-white rounded-[2.5rem] border border-[#c1c6d4]/30 shadow-[0_20px_60px_rgba(0,0,0,0.03)] overflow-hidden">
+      <section className="overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-slate-50/50 text-[10px] uppercase tracking-[0.2em] text-[#414752] font-black border-b border-slate-100">
-                <th className="px-8 py-6">Student Name</th>
-                <th className="px-8 py-6">Registration Number (FR1)</th>
-                <th className="px-8 py-6">Level</th>
-                <th className="px-8 py-6">Current Program/Class</th>
-                <th className="px-8 py-6">Fee Status</th>
-                <th className="px-8 py-6 text-right">Actions</th>
+                <th className="px-2 py-6">Student Name</th>
+                <th className="px-4 py-6">Registration Number</th>
+                <th className="px-4 py-6">Level</th>
+                <th className="px-4 py-6">Current Program/Class</th>
+                <th className="px-4 py-6">Fee Status</th>
+                <th className="px-2 py-6 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-50 font-medium text-slate-900">
@@ -347,7 +353,7 @@ export function StudentsWorkspace({
                 </div>
                 <div>
                   <h3 className="text-2xl font-black text-[#0b1c30] tracking-tight">{selectedStudent.firstName} {selectedStudent.lastName}</h3>
-                  <p className="hidden print:block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mt-1">Consolidated Institutional Record</p>
+                  <p className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mt-1 pr-6">{selectedStudent.studentCode} · Institutional Ledger Profile</p>
                 </div>
               </div>
             </div>

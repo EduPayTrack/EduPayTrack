@@ -19,6 +19,14 @@ async function main() {
         readArg('--password') ||
         process.env.ADMIN_PASSWORD ||
         'Admin12345!';
+    const firstName =
+        readArg('--firstName') ||
+        process.env.ADMIN_FIRST_NAME ||
+        'Admin';
+    const lastName =
+        readArg('--lastName') ||
+        process.env.ADMIN_LAST_NAME ||
+        'User';
     const roleInput =
         readArg('--role') ||
         process.env.ADMIN_ROLE ||
@@ -47,12 +55,15 @@ async function main() {
         data: {
             email,
             passwordHash,
+            firstName,
+            lastName,
             role,
         },
     });
 
     console.log('Admin bootstrap complete.');
     console.log(`Email: ${user.email}`);
+    console.log(`Name: ${user.firstName} ${user.lastName}`);
     console.log(`Role: ${user.role}`);
     console.log('You can now sign in from /login or open /admin directly.');
 }

@@ -32,9 +32,11 @@ export function StudentPaymentForm({
 
       <form className="stack-form" onSubmit={handleSubmit}>
         <div className="field-grid two-up">
-          <label>
+          <label htmlFor="payment-amount">
             <span>Amount</span>
             <input
+              id="payment-amount"
+              name="amount"
               type="number"
               min="0"
               step="0.01"
@@ -45,9 +47,11 @@ export function StudentPaymentForm({
               required
             />
           </label>
-          <label>
+          <label htmlFor="payment-method">
             <span>Payment method</span>
             <select
+              id="payment-method"
+              name="method"
               value={paymentForm.method}
               onChange={(event) =>
                 setPaymentForm((current) => ({
@@ -56,18 +60,19 @@ export function StudentPaymentForm({
                 }))
               }
             >
-              <option value="BANK">Bank</option>
-              <option value="MOBILE_MONEY">Mobile Money</option>
+              <option value="BANK_TRANSFER">Bank Transfer</option>
+              <option value="MOBILE_CREDIT_CARD">Mobile / Credit Card</option>
               <option value="CASH">Cash</option>
-              <option value="OTHER">Other</option>
             </select>
           </label>
         </div>
 
         <div className="field-grid two-up">
-          <label>
+          <label htmlFor="payment-date">
             <span>Payment date</span>
             <input
+              id="payment-date"
+              name="paymentDate"
               type="date"
               value={paymentForm.paymentDate}
               onChange={(event) =>
@@ -76,9 +81,11 @@ export function StudentPaymentForm({
               required
             />
           </label>
-          <label>
+          <label htmlFor="payer-name">
             <span>Payer name</span>
             <input
+              id="payer-name"
+              name="payerName"
               value={paymentForm.payerName}
               onChange={(event) =>
                 setPaymentForm((current) => ({ ...current, payerName: event.target.value }))
@@ -88,9 +95,11 @@ export function StudentPaymentForm({
         </div>
 
         <div className="field-grid two-up">
-          <label>
+          <label htmlFor="external-reference">
             <span>Transaction reference</span>
             <input
+              id="external-reference"
+              name="externalReference"
               value={paymentForm.externalReference}
               onChange={(event) =>
                 setPaymentForm((current) => ({
@@ -100,9 +109,11 @@ export function StudentPaymentForm({
               }
             />
           </label>
-          <label>
+          <label htmlFor="receipt-number">
             <span>Receipt number</span>
             <input
+              id="receipt-number"
+              name="receiptNumber"
               value={paymentForm.receiptNumber}
               onChange={(event) =>
                 setPaymentForm((current) => ({
@@ -114,9 +125,11 @@ export function StudentPaymentForm({
           </label>
         </div>
 
-        <label>
+        <label htmlFor="proof-url">
           <span>Proof URL</span>
           <input
+            id="proof-url"
+            name="proofUrl"
             value={paymentForm.proofUrl}
             onChange={(event) =>
               setPaymentForm((current) => ({ ...current, proofUrl: event.target.value }))
@@ -126,9 +139,11 @@ export function StudentPaymentForm({
           />
         </label>
 
-        <label>
+        <label htmlFor="notes">
           <span>Notes</span>
           <textarea
+            id="notes"
+            name="notes"
             rows={4}
             value={paymentForm.notes}
             onChange={(event) =>

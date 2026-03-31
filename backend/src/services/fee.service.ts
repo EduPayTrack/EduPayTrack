@@ -125,3 +125,36 @@ export const listStudentsWithBalances = async () => {
         },
     });
 };
+
+export const deleteFeeStructure = async (feeStructureId: string) => {
+    const feeStructure = await prisma.feeStructure.findUnique({
+        where: { id: feeStructureId },
+    });
+
+    if (!feeStructure) {
+        throw new AppError('Fee structure not found', 404);
+    }
+
+    await prisma.feeStructure.delete({
+        where: { id: feeStructureId },
+    });
+
+    // Recalculate all balances since a structure was removed
+    const students = await prisma.student.findMany({
+        select: { id: true },
+    });
+
+    await Promise.all(students.map(async (student) => recalculateStudentBalance(student.id)));
+
+    writeAuditLog({
+        action: 'fee_structure.deleted',
+        targetType: 'fee_structure',
+        targetId: feeStructureId,
+        details: {
+            title: feeStructure.title,
+            amount: Number(feeStructure.amount),
+        },
+    });
+
+    return { id: feeStructureId };
+};

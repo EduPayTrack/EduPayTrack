@@ -1,12 +1,13 @@
 import type { PaymentRecord } from '../../../types/api';
+import { useNavigate } from 'react-router-dom';
 
 type Props = {
   data: PaymentRecord[];
   isLoading: boolean;
-  onSelect: (id: string) => void;
 };
 
-export function AccountsVerificationTable({ data, isLoading, onSelect }: Props) {
+export function AccountsVerificationTable({ data, isLoading }: Props) {
+  const navigate = useNavigate();
   if (isLoading) {
     return <div className="text-center py-20 text-[#64748b] animate-pulse">Loading verification queue...</div>;
   }
@@ -68,7 +69,7 @@ export function AccountsVerificationTable({ data, isLoading, onSelect }: Props) 
             </td>
             <td className="px-8 py-6 text-right">
               <button 
-                onClick={() => onSelect(payment.id)}
+                onClick={() => navigate(`/admin/payments/${payment.id}/audit`)}
                 className="bg-white hover:bg-[#004e99] text-[#004e99] hover:text-white px-5 py-2.5 text-[11px] font-black border border-slate-200 rounded-xl shadow-sm transition-all hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-0.5 active:translate-y-0 uppercase tracking-widest"
               >
                 Review & Audit

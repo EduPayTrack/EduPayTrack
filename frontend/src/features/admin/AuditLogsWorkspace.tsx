@@ -2,16 +2,18 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { PaginationControls } from '../../components/shared/PaginationControls';
 import { getAuditLogs } from '../../services/admin';
-import type { AuditLogEntry } from '../../types/api';
+import type { AuditLogEntry, UserRole } from '../../types/api';
 import { exportRowsToCsv } from '../../utils/export';
 import { formatDate } from '../../utils/format';
 
 type AuditLogsWorkspaceProps = {
   token: string;
+  role: UserRole;
   onError: (message: string) => void;
 };
 
-export function AuditLogsWorkspace({ token, onError }: AuditLogsWorkspaceProps) {
+export function AuditLogsWorkspace({ token, role, onError }: AuditLogsWorkspaceProps) {
+  const isAdmin = role === 'ADMIN';
   const [logs, setLogs] = useState<AuditLogEntry[]>([]);
   const [loading, setLoading] = useState(false);
   const [query, setQuery] = useState('');
@@ -112,6 +114,9 @@ export function AuditLogsWorkspace({ token, onError }: AuditLogsWorkspaceProps) 
             <p className="section-kicker">Timeline</p>
             <h3>Recent system activity</h3>
           </div>
+          {isAdmin && (
+             <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-100 px-3 py-1 rounded-lg">View-Only Administrator</span>
+          )}
         </div>
 
         <div className="history-list">

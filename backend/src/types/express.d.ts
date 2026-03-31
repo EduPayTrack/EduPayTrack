@@ -2,7 +2,8 @@ declare namespace Express {
     interface Request {
         user?: {
             userId: string;
-            role: import('@prisma/client').UserRole;
+            email: string;
+            role: import('../generated/prisma').UserRole;
             studentId?: string;
         };
     }

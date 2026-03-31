@@ -10,6 +10,7 @@ import {
 } from '../../services/student';
 import type { AuthResponse, DashboardResponse, OcrPreview, UploadedReceipt } from '../../types/api';
 import { initialPaymentForm, type PaymentFormState } from '../../types/forms';
+import { usePersistentState } from '../../hooks/use-persistent-state';
 
 type StudentWorkspaceProps = {
   token: string;
@@ -30,10 +31,10 @@ export function StudentWorkspace({
   const [ocrStep, setOcrStep] = useState<string>('');
   const [submittingPayment, setSubmittingPayment] = useState(false);
   
-  const [uploadedReceipt, setUploadedReceipt] = useState<UploadedReceipt | null>(null);
-  const [ocrPreview, setOcrPreview] = useState<OcrPreview | null>(null);
-  const [paymentForm, setPaymentForm] = useState<PaymentFormState>(initialPaymentForm);
-  const [isVerified, setIsVerified] = useState(false);
+  const [uploadedReceipt, setUploadedReceipt, clearReceiptDraft] = usePersistentState<UploadedReceipt | null>('student_draft_receipt', null);
+  const [ocrPreview, setOcrPreview, clearOcrDraft] = usePersistentState<OcrPreview | null>('student_draft_ocr', null);
+  const [paymentForm, setPaymentForm, clearFormDraft] = usePersistentState<PaymentFormState>('student_draft_form', initialPaymentForm);
+  const [isVerified, setIsVerified, clearVerifiedDraft] = usePersistentState<boolean>('student_draft_verified', false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -148,10 +149,11 @@ export function StudentWorkspace({
         codeNumber: paymentForm.codeNumber,
       });
 
-      setPaymentForm(initialPaymentForm);
-      setUploadedReceipt(null);
-      setOcrPreview(null);
-      setIsVerified(false);
+      clearFormDraft();
+      clearReceiptDraft();
+      clearOcrDraft();
+      clearVerifiedDraft();
+      
       onSuccess('Payment submitted successfully for verification.');
       await loadDashboard(); // Refresh Recent Submissions immediately
     } catch (error) {
@@ -202,13 +204,17 @@ export function StudentWorkspace({
           <div className="bg-[#eff4ff] rounded-xl p-6 space-y-6 shadow-[0px_20px_40px_rgba(11,28,48,0.06)] border border-white">
             <div>
               <span className="text-xs font-bold uppercase tracking-widest text-[#414752] block mb-2">Current Outstanding Balance</span>
-              <div className="text-4xl font-extrabold font-headline text-[#004e99] tracking-tighter">MWK 2,450.00</div>
+              <div className="text-4xl font-extrabold font-headline text-[#004e99] tracking-tighter">
+                MWK {dashboard?.summary.currentBalance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || '0.00'}
+              </div>
             </div>
             <div className="pt-6 border-t border-[#c1c6d4]/30">
-              <span className="text-xs font-bold uppercase tracking-widest text-[#414752] block mb-2">Next Installment Due</span>
+              <span className="text-xs font-bold uppercase tracking-widest text-[#414752] block mb-2">Pending Verifications</span>
               <div className="flex items-center justify-between text-[#0b1c30]">
-                <span className="text-lg font-semibold">MWK 850.00</span>
-                <span className="px-3 py-1 bg-[#ffdadb] text-[#92002a] text-xs font-bold rounded-full">OCT 15, 2026</span>
+                <span className="text-lg font-semibold">{dashboard?.summary.pendingVerifications || 0} Submissions</span>
+                <span className={`px-3 py-1 text-xs font-bold rounded-full ${dashboard?.summary.pendingVerifications && dashboard.summary.pendingVerifications > 0 ? 'bg-blue-100 text-[#004e99]' : 'bg-slate-200 text-slate-500'}`}>
+                  {dashboard?.summary.pendingVerifications && dashboard.summary.pendingVerifications > 0 ? 'PROCESSING' : 'STABLE'}
+                </span>
               </div>
             </div>
           </div>

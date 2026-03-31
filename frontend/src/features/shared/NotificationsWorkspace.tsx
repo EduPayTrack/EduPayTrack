@@ -1,4 +1,4 @@
-import { startTransition, useState } from 'react';
+import { useState } from 'react';
 
 type Notification = {
   id: number;

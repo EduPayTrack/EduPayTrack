@@ -2,7 +2,9 @@ import { useState } from 'react';
 import type { FormEvent } from 'react';
 
 import { loginUser, registerStudent } from '../../services/auth';
+import { Link, useNavigate } from 'react-router-dom';
 import type { AuthResponse, AuthMode } from '../../types/api';
+import { TOKEN_STORAGE_KEY } from '../../config/env';
 import {
   initialLoginForm,
   initialRegisterForm,
@@ -23,17 +25,34 @@ export function AuthGate({
   onError,
   onSuccess,
 }: AuthGateProps) {
+  // [SECTION: LOGIN OR SIGNUP] - Deciding if the user is logging in or creating a new account
   const [authMode, setAuthMode] = useState<AuthMode>(initialMode);
+  
+  // [SECTION: TYPING BOXES] - This is where we save what you type into the form
   const [registerForm, setRegisterForm] = useState<RegisterFormState>(initialRegisterForm);
   const [loginForm, setLoginForm] = useState<LoginFormState>(initialLoginForm);
   const [confirmPassword, setConfirmPassword] = useState('');
+  
+  // [SECTION: SCREEN SETTINGS] - Toggles to show/hide passwords or loading spinners
   const [loading, setLoading] = useState(false);
+  const [showLoginPwd, setShowLoginPwd] = useState(false);
 
+
+  const navigate = useNavigate();
+
+  // [SECTION: THE SUBMIT ACTION] - What happens when you click the "Login" button
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     onError('');
     onSuccess('');
 
+    // STEP 1: Check if you are already logged in on this browser
+    if (authMode === 'login' && localStorage.getItem(TOKEN_STORAGE_KEY)) {
+        onError('A secure session is already active in this browser. Please use the current session.');
+        return;
+    }
+
+    // STEP 2: Basic checks like matching passwords
     if (authMode === 'register' && registerForm.password !== confirmPassword) {
       onError('Passwords do not match.');
       return;
@@ -59,7 +78,15 @@ export function AuthGate({
           : 'Student account created successfully.',
       );
     } catch (error) {
-      onError(error instanceof Error ? error.message : 'Authentication failed');
+       const message = error instanceof Error ? error.message : 'Authentication failed';
+       if (message === 'ACTIVE_SESSION_EXISTS') {
+         navigate('/session-conflict', { 
+           replace: true, 
+           state: { credentials: loginForm } 
+         });
+       } else {
+         onError(message);
+       }
     } finally {
       setLoading(false);
     }
@@ -124,6 +151,9 @@ export function AuthGate({
                 </label>
                 <div className="relative group">
                   <input 
+                    id="login-email"
+                    name="email"
+                    autoComplete="email"
                     className="w-full bg-[#f1f4f9] border-[#c1c6d4]/30 rounded-lg px-4 py-3.5 focus:ring-1 focus:ring-primary transition-all duration-200 text-[#0b1c30] placeholder:text-[#64748b]" 
                     placeholder="e.g. student@school.edu" 
                     type="email"
@@ -140,26 +170,42 @@ export function AuthGate({
                   <label className="block text-xs font-bold tracking-[0.05em] uppercase text-[#64748b]">
                     Password
                   </label>
-                  <a className="text-xs font-medium text-[#004e99] hover:text-[#004e99]/70 transition-colors duration-200" href="#">
+                  <Link to="/forgot-password" className="text-xs font-medium text-[#004e99] hover:text-[#004e99]/70 transition-colors duration-200">
                     Forgot password?
-                  </a>
+                  </Link>
                 </div>
                 <div className="relative group">
                   <input 
-                    className="w-full bg-[#f1f4f9] border-[#c1c6d4]/30 rounded-lg px-4 py-3.5 focus:ring-1 focus:ring-primary transition-all duration-200 text-[#0b1c30] placeholder:text-[#64748b]" 
+                    id="login-password"
+                    name="password"
+                    autoComplete="current-password"
+                    className="w-full bg-[#f1f4f9] border-[#c1c6d4]/30 rounded-lg px-4 py-3.5 pr-12 focus:ring-1 focus:ring-primary transition-all duration-200 text-[#0b1c30] placeholder:text-[#64748b]" 
                     placeholder="••••••••" 
-                    type="password"
+                    type={showLoginPwd ? 'text' : 'password'}
                     value={loginForm.password}
                     onChange={(e) => setLoginForm((c) => ({ ...c, password: e.target.value }))}
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowLoginPwd(s => !s)}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#64748b]/50 hover:text-[#004e99] transition-colors"
+                    aria-label={showLoginPwd ? 'Hide password' : 'Show password'}
+                  >
+                    <span className="material-symbols-outlined text-xl">{showLoginPwd ? 'visibility_off' : 'visibility'}</span>
+                  </button>
                 </div>
               </div>
 
               {/* Options */}
               <div className="flex items-center px-1 text-left">
                 <label className="relative flex items-center cursor-pointer group">
-                  <input className="peer sr-only" type="checkbox" />
+                  <input 
+                    id="remember-me"
+                    name="remember-me"
+                    className="peer sr-only" 
+                    type="checkbox" 
+                  />
                   <div className="w-5 h-5 bg-[#f1f4f9] rounded border border-[#c1c6d4]/30 peer-checked:bg-[#004e99] peer-checked:border-primary transition-all duration-200 flex items-center justify-center">
                     <span className="material-symbols-outlined text-[16px] text-white opacity-0 peer-checked:opacity-100" style={{ fontVariationSettings: "'FILL' 1" }}>check</span>
                   </div>
@@ -524,6 +570,9 @@ type InputGroupProps = {
 };
 
 function InputGroup({ label, icon, id, type = 'text', placeholder, value, onChange, required }: InputGroupProps) {
+  const [showPwd, setShowPwd] = useState(false);
+  const isPassword = type === 'password';
+  const inputType = isPassword ? (showPwd ? 'text' : 'password') : type;
   return (
     <div className="space-y-1.5 input-group transition-all duration-300">
       <label 
@@ -537,15 +586,25 @@ function InputGroup({ label, icon, id, type = 'text', placeholder, value, onChan
           {icon}
         </span>
         <input 
-          className="w-full pl-12 pr-4 py-3.5 bg-[#f1f4f9] border border-[#c1c6d4]/30 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary/40 focus:bg-white transition-all placeholder:text-[#64748b] text-[#0b1c30] font-medium" 
+          className="w-full pl-12 pr-12 py-3.5 bg-[#f1f4f9] border border-[#c1c6d4]/30 rounded-xl focus:ring-4 focus:ring-primary/10 focus:border-primary/40 focus:bg-white transition-all placeholder:text-[#64748b] text-[#0b1c30] font-medium" 
           id={id} 
           name={id} 
-          type={type} 
+          type={inputType}
           placeholder={placeholder} 
           required={required}
           value={value} 
           onChange={(e) => onChange(e.target.value)}
         />
+        {isPassword && (
+          <button
+            type="button"
+            onClick={() => setShowPwd(s => !s)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-[#64748b]/50 hover:text-[#004e99] transition-colors"
+            aria-label={showPwd ? 'Hide password' : 'Show password'}
+          >
+            <span className="material-symbols-outlined text-xl">{showPwd ? 'visibility_off' : 'visibility'}</span>
+          </button>
+        )}
       </div>
     </div>
   );

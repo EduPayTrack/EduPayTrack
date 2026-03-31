@@ -6,6 +6,7 @@ type ReviewFiltersProps = {
   loading: boolean;
   onFilterChange: (status: PaymentStatus | 'ALL') => void;
   onSearchChange: (value: string) => void;
+  exportAction?: React.ReactNode;
 };
 
 export function ReviewFilters({
@@ -14,9 +15,10 @@ export function ReviewFilters({
   loading,
   onFilterChange,
   onSearchChange,
+  exportAction,
 }: ReviewFiltersProps) {
   return (
-    <section className="flex flex-col lg:flex-row gap-6 justify-between items-end lg:items-center mb-8">
+    <section className="flex flex-col lg:flex-row gap-6 justify-between items-end mb-8">
       <div className="w-full lg:max-w-2xl space-y-4">
         {/* Search Bar */}
         <div className="relative w-full group">
@@ -50,6 +52,12 @@ export function ReviewFilters({
           ))}
         </div>
       </div>
+      
+      {exportAction && (
+        <div className="shrink-0 w-full lg:w-auto flex justify-end">
+          {exportAction}
+        </div>
+      )}
     </section>
   );
 }

@@ -1,56 +1,26 @@
-import { Navigate, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-
-import { AdminDashboardLayout } from '../../components/layout/AdminDashboardLayout';
+import { useOutletContext } from 'react-router-dom';
 import { StudentsWorkspace } from '../../features/admin/StudentsWorkspace';
-import { useAuthState } from '../../hooks/use-auth';
+
+type ContextType = {
+  token: string;
+  onError: (msg: string) => void;
+  onSuccess: (msg: string) => void;
+};
 
 export function AdminStudentsPage() {
-  const { token, authUser, clearSession } = useAuthState();
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const navigate = useNavigate();
-
-  if (!token || !authUser) {
-    return <Navigate replace to="/login" />;
-  }
-
-  if (authUser.role === 'STUDENT') {
-    return <Navigate replace to="/student" />;
-  }
-
-  const handleLogout = () => {
-    clearSession();
-    navigate('/login', { replace: true });
-  };
-
-  const updateStatus = (type: 'error' | 'success', message: string) => {
-    if (type === 'error') {
-      setErrorMessage(message);
-      setSuccessMessage('');
-    } else {
-      setSuccessMessage(message);
-      setErrorMessage('');
-    }
-  };
+  const { token, onError, onSuccess } = useOutletContext<ContextType>();
 
   return (
-    <AdminDashboardLayout
-      title="Browse student balances and activity."
-      kicker="Student Management"
-      role={authUser.role}
-      token={token}
-      onLogout={handleLogout}
-      errorMessage={errorMessage}
-      successMessage={successMessage}
-      onStatusUpdate={updateStatus}
-      onStatusClear={() => { setErrorMessage(''); setSuccessMessage(''); }}
-    >
+    <div className="space-y-6">
+      <div className="mb-4">
+        <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Student Management</p>
+        <h2 className="text-4xl font-black text-slate-900 tracking-tight">Browse student balances and activity.</h2>
+      </div>
       <StudentsWorkspace
         token={token}
-        onError={setErrorMessage}
-        onSuccess={setSuccessMessage}
+        onError={onError}
+        onSuccess={onSuccess}
       />
-    </AdminDashboardLayout>
+    </div>
   );
 }

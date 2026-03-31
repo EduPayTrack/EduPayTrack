@@ -1,10 +1,11 @@
-import { UserRole } from '@prisma/client';
+import { UserRole } from '../generated/prisma';
 import jwt from 'jsonwebtoken';
 
 import { env } from '../config/env';
 
 export type AuthTokenPayload = {
     userId: string;
+    email: string;
     role: UserRole;
     studentId?: string;
 };

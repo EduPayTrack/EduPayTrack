@@ -1,50 +1,87 @@
-import { useState, type ReactNode, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, type ReactNode, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { AdminNav } from '../../features/admin/components/AdminNav';
-import { PasswordChangeCard } from '../../components/shared/PasswordChangeCard';
 import { AppFooter } from './AppFooter';
-import type { UserRole } from '../../types/api';
+import { getRegistry } from '../../services/admin';
+import { API_BASE_URL } from '../../config/env';
+import type { UserRole, SystemRegistry, AuthResponse } from '../../types/api';
+
+function resolveImageUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+
+  // Already a full URL
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+
+  // Relative path like /uploads/filename
+  if (url.startsWith('/')) {
+    const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+    return `${baseUrl}${url}`;
+  }
+
+  // Just a filename, assume it's in uploads
+  const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+  return `${baseUrl}/uploads/${url}`;
+}
 
 type AdminDashboardLayoutProps = {
   children: ReactNode;
   role: UserRole;
+  authUser: AuthResponse['user'];
   token: string;
   onLogout: () => void;
   errorMessage?: string;
   successMessage?: string;
   title?: string;
   kicker?: string;
+  headerActions?: ReactNode;
   onStatusClear?: () => void;
-  onStatusUpdate?: (type: 'error' | 'success', message: string) => void;
 };
 
-export function AdminDashboardLayout({ 
-  children, 
-  role, 
+export function AdminDashboardLayout({
+  children,
+  role,
+  authUser,
   token,
   onLogout,
   errorMessage,
   successMessage,
   title,
   kicker,
+  headerActions,
   onStatusClear,
-  onStatusUpdate
 }: AdminDashboardLayoutProps) {
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const navigate = useNavigate();
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
-  const [profilePic, setProfilePic] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [registry, setRegistry] = useState<SystemRegistry | null>(null);
+
+  useEffect(() => {
+    async function loadRegistry() {
+      try {
+        const data = await getRegistry(token);
+        setRegistry(data);
+        if (data.institutionName) {
+          document.title = `EduPayTrack | ${data.institutionName}`;
+        }
+      } catch (err) {
+        console.error('Failed to load branding');
+      }
+    }
+    void loadRegistry();
+  }, [token]);
 
   useEffect(() => {
     setIsSyncing(true);
     const initialTimer = setTimeout(() => setIsSyncing(false), 2000);
-    
+
     const interval = setInterval(() => {
       setIsSyncing(true);
       setTimeout(() => setIsSyncing(false), 1500);
     }, 45000);
-    
+
     return () => {
       clearTimeout(initialTimer);
       clearInterval(interval);
@@ -61,22 +98,7 @@ export function AdminDashboardLayout({
     }
   }, [successMessage, onStatusClear]);
 
-  const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setProfilePic(event.target?.result as string);
-        onStatusUpdate?.('success', 'Profile picture updated successfully');
-      };
-      reader.readAsDataURL(e.target.files[0]);
-    }
-  };
-
-  const removeProfilePic = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setProfilePic(null);
-    onStatusUpdate?.('success', 'Profile picture removed');
-  };
+  // Profile preview is handled inside ProfilePictureCard; do not duplicate preview state here.
 
   const notifications = [
     { id: 1, text: "New tuition proof uploaded by John Doe", time: "Just now", unread: true, highPriority: true },
@@ -87,34 +109,38 @@ export function AdminDashboardLayout({
   return (
     <div className="bg-slate-50 font-body text-slate-900 antialiased min-h-screen">
       {/* Sidebar Navigation */}
-      <AdminNav 
-        role={role} 
-        onLogout={onLogout} 
-        onChangePassword={() => setShowPasswordModal(true)}
-      />
+      <div className={`fixed inset-0 z-50 lg:hidden transition-opacity duration-300 ${isMobileMenuOpen ? 'bg-slate-900/40 backdrop-blur-sm opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setIsMobileMenuOpen(false)} />
+      <div className={`fixed inset-y-0 left-0 z-50 w-56 transform lg:translate-x-0 transition-transform duration-300 ease-in-out ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <AdminNav
+          role={role}
+          onLogout={onLogout}
+          institutionName={registry?.institutionName || 'Unregistered School'}
+          logoUrl={registry?.logoUrl}
+          onOpenSettings={() => { navigate('/admin/settings?tab=profile'); setIsMobileMenuOpen(false); }}
+          onChangePasswordTab={() => { navigate('/admin/settings?tab=password'); setIsMobileMenuOpen(false); }}
+          onItemClick={() => setIsMobileMenuOpen(false)}
+        />
+      </div>
 
       {/* Main Container */}
       <div className="lg:pl-56 flex flex-col min-h-screen relative pb-16">
         {/* Top Navigation Bar */}
-        <header className="h-20 bg-white/70 backdrop-blur-xl border-b border-slate-200/50 sticky top-0 z-40 flex items-center justify-between px-8">
-          <div className="flex items-center gap-6">
-            <div className="relative group max-md:hidden">
-              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors">
-                search
-              </span>
-              <input 
-                type="text" 
-                placeholder="Search ops database..." 
-                className="bg-slate-100 border-none focus:ring-0 rounded-2xl pl-12 pr-6 py-2.5 text-xs font-bold w-52 text-slate-900 transition-all focus:bg-white focus:shadow-md"
-              />
-            </div>
+        <header className="h-20 bg-white/70 backdrop-blur-xl border-b border-slate-200/50 sticky top-0 z-40 flex items-center justify-between px-4 md:px-8">
+          <div className="flex items-center gap-4 md:gap-6">
+            <button
+              onClick={() => setIsMobileMenuOpen(true)}
+              className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"
+            >
+              <span className="material-symbols-outlined">menu</span>
+            </button>
+
             <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border max-md:hidden transition-colors ${isSyncing ? 'bg-blue-50 border-blue-100' : 'bg-emerald-50 border-emerald-100'}`}>
               {isSyncing ? (
                 <span className="material-symbols-outlined text-[12px] text-blue-600 animate-spin" style={{ fontVariationSettings: "'FILL' 1" }}>sync</span>
               ) : (
                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
               )}
-              <span className={`text-[10px] font-black uppercase tracking-widest leading-none ${isSyncing ? 'text-blue-700' : 'text-emerald-700'}`}>
+              <span className={`text-[12px] font-black tracking-widest leading-none ${isSyncing ? 'text-blue-700' : 'text-emerald-700'}`}>
                 {isSyncing ? 'Syncing...' : 'Auto-Sync Active'}
               </span>
             </div>
@@ -123,7 +149,7 @@ export function AdminDashboardLayout({
           <div className="flex items-center gap-4">
             {/* Notifications Section */}
             <div className="relative">
-              <button 
+              <button
                 onClick={() => setIsNotificationsOpen(!isNotificationsOpen)}
                 className={`flex items-center justify-center w-10 h-10 rounded-xl transition-all relative ${isNotificationsOpen ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-slate-100 text-slate-500 hover:bg-slate-200'}`}
               >
@@ -136,8 +162,8 @@ export function AdminDashboardLayout({
                   <div className="fixed inset-0 z-10" onClick={() => setIsNotificationsOpen(false)} />
                   <div className="absolute right-0 mt-3 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 z-20 overflow-hidden animate-in fade-in zoom-in duration-200 origin-top-right">
                     <div className="p-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-                      <h4 className="text-[10px] font-black uppercase tracking-widest text-[#004e99]">Recent Notifications</h4>
-                      <span className="text-[9px] font-bold text-primary cursor-pointer hover:underline">Mark all read</span>
+                      <h4 className="text-[12px] font-black uppercase tracking-widest text-[#004e99]">Recent Notifications</h4>
+                      <span className="text-[11px] font-black text-primary cursor-pointer hover:underline">Mark all read</span>
                     </div>
                     <div className="max-h-96 overflow-y-auto no-scrollbar">
                       {notifications.map(n => (
@@ -147,15 +173,15 @@ export function AdminDashboardLayout({
                           </div>
                           <div>
                             <p className="text-xs font-black text-slate-800 leading-snug">{n.text}</p>
-                            <p className="text-[10px] text-slate-400 font-medium mt-1 uppercase tracking-widest">{n.time}</p>
+                            <p className="text-[11px] text-slate-500 font-bold mt-1 uppercase tracking-widest">{n.time}</p>
                           </div>
                         </div>
                       ))}
                     </div>
                     <div className="p-3 text-center bg-slate-50">
-                      <Link 
-                        to="/admin/notifications" 
-                        className="text-[10px] font-black text-slate-500 uppercase tracking-widest hover:text-primary transition-colors block"
+                      <Link
+                        to="/admin/notifications"
+                        className="text-[11px] font-black text-slate-600 uppercase tracking-widest hover:text-primary transition-colors block"
                         onClick={() => setIsNotificationsOpen(false)}
                       >
                         View all updates
@@ -171,48 +197,30 @@ export function AdminDashboardLayout({
             {/* Profile Section */}
             <div className="flex items-center gap-3 pl-1">
               <div className="text-right max-md:hidden leading-none">
-                <p className="text-xs font-black text-slate-900 mb-1 uppercase tracking-tight">System Admin</p>
-                <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">{role}</p>
+                <p className="text-[11px] text-slate-500 font-black tracking-widest leading-none mb-1 uppercase">System Admin</p>
+                <p className="text-xs font-black text-slate-900 tracking-tight">{authUser?.firstName && authUser?.lastName ? `${authUser.firstName} ${authUser.lastName}` : 'Administrator'}</p>
               </div>
-              <div 
-                onClick={() => fileInputRef.current?.click()}
-                className="group relative w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden cursor-pointer transition-all hover:border-primary/50 hover:shadow-md active:scale-95"
-              >
-                {profilePic ? (
-                  <img src={profilePic} alt="Admin" className="w-full h-full object-cover" />
+              <div className="group relative w-10 h-10 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden transition-all">
+                {authUser?.profilePictureUrl ? (
+                  <img src={resolveImageUrl(authUser.profilePictureUrl) || ''} alt="Admin" className="w-full h-full object-cover rounded-full" />
                 ) : (
-                  <span className="material-symbols-outlined text-2xl text-slate-400 group-hover:text-primary transition-colors">account_circle</span>
-                )}
-                <div className="absolute inset-0 bg-primary/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="material-symbols-outlined text-white text-lg">add_a_photo</span>
-                </div>
-                {profilePic && (
-                  <button 
-                    onClick={removeProfilePic}
-                    className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md scale-0 group-hover:scale-100 transition-transform border-2 border-white"
-                  >
-                    <span className="material-symbols-outlined text-[10px] font-black">close</span>
-                  </button>
+                  <span className="material-symbols-outlined text-2xl text-slate-400 transition-colors">account_circle</span>
                 )}
               </div>
-              <input 
-                type="file" 
-                ref={fileInputRef} 
-                onChange={handleProfilePicChange} 
-                className="hidden" 
-                accept="image/*" 
-              />
             </div>
           </div>
         </header>
 
         {/* Content Area */}
-        <main className="flex-1 p-8">
+        <main className="flex-1 px-4 md:px-8 pb-8 pt-2">
           {/* Header context */}
-          {(title || kicker) && (
-            <div className="max-w-screen-2xl mx-auto mb-10">
-              {kicker && <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">{kicker}</p>}
-              {title && <h1 className="text-3xl font-black text-slate-900 tracking-tight">{title}</h1>}
+          {(title || kicker || headerActions) && (
+            <div className="max-w-screen-2xl mx-auto mb-4 flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div>
+                {kicker && <p className="text-[11px] font-black uppercase tracking-widest text-primary mb-2 leading-none">{kicker}</p>}
+                {title && <h2 className="text-4xl font-black text-slate-900 tracking-tight">{title}</h2>}
+              </div>
+              {headerActions}
             </div>
           )}
 
@@ -237,42 +245,9 @@ export function AdminDashboardLayout({
           </div>
         </main>
 
-        <AppFooter />
-      </div>
+        <AppFooter institutionName={registry?.institutionName} />
+      </div >
 
-      {/* Change Password Modal Overlay */}
-      {showPasswordModal && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 sm:p-12">
-          <div 
-            className="absolute inset-0 bg-slate-900/60 backdrop-blur-md"
-            onClick={() => setShowPasswordModal(false)}
-          />
-          <div className="relative w-full max-w-xl bg-white rounded-[2rem] shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in duration-300">
-            <div className="p-8 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
-              <div>
-                <p className="text-[10px] font-black text-primary uppercase tracking-widest mb-1">Security Settings</p>
-                <h3 className="text-xl font-black text-slate-900">Change password</h3>
-              </div>
-              <button 
-                onClick={() => setShowPasswordModal(false)}
-                className="w-10 h-10 rounded-full hover:bg-slate-200 flex items-center justify-center text-slate-400 transition-all"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-            </div>
-            <div className="p-8">
-              <PasswordChangeCard 
-                token={token} 
-                onError={(msg) => onStatusUpdate?.('error', msg)}
-                onSuccess={(msg) => {
-                  onStatusUpdate?.('success', msg);
-                  setShowPasswordModal(false);
-                }}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    </div >
   );
 }

@@ -4,7 +4,7 @@ import { NavLink } from 'react-router-dom';
  * Unified Global Footer for the EduPayTrack platform.
  * Features: Brand blue background, Copyright, System Status, and versioning.
  */
-export function AppFooter() {
+export function AppFooter({ institutionName }: { institutionName?: string }) {
   const getLinkClass = ({ isActive }: { isActive: boolean }) => 
     `text-[10px] md:text-xs font-bold transition-all px-1 py-0.5 border-b-2 ${
       isActive 
@@ -16,8 +16,14 @@ export function AppFooter() {
     <footer className="fixed bottom-0 left-0 w-full py-3 px-6 md:px-10 flex flex-col sm:flex-row justify-between items-center gap-2 bg-[#004e99] shadow-[0_-10px_40px_-10px_rgba(0,78,153,0.3)] backdrop-blur-xl z-50 border-t border-white/10">
       {/* LEFT: Copyright & Status */}
       <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4">
-        <div className="text-[10px] md:text-xs font-semibold text-white/90 text-center sm:text-left">
-          © 2026 EduPayTrack. All rights reserved.
+        <div className="flex items-center gap-2 text-white/90 text-[10px] md:text-xs">
+          <span className="font-black">© 2026 EduPayTrack. All rights reserved.</span>
+          {institutionName && (
+            <div className="flex items-center gap-2 opacity-60">
+              <span className="w-[1px] h-3 bg-white/20"></span>
+              <span className="text-[9px] md:text-[10px] font-medium tracking-widest">{institutionName}</span>
+            </div>
+          )}
         </div>
         
         {/* Professional Status Badge */}

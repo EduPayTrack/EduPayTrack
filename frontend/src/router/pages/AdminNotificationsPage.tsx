@@ -1,52 +1,21 @@
-import { Navigate, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-
-import { AdminDashboardLayout } from '../../components/layout/AdminDashboardLayout';
+import { useOutletContext } from 'react-router-dom';
 import { NotificationsWorkspace } from '../../features/shared/NotificationsWorkspace';
-import { useAuthState } from '../../hooks/use-auth';
+import type { AuthResponse } from '../../types/api';
+
+type ContextType = {
+  authUser: AuthResponse['user'];
+};
 
 export function AdminNotificationsPage() {
-  const { token, authUser, clearSession } = useAuthState();
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const navigate = useNavigate();
-
-  if (!token || !authUser) {
-    return <Navigate replace to="/login" />;
-  }
-
-  if (authUser.role === 'STUDENT') {
-    return <Navigate replace to="/student" />;
-  }
-
-  const handleLogout = () => {
-    clearSession();
-    navigate('/login', { replace: true });
-  };
-
-  const updateStatus = (type: 'error' | 'success', message: string) => {
-    if (type === 'error') {
-      setErrorMessage(message);
-      setSuccessMessage('');
-    } else {
-      setSuccessMessage(message);
-      setErrorMessage('');
-    }
-  };
+  const { authUser } = useOutletContext<ContextType>();
 
   return (
-    <AdminDashboardLayout
-      title="Global Updates & System Alerts"
-      kicker="Stay informed."
-      role={authUser.role}
-      token={token}
-      onLogout={handleLogout}
-      errorMessage={errorMessage}
-      successMessage={successMessage}
-      onStatusUpdate={updateStatus}
-      onStatusClear={() => { setErrorMessage(''); setSuccessMessage(''); }}
-    >
+    <div className="space-y-6">
+      <div className="mb-4">
+        <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-2">Stay informed.</p>
+        <h2 className="text-4xl font-black text-slate-900 tracking-tight">Global Updates & System Alerts</h2>
+      </div>
       <NotificationsWorkspace role={authUser.role} />
-    </AdminDashboardLayout>
+    </div>
   );
 }

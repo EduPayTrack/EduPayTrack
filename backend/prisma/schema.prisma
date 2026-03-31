@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
 }
 
 datasource db {
@@ -13,11 +14,16 @@ enum UserRole {
   ACCOUNTS
 }
 
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+  DEACTIVATED
+}
+
 enum PaymentMethod {
-  BANK
-  MOBILE_MONEY
   CASH
-  OTHER
+  BANK_TRANSFER
+  MOBILE_CREDIT_CARD
 }
 
 enum PaymentStatus {
@@ -26,15 +32,29 @@ enum PaymentStatus {
   REJECTED
 }
 
+enum VerificationStatus {
+  UNVERIFIED
+  VERIFIED
+  FLAGGED
+}
+
 model User {
   id               String    @id @default(cuid())
   email            String    @unique
   passwordHash     String
+  firstName        String?
+  lastName         String?
   role             UserRole  @default(STUDENT)
+  status           UserStatus @default(ACTIVE)
+  profilePictureUrl String?
+  currentSessionId String?
+  sessionExpires   DateTime?
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
   student          Student?
+  verifiedPayments Payment[] @relation("PaymentVerifier")
   reviewedPayments Payment[] @relation("PaymentReviewer")
+  generatedReports GeneratedReport[]
 }
 
 model Student {
@@ -46,6 +66,8 @@ model Student {
   program        String
   classLevel     String?
   academicYear   String?
+  term           String?
+  semester       String?
   phone          String?
   currentBalance Decimal   @default(0) @db.Decimal(12, 2)
   createdAt      DateTime  @default(now())
@@ -70,30 +92,63 @@ model FeeStructure {
 }
 
 model Payment {
-  id                String        @id @default(cuid())
-  studentId         String
-  amount            Decimal       @db.Decimal(12, 2)
-  currency          String        @default("MWK")
-  method            PaymentMethod
-  externalReference String?
-  receiptNumber     String?
-  proofUrl          String
-  payerName         String?
-  paymentDate       DateTime
-  submittedAt       DateTime      @default(now())
-  status            PaymentStatus @default(PENDING)
-  duplicateFlag     Boolean       @default(false)
-  ocrText           String?
-  ocrAmount         Decimal?      @db.Decimal(12, 2)
-  ocrReference      String?
-  notes             String?
-  reviewNotes       String?
-  reviewedAt        DateTime?
-  reviewerId        String?
-  student           Student       @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  reviewer          User?         @relation("PaymentReviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
+  id                   String               @id @default(cuid())
+  studentId            String
+  amount               Decimal              @db.Decimal(12, 2)
+  currency             String               @default("MWK")
+  method               PaymentMethod
+  externalReference    String?
+  receiptNumber        String?
+  proofUrl             String
+  payerName            String?
+  paymentDate          DateTime
+  submittedAt          DateTime             @default(now())
+  status               PaymentStatus        @default(PENDING)
+  verificationStatus   VerificationStatus   @default(UNVERIFIED)
+  duplicateFlag        Boolean              @default(false)
+  ocrText              String?
+  ocrAmount            Decimal?             @db.Decimal(12, 2)
+  ocrReference         String?
+  notes                String?
+  verificationNotes    String?
+  reviewNotes          String?
+  verifiedBy           String?
+  verifiedAt           DateTime?
+  reviewedAt           DateTime?
+  reviewerId           String?
+  academicYear         String?
+  term                 String?
+  semester             String?
+  student              Student              @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  verifier             User?                @relation("PaymentVerifier", fields: [verifiedBy], references: [id], onDelete: SetNull)
+  reviewer             User?                @relation("PaymentReviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
 
   @@index([studentId, status])
   @@index([externalReference])
   @@index([receiptNumber])
+  @@index([academicYear, term])
+  @@index([academicYear, semester])
+}
+
+model GeneratedReport {
+  id           String   @id @default(cuid())
+  title        String
+  reportType   String   // e.g., 'TERMLY', 'MONTHLY', 'ANNUAL', 'CUSTOM'
+  filters      Json     // The filter criteria used to generate it
+  data         Json?    // Snapshot of the data at that time
+  generatedBy  String
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [generatedBy], references: [id], onDelete: Cascade)
+
+  @@index([generatedBy])
+}
+
+model SystemRegistry {
+  id              String   @id @default("singleton")
+  institutionName String   @default("Unregistered School")
+  institutionType String   @default("Primary School")
+  address         String?
+  logoUrl         String?
+  contactEmail    String?
+  updatedAt       DateTime @updatedAt
 }

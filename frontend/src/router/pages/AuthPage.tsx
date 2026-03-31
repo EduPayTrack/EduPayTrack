@@ -1,17 +1,38 @@
 import { Navigate, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 import { AuthGate } from '../../components/shared/AuthGate';
 import { AppFooter } from '../../components/layout/AppFooter';
 import { useAuthState } from '../../hooks/use-auth';
-import type { AuthMode } from '../../types/api';
+import { getPublicRegistry } from '../../services/public';
+import { API_BASE_URL } from '../../config/env';
+import type { AuthMode, SystemRegistry } from '../../types/api';
+
+function resolveImageUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
+  if (url.startsWith('data:')) return url; // Handle data URLs (previews)
+  const baseUrl = API_BASE_URL.endsWith('/') ? API_BASE_URL.slice(0, -1) : API_BASE_URL;
+  if (url.startsWith('/')) return `${baseUrl}${url}`;
+  return `${baseUrl}/uploads/${url}`;
+}
 
 export function AuthPage() {
   const { token, authUser, saveSession } = useAuthState();
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [activeAuthMode, setActiveAuthMode] = useState<AuthMode | null>(null);
+  const [registry, setRegistry] = useState<SystemRegistry | null>(null);
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    void getPublicRegistry().then(reg => {
+      setRegistry(reg);
+      if (reg?.institutionName) {
+        document.title = `EduPayTrack | ${reg.institutionName}`;
+      }
+    }).catch(() => {});
+  }, []);
 
   if (token && authUser) {
     return <Navigate replace to={authUser.role === 'STUDENT' ? '/student' : '/admin'} />;
@@ -28,13 +49,24 @@ export function AuthPage() {
         {/* Top Navbar (Fixed) */}
         <nav className="fixed top-0 left-0 w-full z-[60] bg-white/70 backdrop-blur-xl flex items-center justify-between px-6 lg:px-10 h-16 shadow-sm border-b border-gray-200/50">
           <div className="flex items-center gap-3 group cursor-default">
-            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-[#004e99] text-white shadow-lg shadow-[#004e99]/10 transition-transform duration-500 group-hover:scale-105 shrink-0">
-              <span className="material-symbols-outlined text-xl">school</span>
-              <div className="absolute -bottom-1 -right-1 bg-white p-0.5 rounded-md shadow-md border border-[#c1c6d4]/20">
-                <span className="material-symbols-outlined text-[#004e99] text-[14px]">payments</span>
-              </div>
+            <div className="relative flex items-center justify-center w-10 h-10 rounded-xl bg-[#004e99] text-white shadow-lg shadow-[#004e99]/10 transition-transform duration-500 group-hover:scale-105 shrink-0 overflow-hidden">
+              {registry?.logoUrl ? (
+                <img src={resolveImageUrl(registry.logoUrl) || ''} alt="Institution Logo" className="w-full h-full object-cover" />
+              ) : (
+                <span className="material-symbols-outlined text-xl">school</span>
+              )}
+              {!registry?.logoUrl && (
+                <div className="absolute -bottom-1 -right-1 bg-white p-0.5 rounded-md shadow-md border border-[#c1c6d4]/20">
+                  <span className="material-symbols-outlined text-[#004e99] text-[14px]">payments</span>
+                </div>
+              )}
             </div>
-            <span className="text-xl font-bold tracking-tighter text-[#004e99]">EduPayTrack</span>
+            <div className="flex flex-col leading-none">
+              <span className="text-xl font-black tracking-tighter text-[#004e99]">EduPayTrack</span>
+              {registry?.institutionName && (
+                <span className="text-[10px] font-black text-slate-500 uppercase tracking-widest mt-1">Institutional Audit</span>
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <button 
@@ -216,7 +248,7 @@ export function AuthPage() {
         </main>
 
         {/* Global Fixed Footer */}
-        <AppFooter />
+        <AppFooter institutionName={registry?.institutionName} />
       </div>
     );
   }
@@ -275,7 +307,7 @@ export function AuthPage() {
       </div>
 
       {/* Fixed Full-Width App Footer */}
-      <AppFooter />
+      <AppFooter institutionName={registry?.institutionName} />
     </div>
   );
 }

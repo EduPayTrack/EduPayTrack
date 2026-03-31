@@ -13,6 +13,18 @@ const allowedMimeTypes = new Set([
     'application/pdf',
 ]);
 
+const imageExtensions = new Set(['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg', '.bmp', '.tiff', '.ico']);
+const imageMimeTypes = new Set([
+    'image/jpeg',
+    'image/png',
+    'image/gif',
+    'image/webp',
+    'image/svg+xml',
+    'image/bmp',
+    'image/tiff',
+    'image/vnd.microsoft.icon',
+]);
+
 const storage = multer.diskStorage({
     destination: (_req, _file, callback) => {
         callback(null, uploadsDirectory);
@@ -40,6 +52,25 @@ export const uploadReceipt = multer({
 
         if (!validFile) {
             callback(new AppError('Only JPG, PNG, and PDF receipt files are allowed', 400));
+            return;
+        }
+
+        callback(null, true);
+    },
+});
+
+export const uploadProfilePicture = multer({
+    storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024,
+    },
+    fileFilter: (_req, file, callback) => {
+        const extension = path.extname(file.originalname).toLowerCase();
+        const validFile =
+            imageExtensions.has(extension) && imageMimeTypes.has(file.mimetype);
+
+        if (!validFile) {
+            callback(new AppError('Only image files are allowed (JPG, PNG, GIF, WebP, SVG, BMP, TIFF)', 400));
             return;
         }
 

@@ -27,7 +27,7 @@ export function AdminOverviewCard({ authUser, payments }: AdminOverviewCardProps
             </span>
           </div>
           <h2 className="text-3xl md:text-4xl font-black tracking-tight mb-3 text-white leading-tight">
-            Welcome, <span className="text-primary">{authUser.student?.firstName || authUser.email.split('@')[0]}</span>.
+            Welcome, <span className="text-primary">{authUser.firstName || authUser.email.split('@')[0]}</span>.
           </h2>
           <p className="text-slate-400 font-bold text-xs md:text-sm leading-relaxed max-w-md">
             Auditing <span className="text-white">{pendingCount} pending records</span>. AI-OCR accuracy: 94% target.
@@ -65,7 +65,7 @@ export function AdminOverviewCard({ authUser, payments }: AdminOverviewCardProps
       {/* Workflow Progress Bar */}
       <div className="mt-8 pt-6 border-t border-white/5">
         <div className="flex justify-between items-center mb-3">
-          <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Academic Audit Lifecycle</p>
+          <p className="text-[9px] font-black uppercase tracking-widest text-slate-500">Institutional Verification Progress</p>
           <p className="text-[9px] font-black uppercase tracking-widest text-primary">82% Verified</p>
         </div>
         <div className="h-1 w-full bg-white/5 rounded-full overflow-hidden">
@@ -73,8 +73,8 @@ export function AdminOverviewCard({ authUser, payments }: AdminOverviewCardProps
         </div>
         <div className="flex justify-between mt-3">
           <div className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">Queue</div>
-          <div className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">OCR Review</div>
-          <div className="text-[9px] font-bold text-white uppercase tracking-tight">Final Audit</div>
+          <div className="text-[9px] font-bold text-slate-500 uppercase tracking-tight">Review</div>
+          <div className="text-[9px] font-bold text-white uppercase tracking-tight">Completed</div>
         </div>
       </div>
     </section>
