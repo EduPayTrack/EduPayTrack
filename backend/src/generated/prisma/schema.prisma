@@ -38,23 +38,30 @@ enum VerificationStatus {
   FLAGGED
 }
 
+enum ReconciliationStatus {
+  UNMATCHED
+  MATCHED
+}
+
 model User {
-  id                String            @id @default(cuid())
-  email             String            @unique
-  passwordHash      String
-  firstName         String?
-  lastName          String?
-  role              UserRole          @default(STUDENT)
-  status            UserStatus        @default(ACTIVE)
-  profilePictureUrl String?
-  currentSessionId  String?
-  sessionExpires    DateTime?
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-  student           Student?
-  verifiedPayments  Payment[]         @relation("PaymentVerifier")
-  reviewedPayments  Payment[]         @relation("PaymentReviewer")
-  generatedReports  GeneratedReport[]
+  id                 String            @id @default(cuid())
+  email              String            @unique
+  passwordHash       String
+  firstName          String?
+  lastName           String?
+  role               UserRole          @default(STUDENT)
+  status             UserStatus        @default(ACTIVE)
+  profilePictureUrl  String?
+  currentSessionId   String?
+  sessionExpires     DateTime?
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  student            Student?
+  verifiedPayments   Payment[]         @relation("PaymentVerifier")
+  reviewedPayments   Payment[]         @relation("PaymentReviewer")
+  reconciledPayments Payment[]         @relation("PaymentReconciler")
+  generatedReports   GeneratedReport[]
+  notifications      Notification[]
 }
 
 model Student {
@@ -92,36 +99,41 @@ model FeeStructure {
 }
 
 model Payment {
-  id                 String             @id @default(cuid())
-  studentId          String
-  amount             Decimal            @db.Decimal(12, 2)
-  currency           String             @default("MWK")
-  method             PaymentMethod
-  externalReference  String?
-  receiptNumber      String?
-  proofUrl           String
-  payerName          String?
-  paymentDate        DateTime
-  submittedAt        DateTime           @default(now())
-  status             PaymentStatus      @default(PENDING)
-  verificationStatus VerificationStatus @default(UNVERIFIED)
-  duplicateFlag      Boolean            @default(false)
-  ocrText            String?
-  ocrAmount          Decimal?           @db.Decimal(12, 2)
-  ocrReference       String?
-  notes              String?
-  verificationNotes  String?
-  reviewNotes        String?
-  verifiedBy         String?
-  verifiedAt         DateTime?
-  reviewedAt         DateTime?
-  reviewerId         String?
-  academicYear       String?
-  term               String?
-  semester           String?
-  student            Student            @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  verifier           User?              @relation("PaymentVerifier", fields: [verifiedBy], references: [id], onDelete: SetNull)
-  reviewer           User?              @relation("PaymentReviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
+  id                   String               @id @default(cuid())
+  studentId            String
+  amount               Decimal              @db.Decimal(12, 2)
+  currency             String               @default("MWK")
+  method               PaymentMethod
+  externalReference    String?
+  receiptNumber        String?
+  proofUrl             String
+  payerName            String?
+  paymentDate          DateTime
+  submittedAt          DateTime             @default(now())
+  status               PaymentStatus        @default(PENDING)
+  verificationStatus   VerificationStatus   @default(UNVERIFIED)
+  duplicateFlag        Boolean              @default(false)
+  ocrText              String?
+  ocrAmount            Decimal?             @db.Decimal(12, 2)
+  ocrReference         String?
+  notes                String?
+  verificationNotes    String?
+  reviewNotes          String?
+  reconciliationStatus ReconciliationStatus @default(UNMATCHED)
+  reconciliationNote   String?
+  reconciledAt         DateTime?
+  reconciledBy         String?
+  verifiedBy           String?
+  verifiedAt           DateTime?
+  reviewedAt           DateTime?
+  reviewerId           String?
+  academicYear         String?
+  term                 String?
+  semester             String?
+  student              Student              @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  reconciler           User?                @relation("PaymentReconciler", fields: [reconciledBy], references: [id], onDelete: SetNull)
+  verifier             User?                @relation("PaymentVerifier", fields: [verifiedBy], references: [id], onDelete: SetNull)
+  reviewer             User?                @relation("PaymentReviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
 
   @@index([studentId, status])
   @@index([externalReference])
@@ -141,6 +153,19 @@ model GeneratedReport {
   user        User     @relation(fields: [generatedBy], references: [id], onDelete: Cascade)
 
   @@index([generatedBy])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    String
+  title     String
+  message   String
+  type      String // e.g., 'FEE_ASSIGNED', 'PAYMENT_SUBMITTED', 'PAYMENT_APPROVED', 'SYSTEM'
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
 }
 
 model SystemRegistry {

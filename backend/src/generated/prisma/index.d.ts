@@ -97,6 +97,14 @@ export const VerificationStatus: {
 
 export type VerificationStatus = (typeof VerificationStatus)[keyof typeof VerificationStatus]
 
+
+export const ReconciliationStatus: {
+  UNMATCHED: 'UNMATCHED',
+  MATCHED: 'MATCHED'
+};
+
+export type ReconciliationStatus = (typeof ReconciliationStatus)[keyof typeof ReconciliationStatus]
+
 }
 
 export type UserRole = $Enums.UserRole
@@ -118,6 +126,10 @@ export const PaymentStatus: typeof $Enums.PaymentStatus
 export type VerificationStatus = $Enums.VerificationStatus
 
 export const VerificationStatus: typeof $Enums.VerificationStatus
+
+export type ReconciliationStatus = $Enums.ReconciliationStatus
+
+export const ReconciliationStatus: typeof $Enums.ReconciliationStatus
 
 /**
  * ##  Prisma Client ʲˢ
@@ -1479,6 +1491,7 @@ export namespace Prisma {
   export type UserCountOutputType = {
     verifiedPayments: number
     reviewedPayments: number
+    reconciledPayments: number
     generatedReports: number
     notifications: number
   }
@@ -1486,6 +1499,7 @@ export namespace Prisma {
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     verifiedPayments?: boolean | UserCountOutputTypeCountVerifiedPaymentsArgs
     reviewedPayments?: boolean | UserCountOutputTypeCountReviewedPaymentsArgs
+    reconciledPayments?: boolean | UserCountOutputTypeCountReconciledPaymentsArgs
     generatedReports?: boolean | UserCountOutputTypeCountGeneratedReportsArgs
     notifications?: boolean | UserCountOutputTypeCountNotificationsArgs
   }
@@ -1512,6 +1526,13 @@ export namespace Prisma {
    * UserCountOutputType without action
    */
   export type UserCountOutputTypeCountReviewedPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: PaymentWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountReconciledPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: PaymentWhereInput
   }
 
@@ -1788,6 +1809,7 @@ export namespace Prisma {
     student?: boolean | User$studentArgs<ExtArgs>
     verifiedPayments?: boolean | User$verifiedPaymentsArgs<ExtArgs>
     reviewedPayments?: boolean | User$reviewedPaymentsArgs<ExtArgs>
+    reconciledPayments?: boolean | User$reconciledPaymentsArgs<ExtArgs>
     generatedReports?: boolean | User$generatedReportsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1843,6 +1865,7 @@ export namespace Prisma {
     student?: boolean | User$studentArgs<ExtArgs>
     verifiedPayments?: boolean | User$verifiedPaymentsArgs<ExtArgs>
     reviewedPayments?: boolean | User$reviewedPaymentsArgs<ExtArgs>
+    reconciledPayments?: boolean | User$reconciledPaymentsArgs<ExtArgs>
     generatedReports?: boolean | User$generatedReportsArgs<ExtArgs>
     notifications?: boolean | User$notificationsArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -1856,6 +1879,7 @@ export namespace Prisma {
       student: Prisma.$StudentPayload<ExtArgs> | null
       verifiedPayments: Prisma.$PaymentPayload<ExtArgs>[]
       reviewedPayments: Prisma.$PaymentPayload<ExtArgs>[]
+      reconciledPayments: Prisma.$PaymentPayload<ExtArgs>[]
       generatedReports: Prisma.$GeneratedReportPayload<ExtArgs>[]
       notifications: Prisma.$NotificationPayload<ExtArgs>[]
     }
@@ -2269,6 +2293,7 @@ export namespace Prisma {
     student<T extends User$studentArgs<ExtArgs> = {}>(args?: Subset<T, User$studentArgs<ExtArgs>>): Prisma__StudentClient<$Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     verifiedPayments<T extends User$verifiedPaymentsArgs<ExtArgs> = {}>(args?: Subset<T, User$verifiedPaymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     reviewedPayments<T extends User$reviewedPaymentsArgs<ExtArgs> = {}>(args?: Subset<T, User$reviewedPaymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    reconciledPayments<T extends User$reconciledPaymentsArgs<ExtArgs> = {}>(args?: Subset<T, User$reconciledPaymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PaymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     generatedReports<T extends User$generatedReportsArgs<ExtArgs> = {}>(args?: Subset<T, User$generatedReportsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$GeneratedReportPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     notifications<T extends User$notificationsArgs<ExtArgs> = {}>(args?: Subset<T, User$notificationsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$NotificationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
@@ -2746,6 +2771,30 @@ export namespace Prisma {
    * User.reviewedPayments
    */
   export type User$reviewedPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Payment
+     */
+    select?: PaymentSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Payment
+     */
+    omit?: PaymentOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: PaymentInclude<ExtArgs> | null
+    where?: PaymentWhereInput
+    orderBy?: PaymentOrderByWithRelationInput | PaymentOrderByWithRelationInput[]
+    cursor?: PaymentWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: PaymentScalarFieldEnum | PaymentScalarFieldEnum[]
+  }
+
+  /**
+   * User.reconciledPayments
+   */
+  export type User$reconciledPaymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     /**
      * Select specific fields to fetch from the Payment
      */
@@ -5235,6 +5284,10 @@ export namespace Prisma {
     notes: string | null
     verificationNotes: string | null
     reviewNotes: string | null
+    reconciliationStatus: $Enums.ReconciliationStatus | null
+    reconciliationNote: string | null
+    reconciledAt: Date | null
+    reconciledBy: string | null
     verifiedBy: string | null
     verifiedAt: Date | null
     reviewedAt: Date | null
@@ -5265,6 +5318,10 @@ export namespace Prisma {
     notes: string | null
     verificationNotes: string | null
     reviewNotes: string | null
+    reconciliationStatus: $Enums.ReconciliationStatus | null
+    reconciliationNote: string | null
+    reconciledAt: Date | null
+    reconciledBy: string | null
     verifiedBy: string | null
     verifiedAt: Date | null
     reviewedAt: Date | null
@@ -5295,6 +5352,10 @@ export namespace Prisma {
     notes: number
     verificationNotes: number
     reviewNotes: number
+    reconciliationStatus: number
+    reconciliationNote: number
+    reconciledAt: number
+    reconciledBy: number
     verifiedBy: number
     verifiedAt: number
     reviewedAt: number
@@ -5337,6 +5398,10 @@ export namespace Prisma {
     notes?: true
     verificationNotes?: true
     reviewNotes?: true
+    reconciliationStatus?: true
+    reconciliationNote?: true
+    reconciledAt?: true
+    reconciledBy?: true
     verifiedBy?: true
     verifiedAt?: true
     reviewedAt?: true
@@ -5367,6 +5432,10 @@ export namespace Prisma {
     notes?: true
     verificationNotes?: true
     reviewNotes?: true
+    reconciliationStatus?: true
+    reconciliationNote?: true
+    reconciledAt?: true
+    reconciledBy?: true
     verifiedBy?: true
     verifiedAt?: true
     reviewedAt?: true
@@ -5397,6 +5466,10 @@ export namespace Prisma {
     notes?: true
     verificationNotes?: true
     reviewNotes?: true
+    reconciliationStatus?: true
+    reconciliationNote?: true
+    reconciledAt?: true
+    reconciledBy?: true
     verifiedBy?: true
     verifiedAt?: true
     reviewedAt?: true
@@ -5514,6 +5587,10 @@ export namespace Prisma {
     notes: string | null
     verificationNotes: string | null
     reviewNotes: string | null
+    reconciliationStatus: $Enums.ReconciliationStatus
+    reconciliationNote: string | null
+    reconciledAt: Date | null
+    reconciledBy: string | null
     verifiedBy: string | null
     verifiedAt: Date | null
     reviewedAt: Date | null
@@ -5563,6 +5640,10 @@ export namespace Prisma {
     notes?: boolean
     verificationNotes?: boolean
     reviewNotes?: boolean
+    reconciliationStatus?: boolean
+    reconciliationNote?: boolean
+    reconciledAt?: boolean
+    reconciledBy?: boolean
     verifiedBy?: boolean
     verifiedAt?: boolean
     reviewedAt?: boolean
@@ -5571,6 +5652,7 @@ export namespace Prisma {
     term?: boolean
     semester?: boolean
     student?: boolean | StudentDefaultArgs<ExtArgs>
+    reconciler?: boolean | Payment$reconcilerArgs<ExtArgs>
     verifier?: boolean | Payment$verifierArgs<ExtArgs>
     reviewer?: boolean | Payment$reviewerArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
@@ -5596,6 +5678,10 @@ export namespace Prisma {
     notes?: boolean
     verificationNotes?: boolean
     reviewNotes?: boolean
+    reconciliationStatus?: boolean
+    reconciliationNote?: boolean
+    reconciledAt?: boolean
+    reconciledBy?: boolean
     verifiedBy?: boolean
     verifiedAt?: boolean
     reviewedAt?: boolean
@@ -5604,6 +5690,7 @@ export namespace Prisma {
     term?: boolean
     semester?: boolean
     student?: boolean | StudentDefaultArgs<ExtArgs>
+    reconciler?: boolean | Payment$reconcilerArgs<ExtArgs>
     verifier?: boolean | Payment$verifierArgs<ExtArgs>
     reviewer?: boolean | Payment$reviewerArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
@@ -5629,6 +5716,10 @@ export namespace Prisma {
     notes?: boolean
     verificationNotes?: boolean
     reviewNotes?: boolean
+    reconciliationStatus?: boolean
+    reconciliationNote?: boolean
+    reconciledAt?: boolean
+    reconciledBy?: boolean
     verifiedBy?: boolean
     verifiedAt?: boolean
     reviewedAt?: boolean
@@ -5637,6 +5728,7 @@ export namespace Prisma {
     term?: boolean
     semester?: boolean
     student?: boolean | StudentDefaultArgs<ExtArgs>
+    reconciler?: boolean | Payment$reconcilerArgs<ExtArgs>
     verifier?: boolean | Payment$verifierArgs<ExtArgs>
     reviewer?: boolean | Payment$reviewerArgs<ExtArgs>
   }, ExtArgs["result"]["payment"]>
@@ -5662,6 +5754,10 @@ export namespace Prisma {
     notes?: boolean
     verificationNotes?: boolean
     reviewNotes?: boolean
+    reconciliationStatus?: boolean
+    reconciliationNote?: boolean
+    reconciledAt?: boolean
+    reconciledBy?: boolean
     verifiedBy?: boolean
     verifiedAt?: boolean
     reviewedAt?: boolean
@@ -5671,19 +5767,22 @@ export namespace Prisma {
     semester?: boolean
   }
 
-  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "studentId" | "amount" | "currency" | "method" | "externalReference" | "receiptNumber" | "proofUrl" | "payerName" | "paymentDate" | "submittedAt" | "status" | "verificationStatus" | "duplicateFlag" | "ocrText" | "ocrAmount" | "ocrReference" | "notes" | "verificationNotes" | "reviewNotes" | "verifiedBy" | "verifiedAt" | "reviewedAt" | "reviewerId" | "academicYear" | "term" | "semester", ExtArgs["result"]["payment"]>
+  export type PaymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "studentId" | "amount" | "currency" | "method" | "externalReference" | "receiptNumber" | "proofUrl" | "payerName" | "paymentDate" | "submittedAt" | "status" | "verificationStatus" | "duplicateFlag" | "ocrText" | "ocrAmount" | "ocrReference" | "notes" | "verificationNotes" | "reviewNotes" | "reconciliationStatus" | "reconciliationNote" | "reconciledAt" | "reconciledBy" | "verifiedBy" | "verifiedAt" | "reviewedAt" | "reviewerId" | "academicYear" | "term" | "semester", ExtArgs["result"]["payment"]>
   export type PaymentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     student?: boolean | StudentDefaultArgs<ExtArgs>
+    reconciler?: boolean | Payment$reconcilerArgs<ExtArgs>
     verifier?: boolean | Payment$verifierArgs<ExtArgs>
     reviewer?: boolean | Payment$reviewerArgs<ExtArgs>
   }
   export type PaymentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     student?: boolean | StudentDefaultArgs<ExtArgs>
+    reconciler?: boolean | Payment$reconcilerArgs<ExtArgs>
     verifier?: boolean | Payment$verifierArgs<ExtArgs>
     reviewer?: boolean | Payment$reviewerArgs<ExtArgs>
   }
   export type PaymentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     student?: boolean | StudentDefaultArgs<ExtArgs>
+    reconciler?: boolean | Payment$reconcilerArgs<ExtArgs>
     verifier?: boolean | Payment$verifierArgs<ExtArgs>
     reviewer?: boolean | Payment$reviewerArgs<ExtArgs>
   }
@@ -5692,6 +5791,7 @@ export namespace Prisma {
     name: "Payment"
     objects: {
       student: Prisma.$StudentPayload<ExtArgs>
+      reconciler: Prisma.$UserPayload<ExtArgs> | null
       verifier: Prisma.$UserPayload<ExtArgs> | null
       reviewer: Prisma.$UserPayload<ExtArgs> | null
     }
@@ -5716,6 +5816,10 @@ export namespace Prisma {
       notes: string | null
       verificationNotes: string | null
       reviewNotes: string | null
+      reconciliationStatus: $Enums.ReconciliationStatus
+      reconciliationNote: string | null
+      reconciledAt: Date | null
+      reconciledBy: string | null
       verifiedBy: string | null
       verifiedAt: Date | null
       reviewedAt: Date | null
@@ -6118,6 +6222,7 @@ export namespace Prisma {
   export interface Prisma__PaymentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
     student<T extends StudentDefaultArgs<ExtArgs> = {}>(args?: Subset<T, StudentDefaultArgs<ExtArgs>>): Prisma__StudentClient<$Result.GetResult<Prisma.$StudentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    reconciler<T extends Payment$reconcilerArgs<ExtArgs> = {}>(args?: Subset<T, Payment$reconcilerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     verifier<T extends Payment$verifierArgs<ExtArgs> = {}>(args?: Subset<T, Payment$verifierArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     reviewer<T extends Payment$reviewerArgs<ExtArgs> = {}>(args?: Subset<T, Payment$reviewerArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     /**
@@ -6169,6 +6274,10 @@ export namespace Prisma {
     readonly notes: FieldRef<"Payment", 'String'>
     readonly verificationNotes: FieldRef<"Payment", 'String'>
     readonly reviewNotes: FieldRef<"Payment", 'String'>
+    readonly reconciliationStatus: FieldRef<"Payment", 'ReconciliationStatus'>
+    readonly reconciliationNote: FieldRef<"Payment", 'String'>
+    readonly reconciledAt: FieldRef<"Payment", 'DateTime'>
+    readonly reconciledBy: FieldRef<"Payment", 'String'>
     readonly verifiedBy: FieldRef<"Payment", 'String'>
     readonly verifiedAt: FieldRef<"Payment", 'DateTime'>
     readonly reviewedAt: FieldRef<"Payment", 'DateTime'>
@@ -6569,6 +6678,25 @@ export namespace Prisma {
      * Limit how many Payments to delete.
      */
     limit?: number
+  }
+
+  /**
+   * Payment.reconciler
+   */
+  export type Payment$reconcilerArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the User
+     */
+    select?: UserSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the User
+     */
+    omit?: UserOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: UserInclude<ExtArgs> | null
+    where?: UserWhereInput
   }
 
   /**
@@ -9900,6 +10028,10 @@ export namespace Prisma {
     notes: 'notes',
     verificationNotes: 'verificationNotes',
     reviewNotes: 'reviewNotes',
+    reconciliationStatus: 'reconciliationStatus',
+    reconciliationNote: 'reconciliationNote',
+    reconciledAt: 'reconciledAt',
+    reconciledBy: 'reconciledBy',
     verifiedBy: 'verifiedBy',
     verifiedAt: 'verifiedAt',
     reviewedAt: 'reviewedAt',
@@ -10124,6 +10256,20 @@ export namespace Prisma {
 
 
   /**
+   * Reference to a field of type 'ReconciliationStatus'
+   */
+  export type EnumReconciliationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReconciliationStatus'>
+    
+
+
+  /**
+   * Reference to a field of type 'ReconciliationStatus[]'
+   */
+  export type ListEnumReconciliationStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'ReconciliationStatus[]'>
+    
+
+
+  /**
    * Reference to a field of type 'Json'
    */
   export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
@@ -10173,6 +10319,7 @@ export namespace Prisma {
     student?: XOR<StudentNullableScalarRelationFilter, StudentWhereInput> | null
     verifiedPayments?: PaymentListRelationFilter
     reviewedPayments?: PaymentListRelationFilter
+    reconciledPayments?: PaymentListRelationFilter
     generatedReports?: GeneratedReportListRelationFilter
     notifications?: NotificationListRelationFilter
   }
@@ -10193,6 +10340,7 @@ export namespace Prisma {
     student?: StudentOrderByWithRelationInput
     verifiedPayments?: PaymentOrderByRelationAggregateInput
     reviewedPayments?: PaymentOrderByRelationAggregateInput
+    reconciledPayments?: PaymentOrderByRelationAggregateInput
     generatedReports?: GeneratedReportOrderByRelationAggregateInput
     notifications?: NotificationOrderByRelationAggregateInput
   }
@@ -10216,6 +10364,7 @@ export namespace Prisma {
     student?: XOR<StudentNullableScalarRelationFilter, StudentWhereInput> | null
     verifiedPayments?: PaymentListRelationFilter
     reviewedPayments?: PaymentListRelationFilter
+    reconciledPayments?: PaymentListRelationFilter
     generatedReports?: GeneratedReportListRelationFilter
     notifications?: NotificationListRelationFilter
   }, "id" | "email">
@@ -10474,6 +10623,10 @@ export namespace Prisma {
     notes?: StringNullableFilter<"Payment"> | string | null
     verificationNotes?: StringNullableFilter<"Payment"> | string | null
     reviewNotes?: StringNullableFilter<"Payment"> | string | null
+    reconciliationStatus?: EnumReconciliationStatusFilter<"Payment"> | $Enums.ReconciliationStatus
+    reconciliationNote?: StringNullableFilter<"Payment"> | string | null
+    reconciledAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
+    reconciledBy?: StringNullableFilter<"Payment"> | string | null
     verifiedBy?: StringNullableFilter<"Payment"> | string | null
     verifiedAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
     reviewedAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
@@ -10482,6 +10635,7 @@ export namespace Prisma {
     term?: StringNullableFilter<"Payment"> | string | null
     semester?: StringNullableFilter<"Payment"> | string | null
     student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
+    reconciler?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     verifier?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     reviewer?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }
@@ -10507,6 +10661,10 @@ export namespace Prisma {
     notes?: SortOrderInput | SortOrder
     verificationNotes?: SortOrderInput | SortOrder
     reviewNotes?: SortOrderInput | SortOrder
+    reconciliationStatus?: SortOrder
+    reconciliationNote?: SortOrderInput | SortOrder
+    reconciledAt?: SortOrderInput | SortOrder
+    reconciledBy?: SortOrderInput | SortOrder
     verifiedBy?: SortOrderInput | SortOrder
     verifiedAt?: SortOrderInput | SortOrder
     reviewedAt?: SortOrderInput | SortOrder
@@ -10515,6 +10673,7 @@ export namespace Prisma {
     term?: SortOrderInput | SortOrder
     semester?: SortOrderInput | SortOrder
     student?: StudentOrderByWithRelationInput
+    reconciler?: UserOrderByWithRelationInput
     verifier?: UserOrderByWithRelationInput
     reviewer?: UserOrderByWithRelationInput
   }
@@ -10543,6 +10702,10 @@ export namespace Prisma {
     notes?: StringNullableFilter<"Payment"> | string | null
     verificationNotes?: StringNullableFilter<"Payment"> | string | null
     reviewNotes?: StringNullableFilter<"Payment"> | string | null
+    reconciliationStatus?: EnumReconciliationStatusFilter<"Payment"> | $Enums.ReconciliationStatus
+    reconciliationNote?: StringNullableFilter<"Payment"> | string | null
+    reconciledAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
+    reconciledBy?: StringNullableFilter<"Payment"> | string | null
     verifiedBy?: StringNullableFilter<"Payment"> | string | null
     verifiedAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
     reviewedAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
@@ -10551,6 +10714,7 @@ export namespace Prisma {
     term?: StringNullableFilter<"Payment"> | string | null
     semester?: StringNullableFilter<"Payment"> | string | null
     student?: XOR<StudentScalarRelationFilter, StudentWhereInput>
+    reconciler?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     verifier?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     reviewer?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
   }, "id">
@@ -10576,6 +10740,10 @@ export namespace Prisma {
     notes?: SortOrderInput | SortOrder
     verificationNotes?: SortOrderInput | SortOrder
     reviewNotes?: SortOrderInput | SortOrder
+    reconciliationStatus?: SortOrder
+    reconciliationNote?: SortOrderInput | SortOrder
+    reconciledAt?: SortOrderInput | SortOrder
+    reconciledBy?: SortOrderInput | SortOrder
     verifiedBy?: SortOrderInput | SortOrder
     verifiedAt?: SortOrderInput | SortOrder
     reviewedAt?: SortOrderInput | SortOrder
@@ -10614,6 +10782,10 @@ export namespace Prisma {
     notes?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     verificationNotes?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     reviewNotes?: StringNullableWithAggregatesFilter<"Payment"> | string | null
+    reconciliationStatus?: EnumReconciliationStatusWithAggregatesFilter<"Payment"> | $Enums.ReconciliationStatus
+    reconciliationNote?: StringNullableWithAggregatesFilter<"Payment"> | string | null
+    reconciledAt?: DateTimeNullableWithAggregatesFilter<"Payment"> | Date | string | null
+    reconciledBy?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     verifiedBy?: StringNullableWithAggregatesFilter<"Payment"> | string | null
     verifiedAt?: DateTimeNullableWithAggregatesFilter<"Payment"> | Date | string | null
     reviewedAt?: DateTimeNullableWithAggregatesFilter<"Payment"> | Date | string | null
@@ -10831,6 +11003,7 @@ export namespace Prisma {
     student?: StudentCreateNestedOneWithoutUserInput
     verifiedPayments?: PaymentCreateNestedManyWithoutVerifierInput
     reviewedPayments?: PaymentCreateNestedManyWithoutReviewerInput
+    reconciledPayments?: PaymentCreateNestedManyWithoutReconcilerInput
     generatedReports?: GeneratedReportCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
   }
@@ -10851,6 +11024,7 @@ export namespace Prisma {
     student?: StudentUncheckedCreateNestedOneWithoutUserInput
     verifiedPayments?: PaymentUncheckedCreateNestedManyWithoutVerifierInput
     reviewedPayments?: PaymentUncheckedCreateNestedManyWithoutReviewerInput
+    reconciledPayments?: PaymentUncheckedCreateNestedManyWithoutReconcilerInput
     generatedReports?: GeneratedReportUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
@@ -10871,6 +11045,7 @@ export namespace Prisma {
     student?: StudentUpdateOneWithoutUserNestedInput
     verifiedPayments?: PaymentUpdateManyWithoutVerifierNestedInput
     reviewedPayments?: PaymentUpdateManyWithoutReviewerNestedInput
+    reconciledPayments?: PaymentUpdateManyWithoutReconcilerNestedInput
     generatedReports?: GeneratedReportUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
@@ -10891,6 +11066,7 @@ export namespace Prisma {
     student?: StudentUncheckedUpdateOneWithoutUserNestedInput
     verifiedPayments?: PaymentUncheckedUpdateManyWithoutVerifierNestedInput
     reviewedPayments?: PaymentUncheckedUpdateManyWithoutReviewerNestedInput
+    reconciledPayments?: PaymentUncheckedUpdateManyWithoutReconcilerNestedInput
     generatedReports?: GeneratedReportUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -11187,12 +11363,16 @@ export namespace Prisma {
     notes?: string | null
     verificationNotes?: string | null
     reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
     verifiedAt?: Date | string | null
     reviewedAt?: Date | string | null
     academicYear?: string | null
     term?: string | null
     semester?: string | null
     student: StudentCreateNestedOneWithoutPaymentsInput
+    reconciler?: UserCreateNestedOneWithoutReconciledPaymentsInput
     verifier?: UserCreateNestedOneWithoutVerifiedPaymentsInput
     reviewer?: UserCreateNestedOneWithoutReviewedPaymentsInput
   }
@@ -11218,6 +11398,10 @@ export namespace Prisma {
     notes?: string | null
     verificationNotes?: string | null
     reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
+    reconciledBy?: string | null
     verifiedBy?: string | null
     verifiedAt?: Date | string | null
     reviewedAt?: Date | string | null
@@ -11247,12 +11431,16 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
     student?: StudentUpdateOneRequiredWithoutPaymentsNestedInput
+    reconciler?: UserUpdateOneWithoutReconciledPaymentsNestedInput
     verifier?: UserUpdateOneWithoutVerifiedPaymentsNestedInput
     reviewer?: UserUpdateOneWithoutReviewedPaymentsNestedInput
   }
@@ -11278,6 +11466,10 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reconciledBy?: NullableStringFieldUpdateOperationsInput | string | null
     verifiedBy?: NullableStringFieldUpdateOperationsInput | string | null
     verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -11308,6 +11500,10 @@ export namespace Prisma {
     notes?: string | null
     verificationNotes?: string | null
     reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
+    reconciledBy?: string | null
     verifiedBy?: string | null
     verifiedAt?: Date | string | null
     reviewedAt?: Date | string | null
@@ -11337,6 +11533,9 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
@@ -11365,6 +11564,10 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reconciledBy?: NullableStringFieldUpdateOperationsInput | string | null
     verifiedBy?: NullableStringFieldUpdateOperationsInput | string | null
     verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -12006,6 +12209,13 @@ export namespace Prisma {
     not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
 
+  export type EnumReconciliationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReconciliationStatus | EnumReconciliationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReconciliationStatus[] | ListEnumReconciliationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReconciliationStatus[] | ListEnumReconciliationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReconciliationStatusFilter<$PrismaModel> | $Enums.ReconciliationStatus
+  }
+
   export type StudentScalarRelationFilter = {
     is?: StudentWhereInput
     isNot?: StudentWhereInput
@@ -12037,6 +12247,10 @@ export namespace Prisma {
     notes?: SortOrder
     verificationNotes?: SortOrder
     reviewNotes?: SortOrder
+    reconciliationStatus?: SortOrder
+    reconciliationNote?: SortOrder
+    reconciledAt?: SortOrder
+    reconciledBy?: SortOrder
     verifiedBy?: SortOrder
     verifiedAt?: SortOrder
     reviewedAt?: SortOrder
@@ -12072,6 +12286,10 @@ export namespace Prisma {
     notes?: SortOrder
     verificationNotes?: SortOrder
     reviewNotes?: SortOrder
+    reconciliationStatus?: SortOrder
+    reconciliationNote?: SortOrder
+    reconciledAt?: SortOrder
+    reconciledBy?: SortOrder
     verifiedBy?: SortOrder
     verifiedAt?: SortOrder
     reviewedAt?: SortOrder
@@ -12102,6 +12320,10 @@ export namespace Prisma {
     notes?: SortOrder
     verificationNotes?: SortOrder
     reviewNotes?: SortOrder
+    reconciliationStatus?: SortOrder
+    reconciliationNote?: SortOrder
+    reconciledAt?: SortOrder
+    reconciledBy?: SortOrder
     verifiedBy?: SortOrder
     verifiedAt?: SortOrder
     reviewedAt?: SortOrder
@@ -12160,6 +12382,16 @@ export namespace Prisma {
     _sum?: NestedDecimalNullableFilter<$PrismaModel>
     _min?: NestedDecimalNullableFilter<$PrismaModel>
     _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type EnumReconciliationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReconciliationStatus | EnumReconciliationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReconciliationStatus[] | ListEnumReconciliationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReconciliationStatus[] | ListEnumReconciliationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReconciliationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ReconciliationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReconciliationStatusFilter<$PrismaModel>
+    _max?: NestedEnumReconciliationStatusFilter<$PrismaModel>
   }
   export type JsonFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -12366,6 +12598,13 @@ export namespace Prisma {
     connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
   }
 
+  export type PaymentCreateNestedManyWithoutReconcilerInput = {
+    create?: XOR<PaymentCreateWithoutReconcilerInput, PaymentUncheckedCreateWithoutReconcilerInput> | PaymentCreateWithoutReconcilerInput[] | PaymentUncheckedCreateWithoutReconcilerInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutReconcilerInput | PaymentCreateOrConnectWithoutReconcilerInput[]
+    createMany?: PaymentCreateManyReconcilerInputEnvelope
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+  }
+
   export type GeneratedReportCreateNestedManyWithoutUserInput = {
     create?: XOR<GeneratedReportCreateWithoutUserInput, GeneratedReportUncheckedCreateWithoutUserInput> | GeneratedReportCreateWithoutUserInput[] | GeneratedReportUncheckedCreateWithoutUserInput[]
     connectOrCreate?: GeneratedReportCreateOrConnectWithoutUserInput | GeneratedReportCreateOrConnectWithoutUserInput[]
@@ -12397,6 +12636,13 @@ export namespace Prisma {
     create?: XOR<PaymentCreateWithoutReviewerInput, PaymentUncheckedCreateWithoutReviewerInput> | PaymentCreateWithoutReviewerInput[] | PaymentUncheckedCreateWithoutReviewerInput[]
     connectOrCreate?: PaymentCreateOrConnectWithoutReviewerInput | PaymentCreateOrConnectWithoutReviewerInput[]
     createMany?: PaymentCreateManyReviewerInputEnvelope
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+  }
+
+  export type PaymentUncheckedCreateNestedManyWithoutReconcilerInput = {
+    create?: XOR<PaymentCreateWithoutReconcilerInput, PaymentUncheckedCreateWithoutReconcilerInput> | PaymentCreateWithoutReconcilerInput[] | PaymentUncheckedCreateWithoutReconcilerInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutReconcilerInput | PaymentCreateOrConnectWithoutReconcilerInput[]
+    createMany?: PaymentCreateManyReconcilerInputEnvelope
     connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
   }
 
@@ -12476,6 +12722,20 @@ export namespace Prisma {
     deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
   }
 
+  export type PaymentUpdateManyWithoutReconcilerNestedInput = {
+    create?: XOR<PaymentCreateWithoutReconcilerInput, PaymentUncheckedCreateWithoutReconcilerInput> | PaymentCreateWithoutReconcilerInput[] | PaymentUncheckedCreateWithoutReconcilerInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutReconcilerInput | PaymentCreateOrConnectWithoutReconcilerInput[]
+    upsert?: PaymentUpsertWithWhereUniqueWithoutReconcilerInput | PaymentUpsertWithWhereUniqueWithoutReconcilerInput[]
+    createMany?: PaymentCreateManyReconcilerInputEnvelope
+    set?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    disconnect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    delete?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    update?: PaymentUpdateWithWhereUniqueWithoutReconcilerInput | PaymentUpdateWithWhereUniqueWithoutReconcilerInput[]
+    updateMany?: PaymentUpdateManyWithWhereWithoutReconcilerInput | PaymentUpdateManyWithWhereWithoutReconcilerInput[]
+    deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
+  }
+
   export type GeneratedReportUpdateManyWithoutUserNestedInput = {
     create?: XOR<GeneratedReportCreateWithoutUserInput, GeneratedReportUncheckedCreateWithoutUserInput> | GeneratedReportCreateWithoutUserInput[] | GeneratedReportUncheckedCreateWithoutUserInput[]
     connectOrCreate?: GeneratedReportCreateOrConnectWithoutUserInput | GeneratedReportCreateOrConnectWithoutUserInput[]
@@ -12539,6 +12799,20 @@ export namespace Prisma {
     connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
     update?: PaymentUpdateWithWhereUniqueWithoutReviewerInput | PaymentUpdateWithWhereUniqueWithoutReviewerInput[]
     updateMany?: PaymentUpdateManyWithWhereWithoutReviewerInput | PaymentUpdateManyWithWhereWithoutReviewerInput[]
+    deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
+  }
+
+  export type PaymentUncheckedUpdateManyWithoutReconcilerNestedInput = {
+    create?: XOR<PaymentCreateWithoutReconcilerInput, PaymentUncheckedCreateWithoutReconcilerInput> | PaymentCreateWithoutReconcilerInput[] | PaymentUncheckedCreateWithoutReconcilerInput[]
+    connectOrCreate?: PaymentCreateOrConnectWithoutReconcilerInput | PaymentCreateOrConnectWithoutReconcilerInput[]
+    upsert?: PaymentUpsertWithWhereUniqueWithoutReconcilerInput | PaymentUpsertWithWhereUniqueWithoutReconcilerInput[]
+    createMany?: PaymentCreateManyReconcilerInputEnvelope
+    set?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    disconnect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    delete?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
+    update?: PaymentUpdateWithWhereUniqueWithoutReconcilerInput | PaymentUpdateWithWhereUniqueWithoutReconcilerInput[]
+    updateMany?: PaymentUpdateManyWithWhereWithoutReconcilerInput | PaymentUpdateManyWithWhereWithoutReconcilerInput[]
     deleteMany?: PaymentScalarWhereInput | PaymentScalarWhereInput[]
   }
 
@@ -12644,6 +12918,12 @@ export namespace Prisma {
     connect?: StudentWhereUniqueInput
   }
 
+  export type UserCreateNestedOneWithoutReconciledPaymentsInput = {
+    create?: XOR<UserCreateWithoutReconciledPaymentsInput, UserUncheckedCreateWithoutReconciledPaymentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReconciledPaymentsInput
+    connect?: UserWhereUniqueInput
+  }
+
   export type UserCreateNestedOneWithoutVerifiedPaymentsInput = {
     create?: XOR<UserCreateWithoutVerifiedPaymentsInput, UserUncheckedCreateWithoutVerifiedPaymentsInput>
     connectOrCreate?: UserCreateOrConnectWithoutVerifiedPaymentsInput
@@ -12676,12 +12956,26 @@ export namespace Prisma {
     divide?: Decimal | DecimalJsLike | number | string
   }
 
+  export type EnumReconciliationStatusFieldUpdateOperationsInput = {
+    set?: $Enums.ReconciliationStatus
+  }
+
   export type StudentUpdateOneRequiredWithoutPaymentsNestedInput = {
     create?: XOR<StudentCreateWithoutPaymentsInput, StudentUncheckedCreateWithoutPaymentsInput>
     connectOrCreate?: StudentCreateOrConnectWithoutPaymentsInput
     upsert?: StudentUpsertWithoutPaymentsInput
     connect?: StudentWhereUniqueInput
     update?: XOR<XOR<StudentUpdateToOneWithWhereWithoutPaymentsInput, StudentUpdateWithoutPaymentsInput>, StudentUncheckedUpdateWithoutPaymentsInput>
+  }
+
+  export type UserUpdateOneWithoutReconciledPaymentsNestedInput = {
+    create?: XOR<UserCreateWithoutReconciledPaymentsInput, UserUncheckedCreateWithoutReconciledPaymentsInput>
+    connectOrCreate?: UserCreateOrConnectWithoutReconciledPaymentsInput
+    upsert?: UserUpsertWithoutReconciledPaymentsInput
+    disconnect?: UserWhereInput | boolean
+    delete?: UserWhereInput | boolean
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReconciledPaymentsInput, UserUpdateWithoutReconciledPaymentsInput>, UserUncheckedUpdateWithoutReconciledPaymentsInput>
   }
 
   export type UserUpdateOneWithoutVerifiedPaymentsNestedInput = {
@@ -12972,6 +13266,13 @@ export namespace Prisma {
     not?: NestedDecimalNullableFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string | null
   }
 
+  export type NestedEnumReconciliationStatusFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReconciliationStatus | EnumReconciliationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReconciliationStatus[] | ListEnumReconciliationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReconciliationStatus[] | ListEnumReconciliationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReconciliationStatusFilter<$PrismaModel> | $Enums.ReconciliationStatus
+  }
+
   export type NestedEnumPaymentMethodWithAggregatesFilter<$PrismaModel = never> = {
     equals?: $Enums.PaymentMethod | EnumPaymentMethodFieldRefInput<$PrismaModel>
     in?: $Enums.PaymentMethod[] | ListEnumPaymentMethodFieldRefInput<$PrismaModel>
@@ -13016,6 +13317,16 @@ export namespace Prisma {
     _sum?: NestedDecimalNullableFilter<$PrismaModel>
     _min?: NestedDecimalNullableFilter<$PrismaModel>
     _max?: NestedDecimalNullableFilter<$PrismaModel>
+  }
+
+  export type NestedEnumReconciliationStatusWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.ReconciliationStatus | EnumReconciliationStatusFieldRefInput<$PrismaModel>
+    in?: $Enums.ReconciliationStatus[] | ListEnumReconciliationStatusFieldRefInput<$PrismaModel>
+    notIn?: $Enums.ReconciliationStatus[] | ListEnumReconciliationStatusFieldRefInput<$PrismaModel>
+    not?: NestedEnumReconciliationStatusWithAggregatesFilter<$PrismaModel> | $Enums.ReconciliationStatus
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumReconciliationStatusFilter<$PrismaModel>
+    _max?: NestedEnumReconciliationStatusFilter<$PrismaModel>
   }
   export type NestedJsonFilter<$PrismaModel = never> =
     | PatchUndefined<
@@ -13123,12 +13434,16 @@ export namespace Prisma {
     notes?: string | null
     verificationNotes?: string | null
     reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
     verifiedAt?: Date | string | null
     reviewedAt?: Date | string | null
     academicYear?: string | null
     term?: string | null
     semester?: string | null
     student: StudentCreateNestedOneWithoutPaymentsInput
+    reconciler?: UserCreateNestedOneWithoutReconciledPaymentsInput
     reviewer?: UserCreateNestedOneWithoutReviewedPaymentsInput
   }
 
@@ -13153,6 +13468,10 @@ export namespace Prisma {
     notes?: string | null
     verificationNotes?: string | null
     reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
+    reconciledBy?: string | null
     verifiedAt?: Date | string | null
     reviewedAt?: Date | string | null
     reviewerId?: string | null
@@ -13191,12 +13510,16 @@ export namespace Prisma {
     notes?: string | null
     verificationNotes?: string | null
     reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
     verifiedAt?: Date | string | null
     reviewedAt?: Date | string | null
     academicYear?: string | null
     term?: string | null
     semester?: string | null
     student: StudentCreateNestedOneWithoutPaymentsInput
+    reconciler?: UserCreateNestedOneWithoutReconciledPaymentsInput
     verifier?: UserCreateNestedOneWithoutVerifiedPaymentsInput
   }
 
@@ -13221,6 +13544,10 @@ export namespace Prisma {
     notes?: string | null
     verificationNotes?: string | null
     reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
+    reconciledBy?: string | null
     verifiedBy?: string | null
     verifiedAt?: Date | string | null
     reviewedAt?: Date | string | null
@@ -13236,6 +13563,82 @@ export namespace Prisma {
 
   export type PaymentCreateManyReviewerInputEnvelope = {
     data: PaymentCreateManyReviewerInput | PaymentCreateManyReviewerInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type PaymentCreateWithoutReconcilerInput = {
+    id?: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    method: $Enums.PaymentMethod
+    externalReference?: string | null
+    receiptNumber?: string | null
+    proofUrl: string
+    payerName?: string | null
+    paymentDate: Date | string
+    submittedAt?: Date | string
+    status?: $Enums.PaymentStatus
+    verificationStatus?: $Enums.VerificationStatus
+    duplicateFlag?: boolean
+    ocrText?: string | null
+    ocrAmount?: Decimal | DecimalJsLike | number | string | null
+    ocrReference?: string | null
+    notes?: string | null
+    verificationNotes?: string | null
+    reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
+    verifiedAt?: Date | string | null
+    reviewedAt?: Date | string | null
+    academicYear?: string | null
+    term?: string | null
+    semester?: string | null
+    student: StudentCreateNestedOneWithoutPaymentsInput
+    verifier?: UserCreateNestedOneWithoutVerifiedPaymentsInput
+    reviewer?: UserCreateNestedOneWithoutReviewedPaymentsInput
+  }
+
+  export type PaymentUncheckedCreateWithoutReconcilerInput = {
+    id?: string
+    studentId: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    method: $Enums.PaymentMethod
+    externalReference?: string | null
+    receiptNumber?: string | null
+    proofUrl: string
+    payerName?: string | null
+    paymentDate: Date | string
+    submittedAt?: Date | string
+    status?: $Enums.PaymentStatus
+    verificationStatus?: $Enums.VerificationStatus
+    duplicateFlag?: boolean
+    ocrText?: string | null
+    ocrAmount?: Decimal | DecimalJsLike | number | string | null
+    ocrReference?: string | null
+    notes?: string | null
+    verificationNotes?: string | null
+    reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
+    verifiedBy?: string | null
+    verifiedAt?: Date | string | null
+    reviewedAt?: Date | string | null
+    reviewerId?: string | null
+    academicYear?: string | null
+    term?: string | null
+    semester?: string | null
+  }
+
+  export type PaymentCreateOrConnectWithoutReconcilerInput = {
+    where: PaymentWhereUniqueInput
+    create: XOR<PaymentCreateWithoutReconcilerInput, PaymentUncheckedCreateWithoutReconcilerInput>
+  }
+
+  export type PaymentCreateManyReconcilerInputEnvelope = {
+    data: PaymentCreateManyReconcilerInput | PaymentCreateManyReconcilerInput[]
     skipDuplicates?: boolean
   }
 
@@ -13380,6 +13783,10 @@ export namespace Prisma {
     notes?: StringNullableFilter<"Payment"> | string | null
     verificationNotes?: StringNullableFilter<"Payment"> | string | null
     reviewNotes?: StringNullableFilter<"Payment"> | string | null
+    reconciliationStatus?: EnumReconciliationStatusFilter<"Payment"> | $Enums.ReconciliationStatus
+    reconciliationNote?: StringNullableFilter<"Payment"> | string | null
+    reconciledAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
+    reconciledBy?: StringNullableFilter<"Payment"> | string | null
     verifiedBy?: StringNullableFilter<"Payment"> | string | null
     verifiedAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
     reviewedAt?: DateTimeNullableFilter<"Payment"> | Date | string | null
@@ -13403,6 +13810,22 @@ export namespace Prisma {
   export type PaymentUpdateManyWithWhereWithoutReviewerInput = {
     where: PaymentScalarWhereInput
     data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyWithoutReviewerInput>
+  }
+
+  export type PaymentUpsertWithWhereUniqueWithoutReconcilerInput = {
+    where: PaymentWhereUniqueInput
+    update: XOR<PaymentUpdateWithoutReconcilerInput, PaymentUncheckedUpdateWithoutReconcilerInput>
+    create: XOR<PaymentCreateWithoutReconcilerInput, PaymentUncheckedCreateWithoutReconcilerInput>
+  }
+
+  export type PaymentUpdateWithWhereUniqueWithoutReconcilerInput = {
+    where: PaymentWhereUniqueInput
+    data: XOR<PaymentUpdateWithoutReconcilerInput, PaymentUncheckedUpdateWithoutReconcilerInput>
+  }
+
+  export type PaymentUpdateManyWithWhereWithoutReconcilerInput = {
+    where: PaymentScalarWhereInput
+    data: XOR<PaymentUpdateManyMutationInput, PaymentUncheckedUpdateManyWithoutReconcilerInput>
   }
 
   export type GeneratedReportUpsertWithWhereUniqueWithoutUserInput = {
@@ -13478,6 +13901,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     verifiedPayments?: PaymentCreateNestedManyWithoutVerifierInput
     reviewedPayments?: PaymentCreateNestedManyWithoutReviewerInput
+    reconciledPayments?: PaymentCreateNestedManyWithoutReconcilerInput
     generatedReports?: GeneratedReportCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
   }
@@ -13497,6 +13921,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     verifiedPayments?: PaymentUncheckedCreateNestedManyWithoutVerifierInput
     reviewedPayments?: PaymentUncheckedCreateNestedManyWithoutReviewerInput
+    reconciledPayments?: PaymentUncheckedCreateNestedManyWithoutReconcilerInput
     generatedReports?: GeneratedReportUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
@@ -13526,11 +13951,15 @@ export namespace Prisma {
     notes?: string | null
     verificationNotes?: string | null
     reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
     verifiedAt?: Date | string | null
     reviewedAt?: Date | string | null
     academicYear?: string | null
     term?: string | null
     semester?: string | null
+    reconciler?: UserCreateNestedOneWithoutReconciledPaymentsInput
     verifier?: UserCreateNestedOneWithoutVerifiedPaymentsInput
     reviewer?: UserCreateNestedOneWithoutReviewedPaymentsInput
   }
@@ -13555,6 +13984,10 @@ export namespace Prisma {
     notes?: string | null
     verificationNotes?: string | null
     reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
+    reconciledBy?: string | null
     verifiedBy?: string | null
     verifiedAt?: Date | string | null
     reviewedAt?: Date | string | null
@@ -13600,6 +14033,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     verifiedPayments?: PaymentUpdateManyWithoutVerifierNestedInput
     reviewedPayments?: PaymentUpdateManyWithoutReviewerNestedInput
+    reconciledPayments?: PaymentUpdateManyWithoutReconcilerNestedInput
     generatedReports?: GeneratedReportUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
@@ -13619,6 +14053,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     verifiedPayments?: PaymentUncheckedUpdateManyWithoutVerifierNestedInput
     reviewedPayments?: PaymentUncheckedUpdateManyWithoutReviewerNestedInput
+    reconciledPayments?: PaymentUncheckedUpdateManyWithoutReconcilerNestedInput
     generatedReports?: GeneratedReportUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -13678,6 +14113,51 @@ export namespace Prisma {
     create: XOR<StudentCreateWithoutPaymentsInput, StudentUncheckedCreateWithoutPaymentsInput>
   }
 
+  export type UserCreateWithoutReconciledPaymentsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    firstName?: string | null
+    lastName?: string | null
+    role?: $Enums.UserRole
+    status?: $Enums.UserStatus
+    profilePictureUrl?: string | null
+    currentSessionId?: string | null
+    sessionExpires?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    student?: StudentCreateNestedOneWithoutUserInput
+    verifiedPayments?: PaymentCreateNestedManyWithoutVerifierInput
+    reviewedPayments?: PaymentCreateNestedManyWithoutReviewerInput
+    generatedReports?: GeneratedReportCreateNestedManyWithoutUserInput
+    notifications?: NotificationCreateNestedManyWithoutUserInput
+  }
+
+  export type UserUncheckedCreateWithoutReconciledPaymentsInput = {
+    id?: string
+    email: string
+    passwordHash: string
+    firstName?: string | null
+    lastName?: string | null
+    role?: $Enums.UserRole
+    status?: $Enums.UserStatus
+    profilePictureUrl?: string | null
+    currentSessionId?: string | null
+    sessionExpires?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    student?: StudentUncheckedCreateNestedOneWithoutUserInput
+    verifiedPayments?: PaymentUncheckedCreateNestedManyWithoutVerifierInput
+    reviewedPayments?: PaymentUncheckedCreateNestedManyWithoutReviewerInput
+    generatedReports?: GeneratedReportUncheckedCreateNestedManyWithoutUserInput
+    notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
+  }
+
+  export type UserCreateOrConnectWithoutReconciledPaymentsInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutReconciledPaymentsInput, UserUncheckedCreateWithoutReconciledPaymentsInput>
+  }
+
   export type UserCreateWithoutVerifiedPaymentsInput = {
     id?: string
     email: string
@@ -13693,6 +14173,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     student?: StudentCreateNestedOneWithoutUserInput
     reviewedPayments?: PaymentCreateNestedManyWithoutReviewerInput
+    reconciledPayments?: PaymentCreateNestedManyWithoutReconcilerInput
     generatedReports?: GeneratedReportCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
   }
@@ -13712,6 +14193,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     student?: StudentUncheckedCreateNestedOneWithoutUserInput
     reviewedPayments?: PaymentUncheckedCreateNestedManyWithoutReviewerInput
+    reconciledPayments?: PaymentUncheckedCreateNestedManyWithoutReconcilerInput
     generatedReports?: GeneratedReportUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
@@ -13736,6 +14218,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     student?: StudentCreateNestedOneWithoutUserInput
     verifiedPayments?: PaymentCreateNestedManyWithoutVerifierInput
+    reconciledPayments?: PaymentCreateNestedManyWithoutReconcilerInput
     generatedReports?: GeneratedReportCreateNestedManyWithoutUserInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
   }
@@ -13755,6 +14238,7 @@ export namespace Prisma {
     updatedAt?: Date | string
     student?: StudentUncheckedCreateNestedOneWithoutUserInput
     verifiedPayments?: PaymentUncheckedCreateNestedManyWithoutVerifierInput
+    reconciledPayments?: PaymentUncheckedCreateNestedManyWithoutReconcilerInput
     generatedReports?: GeneratedReportUncheckedCreateNestedManyWithoutUserInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
@@ -13809,6 +14293,57 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type UserUpsertWithoutReconciledPaymentsInput = {
+    update: XOR<UserUpdateWithoutReconciledPaymentsInput, UserUncheckedUpdateWithoutReconciledPaymentsInput>
+    create: XOR<UserCreateWithoutReconciledPaymentsInput, UserUncheckedCreateWithoutReconciledPaymentsInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutReconciledPaymentsInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutReconciledPaymentsInput, UserUncheckedUpdateWithoutReconciledPaymentsInput>
+  }
+
+  export type UserUpdateWithoutReconciledPaymentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    profilePictureUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    currentSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    student?: StudentUpdateOneWithoutUserNestedInput
+    verifiedPayments?: PaymentUpdateManyWithoutVerifierNestedInput
+    reviewedPayments?: PaymentUpdateManyWithoutReviewerNestedInput
+    generatedReports?: GeneratedReportUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUpdateManyWithoutUserNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutReconciledPaymentsInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    passwordHash?: StringFieldUpdateOperationsInput | string
+    firstName?: NullableStringFieldUpdateOperationsInput | string | null
+    lastName?: NullableStringFieldUpdateOperationsInput | string | null
+    role?: EnumUserRoleFieldUpdateOperationsInput | $Enums.UserRole
+    status?: EnumUserStatusFieldUpdateOperationsInput | $Enums.UserStatus
+    profilePictureUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    currentSessionId?: NullableStringFieldUpdateOperationsInput | string | null
+    sessionExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    student?: StudentUncheckedUpdateOneWithoutUserNestedInput
+    verifiedPayments?: PaymentUncheckedUpdateManyWithoutVerifierNestedInput
+    reviewedPayments?: PaymentUncheckedUpdateManyWithoutReviewerNestedInput
+    generatedReports?: GeneratedReportUncheckedUpdateManyWithoutUserNestedInput
+    notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
+  }
+
   export type UserUpsertWithoutVerifiedPaymentsInput = {
     update: XOR<UserUpdateWithoutVerifiedPaymentsInput, UserUncheckedUpdateWithoutVerifiedPaymentsInput>
     create: XOR<UserCreateWithoutVerifiedPaymentsInput, UserUncheckedCreateWithoutVerifiedPaymentsInput>
@@ -13835,6 +14370,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     student?: StudentUpdateOneWithoutUserNestedInput
     reviewedPayments?: PaymentUpdateManyWithoutReviewerNestedInput
+    reconciledPayments?: PaymentUpdateManyWithoutReconcilerNestedInput
     generatedReports?: GeneratedReportUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
@@ -13854,6 +14390,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     student?: StudentUncheckedUpdateOneWithoutUserNestedInput
     reviewedPayments?: PaymentUncheckedUpdateManyWithoutReviewerNestedInput
+    reconciledPayments?: PaymentUncheckedUpdateManyWithoutReconcilerNestedInput
     generatedReports?: GeneratedReportUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -13884,6 +14421,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     student?: StudentUpdateOneWithoutUserNestedInput
     verifiedPayments?: PaymentUpdateManyWithoutVerifierNestedInput
+    reconciledPayments?: PaymentUpdateManyWithoutReconcilerNestedInput
     generatedReports?: GeneratedReportUpdateManyWithoutUserNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
@@ -13903,6 +14441,7 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     student?: StudentUncheckedUpdateOneWithoutUserNestedInput
     verifiedPayments?: PaymentUncheckedUpdateManyWithoutVerifierNestedInput
+    reconciledPayments?: PaymentUncheckedUpdateManyWithoutReconcilerNestedInput
     generatedReports?: GeneratedReportUncheckedUpdateManyWithoutUserNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
@@ -13923,6 +14462,7 @@ export namespace Prisma {
     student?: StudentCreateNestedOneWithoutUserInput
     verifiedPayments?: PaymentCreateNestedManyWithoutVerifierInput
     reviewedPayments?: PaymentCreateNestedManyWithoutReviewerInput
+    reconciledPayments?: PaymentCreateNestedManyWithoutReconcilerInput
     notifications?: NotificationCreateNestedManyWithoutUserInput
   }
 
@@ -13942,6 +14482,7 @@ export namespace Prisma {
     student?: StudentUncheckedCreateNestedOneWithoutUserInput
     verifiedPayments?: PaymentUncheckedCreateNestedManyWithoutVerifierInput
     reviewedPayments?: PaymentUncheckedCreateNestedManyWithoutReviewerInput
+    reconciledPayments?: PaymentUncheckedCreateNestedManyWithoutReconcilerInput
     notifications?: NotificationUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -13977,6 +14518,7 @@ export namespace Prisma {
     student?: StudentUpdateOneWithoutUserNestedInput
     verifiedPayments?: PaymentUpdateManyWithoutVerifierNestedInput
     reviewedPayments?: PaymentUpdateManyWithoutReviewerNestedInput
+    reconciledPayments?: PaymentUpdateManyWithoutReconcilerNestedInput
     notifications?: NotificationUpdateManyWithoutUserNestedInput
   }
 
@@ -13996,6 +14538,7 @@ export namespace Prisma {
     student?: StudentUncheckedUpdateOneWithoutUserNestedInput
     verifiedPayments?: PaymentUncheckedUpdateManyWithoutVerifierNestedInput
     reviewedPayments?: PaymentUncheckedUpdateManyWithoutReviewerNestedInput
+    reconciledPayments?: PaymentUncheckedUpdateManyWithoutReconcilerNestedInput
     notifications?: NotificationUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -14015,6 +14558,7 @@ export namespace Prisma {
     student?: StudentCreateNestedOneWithoutUserInput
     verifiedPayments?: PaymentCreateNestedManyWithoutVerifierInput
     reviewedPayments?: PaymentCreateNestedManyWithoutReviewerInput
+    reconciledPayments?: PaymentCreateNestedManyWithoutReconcilerInput
     generatedReports?: GeneratedReportCreateNestedManyWithoutUserInput
   }
 
@@ -14034,6 +14578,7 @@ export namespace Prisma {
     student?: StudentUncheckedCreateNestedOneWithoutUserInput
     verifiedPayments?: PaymentUncheckedCreateNestedManyWithoutVerifierInput
     reviewedPayments?: PaymentUncheckedCreateNestedManyWithoutReviewerInput
+    reconciledPayments?: PaymentUncheckedCreateNestedManyWithoutReconcilerInput
     generatedReports?: GeneratedReportUncheckedCreateNestedManyWithoutUserInput
   }
 
@@ -14069,6 +14614,7 @@ export namespace Prisma {
     student?: StudentUpdateOneWithoutUserNestedInput
     verifiedPayments?: PaymentUpdateManyWithoutVerifierNestedInput
     reviewedPayments?: PaymentUpdateManyWithoutReviewerNestedInput
+    reconciledPayments?: PaymentUpdateManyWithoutReconcilerNestedInput
     generatedReports?: GeneratedReportUpdateManyWithoutUserNestedInput
   }
 
@@ -14088,6 +14634,7 @@ export namespace Prisma {
     student?: StudentUncheckedUpdateOneWithoutUserNestedInput
     verifiedPayments?: PaymentUncheckedUpdateManyWithoutVerifierNestedInput
     reviewedPayments?: PaymentUncheckedUpdateManyWithoutReviewerNestedInput
+    reconciledPayments?: PaymentUncheckedUpdateManyWithoutReconcilerNestedInput
     generatedReports?: GeneratedReportUncheckedUpdateManyWithoutUserNestedInput
   }
 
@@ -14112,6 +14659,10 @@ export namespace Prisma {
     notes?: string | null
     verificationNotes?: string | null
     reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
+    reconciledBy?: string | null
     verifiedAt?: Date | string | null
     reviewedAt?: Date | string | null
     reviewerId?: string | null
@@ -14141,9 +14692,46 @@ export namespace Prisma {
     notes?: string | null
     verificationNotes?: string | null
     reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
+    reconciledBy?: string | null
     verifiedBy?: string | null
     verifiedAt?: Date | string | null
     reviewedAt?: Date | string | null
+    academicYear?: string | null
+    term?: string | null
+    semester?: string | null
+  }
+
+  export type PaymentCreateManyReconcilerInput = {
+    id?: string
+    studentId: string
+    amount: Decimal | DecimalJsLike | number | string
+    currency?: string
+    method: $Enums.PaymentMethod
+    externalReference?: string | null
+    receiptNumber?: string | null
+    proofUrl: string
+    payerName?: string | null
+    paymentDate: Date | string
+    submittedAt?: Date | string
+    status?: $Enums.PaymentStatus
+    verificationStatus?: $Enums.VerificationStatus
+    duplicateFlag?: boolean
+    ocrText?: string | null
+    ocrAmount?: Decimal | DecimalJsLike | number | string | null
+    ocrReference?: string | null
+    notes?: string | null
+    verificationNotes?: string | null
+    reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
+    verifiedBy?: string | null
+    verifiedAt?: Date | string | null
+    reviewedAt?: Date | string | null
+    reviewerId?: string | null
     academicYear?: string | null
     term?: string | null
     semester?: string | null
@@ -14187,12 +14775,16 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
     student?: StudentUpdateOneRequiredWithoutPaymentsNestedInput
+    reconciler?: UserUpdateOneWithoutReconciledPaymentsNestedInput
     reviewer?: UserUpdateOneWithoutReviewedPaymentsNestedInput
   }
 
@@ -14217,6 +14809,10 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reconciledBy?: NullableStringFieldUpdateOperationsInput | string | null
     verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14246,6 +14842,10 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reconciledBy?: NullableStringFieldUpdateOperationsInput | string | null
     verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewerId?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14274,12 +14874,16 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
     student?: StudentUpdateOneRequiredWithoutPaymentsNestedInput
+    reconciler?: UserUpdateOneWithoutReconciledPaymentsNestedInput
     verifier?: UserUpdateOneWithoutVerifiedPaymentsNestedInput
   }
 
@@ -14304,6 +14908,10 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reconciledBy?: NullableStringFieldUpdateOperationsInput | string | null
     verifiedBy?: NullableStringFieldUpdateOperationsInput | string | null
     verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -14333,9 +14941,112 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reconciledBy?: NullableStringFieldUpdateOperationsInput | string | null
     verifiedBy?: NullableStringFieldUpdateOperationsInput | string | null
     verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    academicYear?: NullableStringFieldUpdateOperationsInput | string | null
+    term?: NullableStringFieldUpdateOperationsInput | string | null
+    semester?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PaymentUpdateWithoutReconcilerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    receiptNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    proofUrl?: StringFieldUpdateOperationsInput | string
+    payerName?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    verificationStatus?: EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
+    duplicateFlag?: BoolFieldUpdateOperationsInput | boolean
+    ocrText?: NullableStringFieldUpdateOperationsInput | string | null
+    ocrAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    ocrReference?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    academicYear?: NullableStringFieldUpdateOperationsInput | string | null
+    term?: NullableStringFieldUpdateOperationsInput | string | null
+    semester?: NullableStringFieldUpdateOperationsInput | string | null
+    student?: StudentUpdateOneRequiredWithoutPaymentsNestedInput
+    verifier?: UserUpdateOneWithoutVerifiedPaymentsNestedInput
+    reviewer?: UserUpdateOneWithoutReviewedPaymentsNestedInput
+  }
+
+  export type PaymentUncheckedUpdateWithoutReconcilerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    receiptNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    proofUrl?: StringFieldUpdateOperationsInput | string
+    payerName?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    verificationStatus?: EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
+    duplicateFlag?: BoolFieldUpdateOperationsInput | boolean
+    ocrText?: NullableStringFieldUpdateOperationsInput | string | null
+    ocrAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    ocrReference?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewerId?: NullableStringFieldUpdateOperationsInput | string | null
+    academicYear?: NullableStringFieldUpdateOperationsInput | string | null
+    term?: NullableStringFieldUpdateOperationsInput | string | null
+    semester?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type PaymentUncheckedUpdateManyWithoutReconcilerInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    studentId?: StringFieldUpdateOperationsInput | string
+    amount?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
+    currency?: StringFieldUpdateOperationsInput | string
+    method?: EnumPaymentMethodFieldUpdateOperationsInput | $Enums.PaymentMethod
+    externalReference?: NullableStringFieldUpdateOperationsInput | string | null
+    receiptNumber?: NullableStringFieldUpdateOperationsInput | string | null
+    proofUrl?: StringFieldUpdateOperationsInput | string
+    payerName?: NullableStringFieldUpdateOperationsInput | string | null
+    paymentDate?: DateTimeFieldUpdateOperationsInput | Date | string
+    submittedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    status?: EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+    verificationStatus?: EnumVerificationStatusFieldUpdateOperationsInput | $Enums.VerificationStatus
+    duplicateFlag?: BoolFieldUpdateOperationsInput | boolean
+    ocrText?: NullableStringFieldUpdateOperationsInput | string | null
+    ocrAmount?: NullableDecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string | null
+    ocrReference?: NullableStringFieldUpdateOperationsInput | string | null
+    notes?: NullableStringFieldUpdateOperationsInput | string | null
+    verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    verifiedBy?: NullableStringFieldUpdateOperationsInput | string | null
+    verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reviewerId?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
@@ -14415,6 +15126,10 @@ export namespace Prisma {
     notes?: string | null
     verificationNotes?: string | null
     reviewNotes?: string | null
+    reconciliationStatus?: $Enums.ReconciliationStatus
+    reconciliationNote?: string | null
+    reconciledAt?: Date | string | null
+    reconciledBy?: string | null
     verifiedBy?: string | null
     verifiedAt?: Date | string | null
     reviewedAt?: Date | string | null
@@ -14444,11 +15159,15 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciler?: UserUpdateOneWithoutReconciledPaymentsNestedInput
     verifier?: UserUpdateOneWithoutVerifiedPaymentsNestedInput
     reviewer?: UserUpdateOneWithoutReviewedPaymentsNestedInput
   }
@@ -14473,6 +15192,10 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reconciledBy?: NullableStringFieldUpdateOperationsInput | string | null
     verifiedBy?: NullableStringFieldUpdateOperationsInput | string | null
     verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -14502,6 +15225,10 @@ export namespace Prisma {
     notes?: NullableStringFieldUpdateOperationsInput | string | null
     verificationNotes?: NullableStringFieldUpdateOperationsInput | string | null
     reviewNotes?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciliationStatus?: EnumReconciliationStatusFieldUpdateOperationsInput | $Enums.ReconciliationStatus
+    reconciliationNote?: NullableStringFieldUpdateOperationsInput | string | null
+    reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    reconciledBy?: NullableStringFieldUpdateOperationsInput | string | null
     verifiedBy?: NullableStringFieldUpdateOperationsInput | string | null
     verifiedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     reviewedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

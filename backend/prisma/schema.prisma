@@ -38,6 +38,11 @@ enum VerificationStatus {
   FLAGGED
 }
 
+enum ReconciliationStatus {
+  UNMATCHED
+  MATCHED
+}
+
 model User {
   id               String    @id @default(cuid())
   email            String    @unique
@@ -54,6 +59,7 @@ model User {
   student          Student?
   verifiedPayments Payment[] @relation("PaymentVerifier")
   reviewedPayments Payment[] @relation("PaymentReviewer")
+  reconciledPayments Payment[] @relation("PaymentReconciler")
   generatedReports GeneratedReport[]
   notifications    Notification[]
 }
@@ -113,6 +119,10 @@ model Payment {
   notes                String?
   verificationNotes    String?
   reviewNotes          String?
+  reconciliationStatus ReconciliationStatus @default(UNMATCHED)
+  reconciliationNote   String?
+  reconciledAt         DateTime?
+  reconciledBy         String?
   verifiedBy           String?
   verifiedAt           DateTime?
   reviewedAt           DateTime?
@@ -121,6 +131,7 @@ model Payment {
   term                 String?
   semester             String?
   student              Student              @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  reconciler           User?                @relation("PaymentReconciler", fields: [reconciledBy], references: [id], onDelete: SetNull)
   verifier             User?                @relation("PaymentVerifier", fields: [verifiedBy], references: [id], onDelete: SetNull)
   reviewer             User?                @relation("PaymentReviewer", fields: [reviewerId], references: [id], onDelete: SetNull)
 

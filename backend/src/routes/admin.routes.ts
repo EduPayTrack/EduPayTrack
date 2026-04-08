@@ -11,7 +11,7 @@ import {
     updateFeeStructure,
     deleteFeeStructure,
 } from '../services/fee.service';
-import { listPaymentsForReview, reviewPayment, verifyPayment, getPaymentDetailsById } from '../services/payment.service';
+import { listPaymentsForReview, reviewPayment, verifyPayment, getPaymentDetailsById, reconcilePayment } from '../services/payment.service';
 import { createStaffUser, listSystemUsers, resetUserPassword, suspendUser, deactivateUser, deleteUser, activateUser, updateSystemUser } from '../services/user.service';
 import { getRegistry, updateRegistry } from '../services/registry.service';
 import { readAuditLogs, deleteAuditLogs } from '../utils/audit-log';
@@ -69,6 +69,20 @@ adminRouter.patch(
     requireRole(UserRole.ADMIN, UserRole.ACCOUNTS),
     asyncHandler(async (req, res) => {
         const payment = await reviewPayment(
+            req.params.paymentId,
+            req.user!.userId,
+            req.body
+        );
+
+        res.status(200).json(payment);
+    })
+);
+
+adminRouter.patch(
+    '/payments/:paymentId/reconcile',
+    requireRole(UserRole.ADMIN, UserRole.ACCOUNTS),
+    asyncHandler(async (req, res) => {
+        const payment = await reconcilePayment(
             req.params.paymentId,
             req.user!.userId,
             req.body

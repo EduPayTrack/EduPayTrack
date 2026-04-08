@@ -1,4 +1,4 @@
-import { PaymentMethod, PaymentStatus, VerificationStatus, UserRole } from '../generated/prisma';
+import { PaymentMethod, PaymentStatus, VerificationStatus, ReconciliationStatus, UserRole } from '../generated/prisma';
 import { z } from 'zod';
 
 import { prisma } from '../lib/prisma';
@@ -30,6 +30,11 @@ const verifyPaymentSchema = z.object({
 const reviewPaymentSchema = z.object({
     status: z.enum([PaymentStatus.APPROVED, PaymentStatus.REJECTED]),
     reviewNotes: z.string().max(500).optional(),
+});
+
+const reconcilePaymentSchema = z.object({
+    reconciliationStatus: z.enum([ReconciliationStatus.MATCHED, ReconciliationStatus.UNMATCHED]),
+    reconciliationNote: z.string().max(500).optional(),
 });
 
 export const submitPayment = async (userId: string, input: unknown) => {
@@ -160,6 +165,14 @@ export const getPaymentDetailsById = async (paymentId: string) => {
         where: { id: paymentId },
         include: {
             student: true,
+            reconciler: {
+                select: {
+                    id: true,
+                    email: true,
+                    firstName: true,
+                    lastName: true,
+                }
+            },
             verifier: {
                 select: {
                     id: true,
@@ -191,6 +204,13 @@ export const listPaymentsForReview = async (status?: string) => {
         },
         include: {
             student: true,
+            reconciler: {
+                select: {
+                    id: true,
+                    email: true,
+                    role: true,
+                },
+            },
             verifier: {
                 select: {
                     id: true,
@@ -263,6 +283,59 @@ export const verifyPayment = async (
             studentId: payment.studentId,
             verificationStatus: payment.verificationStatus,
             verificationNotes: payment.verificationNotes,
+        },
+    });
+
+    return payment;
+};
+
+export const reconcilePayment = async (
+    paymentId: string,
+    reconcilerId: string,
+    input: unknown
+) => {
+    const data = reconcilePaymentSchema.parse(input);
+
+    const existingPayment = await prisma.payment.findUnique({
+        where: { id: paymentId },
+    });
+
+    if (!existingPayment) {
+        throw new AppError('Payment not found', 404);
+    }
+
+    const payment = await prisma.payment.update({
+        where: { id: paymentId },
+        data: {
+            reconciliationStatus: data.reconciliationStatus,
+            reconciliationNote: data.reconciliationNote,
+            reconciledAt: new Date(),
+            reconciledBy: reconcilerId,
+        },
+        include: {
+            student: true,
+            reconciler: {
+                select: {
+                    id: true,
+                    email: true,
+                    role: true,
+                },
+            },
+        },
+    });
+
+    writeAuditLog({
+        action: `payment.reconciliation.${data.reconciliationStatus.toLowerCase()}`,
+        actor: {
+            userId: reconcilerId,
+            role: 'ACCOUNTS',
+        },
+        targetType: 'payment',
+        targetId: payment.id,
+        details: {
+            studentId: payment.studentId,
+            reconciliationStatus: payment.reconciliationStatus,
+            reconciliationNote: payment.reconciliationNote,
         },
     });
 

@@ -189,6 +189,10 @@ exports.Prisma.PaymentScalarFieldEnum = {
   notes: 'notes',
   verificationNotes: 'verificationNotes',
   reviewNotes: 'reviewNotes',
+  reconciliationStatus: 'reconciliationStatus',
+  reconciliationNote: 'reconciliationNote',
+  reconciledAt: 'reconciledAt',
+  reconciledBy: 'reconciledBy',
   verifiedBy: 'verifiedBy',
   verifiedAt: 'verifiedAt',
   reviewedAt: 'reviewedAt',
@@ -285,6 +289,11 @@ exports.VerificationStatus = exports.$Enums.VerificationStatus = {
   UNVERIFIED: 'UNVERIFIED',
   VERIFIED: 'VERIFIED',
   FLAGGED: 'FLAGGED'
+};
+
+exports.ReconciliationStatus = exports.$Enums.ReconciliationStatus = {
+  UNMATCHED: 'UNMATCHED',
+  MATCHED: 'MATCHED'
 };
 
 exports.Prisma.ModelName = {

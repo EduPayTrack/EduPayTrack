@@ -49,14 +49,6 @@ import { formatCurrency } from '../../lib/utils';
 import { PaymentStatusBadge, getFullImageUrl } from '../../components/admin/common/payment-helpers';
 import { StudentPaymentHistoryDialog } from '../../components/admin/common/student-history-dialog';
 
-const RECONCILIATION_STORAGE_KEY = 'edupaytrack-reconciliation-records';
-
-interface ReconciliationRecord {
-  status: 'MATCHED' | 'UNMATCHED';
-  note: string;
-  updatedAt: string;
-}
-
 export function VerifyPaymentsPage() {
   const { user } = useAuth();
   const [payments, setPayments] = useState<any[]>([]);
@@ -72,7 +64,6 @@ export function VerifyPaymentsPage() {
   const [viewingStudentHistory, setViewingStudentHistory] = useState<any>(null);
   const [actionLoading, setActionLoading] = useState<string | undefined>(undefined);
   const [bulkActionLoading, setBulkActionLoading] = useState(false);
-  const [reconciliationRecords, setReconciliationRecords] = useState<Record<string, ReconciliationRecord>>({});
 
   const isAdminOrAccountant = user?.role === 'admin' || user?.role === 'accounts';
   const isAccounts = user?.role === 'accounts';
@@ -82,19 +73,6 @@ export function VerifyPaymentsPage() {
 
   useEffect(() => {
     loadPayments();
-  }, []);
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-
-    try {
-      const raw = window.localStorage.getItem(RECONCILIATION_STORAGE_KEY);
-      if (raw) {
-        setReconciliationRecords(JSON.parse(raw));
-      }
-    } catch {
-      toast.error('Could not load saved reconciliation notes');
-    }
   }, []);
 
   const loadPayments = async () => {
@@ -116,7 +94,7 @@ export function VerifyPaymentsPage() {
       (payment) =>
         payment.duplicateFlag || payment.verificationStatus === 'FLAGGED' || Number(payment.amount || 0) >= 100000
     );
-    const matched = pending.filter((payment) => reconciliationRecords[payment.id]?.status === 'MATCHED');
+    const matched = pending.filter((payment) => payment.reconciliationStatus === 'MATCHED');
 
     return {
       pending: pending.length,
@@ -125,15 +103,12 @@ export function VerifyPaymentsPage() {
       flagged: pending.filter((payment) => payment.verificationStatus === 'FLAGGED').length,
       matched: matched.length,
     };
-  }, [payments, reconciliationRecords]);
+  }, [payments]);
 
   const filtered = useMemo(() => {
     return payments
       .map((payment) => ({
         ...payment,
-        reconciliationStatus: reconciliationRecords[payment.id]?.status || 'UNMATCHED',
-        reconciliationNote: reconciliationRecords[payment.id]?.note || '',
-        reconciliationUpdatedAt: reconciliationRecords[payment.id]?.updatedAt,
         riskScore:
           (payment.duplicateFlag ? 3 : 0) +
           (payment.verificationStatus === 'FLAGGED' ? 3 : 0) +
@@ -168,7 +143,7 @@ export function VerifyPaymentsPage() {
         if (sortBy === 'OLDEST') return Number(new Date(a.submittedAt)) - Number(new Date(b.submittedAt));
         return Number(new Date(b.submittedAt)) - Number(new Date(a.submittedAt));
       });
-  }, [payments, filter, verificationFilter, riskFilter, reconciliationFilter, search, sortBy, reconciliationRecords]);
+  }, [payments, filter, verificationFilter, riskFilter, reconciliationFilter, search, sortBy]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
@@ -210,14 +185,7 @@ export function VerifyPaymentsPage() {
     );
   };
 
-  const persistReconciliationRecords = (records: Record<string, ReconciliationRecord>) => {
-    setReconciliationRecords(records);
-    if (typeof window !== 'undefined') {
-      window.localStorage.setItem(RECONCILIATION_STORAGE_KEY, JSON.stringify(records));
-    }
-  };
-
-  const handleReconciliation = (payment: any, status: 'MATCHED' | 'UNMATCHED') => {
+  const handleReconciliation = async (payment: any, status: 'MATCHED' | 'UNMATCHED') => {
     const note = window.prompt(
       status === 'MATCHED'
         ? 'Add a reconciliation note (bank statement, mobile money export, teller batch, etc.)'
@@ -229,24 +197,41 @@ export function VerifyPaymentsPage() {
 
     if (note === null) return;
 
-    const nextRecords = {
-      ...reconciliationRecords,
-      [payment.id]: {
-        status,
-        note: note.trim(),
-        updatedAt: new Date().toISOString(),
-      },
-    };
-
-    persistReconciliationRecords(nextRecords);
-    toast.success(status === 'MATCHED' ? 'Payment marked as matched' : 'Payment kept in unmatched queue');
+    setActionLoading(payment.id);
+    try {
+      await apiFetch(`/admin/payments/${payment.id}/reconcile`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          reconciliationStatus: status,
+          reconciliationNote: note.trim(),
+        }),
+      });
+      toast.success(status === 'MATCHED' ? 'Payment marked as matched' : 'Payment kept in unmatched queue');
+      await loadPayments();
+    } catch (err: any) {
+      toast.error(err.message || 'Reconciliation update failed');
+    } finally {
+      setActionLoading(undefined);
+    }
   };
 
-  const clearReconciliation = (paymentId: string) => {
-    const nextRecords = { ...reconciliationRecords };
-    delete nextRecords[paymentId];
-    persistReconciliationRecords(nextRecords);
-    toast.success('Reconciliation status cleared');
+  const clearReconciliation = async (paymentId: string) => {
+    setActionLoading(paymentId);
+    try {
+      await apiFetch(`/admin/payments/${paymentId}/reconcile`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          reconciliationStatus: 'UNMATCHED',
+          reconciliationNote: '',
+        }),
+      });
+      toast.success('Reconciliation status cleared');
+      await loadPayments();
+    } catch (err: any) {
+      toast.error(err.message || 'Could not clear reconciliation status');
+    } finally {
+      setActionLoading(undefined);
+    }
   };
 
   const handleVerification = async (payment: any, verificationStatus: 'VERIFIED' | 'FLAGGED') => {
