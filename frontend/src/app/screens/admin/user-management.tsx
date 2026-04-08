@@ -155,7 +155,7 @@ export function UserManagementPage() {
   };
 
   const handleEdit = async () => {
-    if (!editingUser || !name || !email) {
+    if (!editingUser || !email) {
       toast.error('Please fill required fields');
       return;
     }
@@ -163,7 +163,7 @@ export function UserManagementPage() {
     try {
       await apiFetch(`/admin/users/${editingUser.id}`, {
         method: 'PATCH',
-        body: JSON.stringify({ name, email, role }),
+        body: JSON.stringify({ email, role }),
       });
       toast.success('User updated');
       setShowEditModal(false);
@@ -287,7 +287,6 @@ export function UserManagementPage() {
 
   const openEditModal = (u: User) => {
     setEditingUser(u);
-    setName(u.name);
     setEmail(u.email);
     setRole(u.role);
     setShowEditModal(true);
@@ -301,7 +300,7 @@ export function UserManagementPage() {
   const resetForm = () => {
     setName('');
     setEmail('');
-    setRole('STUDENT');
+    setRole('ACCOUNTS');
     setPassword('');
   };
 
@@ -486,9 +485,9 @@ export function UserManagementPage() {
       <Dialog open={showCreateModal} onOpenChange={setShowCreateModal}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Add New User</DialogTitle>
+            <DialogTitle>Add Staff User</DialogTitle>
             <DialogDescription>
-              Create a new user account with system access.
+              Create a new staff account (Admin or Accountant only).
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
@@ -520,7 +519,6 @@ export function UserManagementPage() {
                 <SelectContent>
                   <SelectItem value="ADMIN">Administrator</SelectItem>
                   <SelectItem value="ACCOUNTS">Accountant</SelectItem>
-                  <SelectItem value="STUDENT">Student</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -534,11 +532,16 @@ export function UserManagementPage() {
                 className="h-10" 
               />
             </div>
+            <div className="p-3 bg-muted/50 rounded-lg border border-border">
+              <p className="text-[12px] text-muted-foreground">
+                <strong>Note:</strong> Students can create their own accounts from the login page. This form is for staff only.
+              </p>
+            </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowCreateModal(false)}>Cancel</Button>
             <Button onClick={handleCreate} disabled={saving}>
-              {saving ? 'Creating...' : 'Create User'}
+              {saving ? 'Creating...' : 'Create Staff'}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -550,19 +553,10 @@ export function UserManagementPage() {
           <DialogHeader>
             <DialogTitle>Edit User</DialogTitle>
             <DialogDescription>
-              Update user details and change their role without recreating the account.
+              Change user email or role. Name can only be changed by the user themselves.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
-            <div className="space-y-1.5">
-              <label className="text-[13px] font-medium">Full Name *</label>
-              <Input 
-                value={name} 
-                onChange={(e: any) => setName(e.target.value)} 
-                placeholder="John Doe" 
-                className="h-10" 
-              />
-            </div>
             <div className="space-y-1.5">
               <label className="text-[13px] font-medium">Email Address *</label>
               <Input 
