@@ -467,7 +467,7 @@ export function VerifyPaymentsPage() {
       </Card>
 
       <Dialog open={!!viewingReceipt} onOpenChange={() => setViewingReceipt(null)}>
-        <DialogContent className="sm:max-w-xl">
+        <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-4xl">
           <DialogHeader>
             <DialogTitle>Payment Receipt</DialogTitle>
             <DialogDescription>Proof of payment submitted by the student for verification.</DialogDescription>
@@ -475,9 +475,9 @@ export function VerifyPaymentsPage() {
           <div className="relative flex min-h-[300px] items-center justify-center rounded-lg bg-muted/30 p-2">
             {viewingReceipt?.proofUrl ? (
               isImageReceipt ? (
-                <img src={receiptUrl} alt="Receipt" className="max-h-[70vh] max-w-full rounded shadow-lg" />
+                <img src={receiptUrl} alt="Receipt" className="max-h-[60vh] w-auto max-w-full rounded shadow-lg" />
               ) : isPdfReceipt ? (
-                <iframe src={receiptUrl} title="Receipt PDF" className="h-[70vh] w-full rounded bg-white" />
+                <iframe src={receiptUrl} title="Receipt PDF" className="h-[60vh] w-full rounded bg-white" />
               ) : (
                 <a href={receiptUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline">
                   Open receipt in a new tab
