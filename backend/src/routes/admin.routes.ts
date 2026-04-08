@@ -137,12 +137,19 @@ adminRouter.get(
 adminRouter.get(
     '/students/:studentId/payments',
     asyncHandler(async (req, res) => {
-        const { studentId } = req.params;
-        const payments = await prisma.payment.findMany({
-            where: { studentId },
-            orderBy: { createdAt: 'desc' },
-        });
-        res.status(200).json(payments);
+        try {
+            const { studentId } = req.params;
+            console.log('Fetching payments for student:', studentId);
+            const payments = await prisma.payment.findMany({
+                where: { studentId },
+                orderBy: { createdAt: 'desc' },
+            });
+            console.log('Found payments:', payments.length);
+            res.status(200).json(payments);
+        } catch (error) {
+            console.error('Error fetching student payments:', error);
+            res.status(500).json({ success: false, message: 'Failed to fetch payments', error: String(error) });
+        }
     })
 );
 
