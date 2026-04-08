@@ -5,6 +5,7 @@ import {
   CalendarClock,
   CreditCard,
   FileBarChart2,
+  History,
   GraduationCap,
   LayoutDashboard,
   Settings,
@@ -276,6 +277,7 @@ export const studentNav: NavItem[] = [
 export const adminNav: NavItem[] = [
   { label: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
   { label: 'Verify Payments', href: '/admin/verify-payments', icon: ShieldCheck },
+  { label: 'Reconciliation', href: '/admin/reconciliation-history', icon: History },
   { label: 'Students', href: '/admin/students', icon: Users },
   { label: 'Fee Structure', href: '/admin/fee-structure', icon: BriefcaseBusiness },
   { label: 'Users', href: '/admin/users', icon: UserCog },

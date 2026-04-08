@@ -6,6 +6,7 @@ import { AppLayout } from './components/layout';
 import {
   AdminDashboardPage,
   AdminNotificationsPage,
+  ReconciliationHistoryPage,
   AuditLogsPage,
   AuthLayout,
   FeeStructurePage,
@@ -104,6 +105,10 @@ export function AppRouter() {
         <Route
           path="/admin/verify-payments"
           element={<RequireRoles allowedRoles={['admin', 'accounts']}><VerifyPaymentsPage /></RequireRoles>}
+        />
+        <Route
+          path="/admin/reconciliation-history"
+          element={<RequireRoles allowedRoles={['admin', 'accounts']}><ReconciliationHistoryPage /></RequireRoles>}
         />
         <Route
           path="/admin/students"
