@@ -1,4 +1,4 @@
-import { PaymentStatus, UserRole } from '../generated/prisma';
+import { PaymentStatus, ReconciliationStatus, UserRole } from '../generated/prisma';
 import { Router } from 'express';
 
 import { asyncHandler } from '../lib/async-handler';
@@ -32,9 +32,28 @@ adminRouter.get(
     asyncHandler(async (_req, res) => {
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const startOfPreviousMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+        const endOfPreviousMonth = new Date(now.getFullYear(), now.getMonth(), 0, 23, 59, 59, 999);
         const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        const threeDaysAgo = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000);
+        const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
-        const [studentCount, pendingCount, approvedTodayCount, monthlyRevenue] = await Promise.all([
+        const [
+            studentCount,
+            pendingCount,
+            approvedTodayCount,
+            monthlyRevenue,
+            previousMonthRevenue,
+            totalRevenue,
+            matchedCount,
+            unmatchedCount,
+            matchedAmount,
+            unmatchedAmount,
+            overThreeDaysCount,
+            overSevenDaysCount,
+            recentReconciliations,
+            oldestUnmatched,
+        ] = await Promise.all([
             prisma.student.count(),
             prisma.payment.count({ where: { status: 'PENDING' } }),
             prisma.payment.count({ where: { status: 'APPROVED', reviewedAt: { gte: startOfDay } } }),
@@ -42,13 +61,156 @@ adminRouter.get(
                 where: { status: 'APPROVED', reviewedAt: { gte: startOfMonth } },
                 _sum: { amount: true },
             }),
+            prisma.payment.aggregate({
+                where: {
+                    status: 'APPROVED',
+                    reviewedAt: {
+                        gte: startOfPreviousMonth,
+                        lte: endOfPreviousMonth,
+                    },
+                },
+                _sum: { amount: true },
+            }),
+            prisma.payment.aggregate({
+                where: { status: 'APPROVED' },
+                _sum: { amount: true },
+            }),
+            prisma.payment.count({
+                where: {
+                    reconciliationStatus: ReconciliationStatus.MATCHED,
+                    status: PaymentStatus.PENDING,
+                },
+            }),
+            prisma.payment.count({
+                where: {
+                    reconciliationStatus: ReconciliationStatus.UNMATCHED,
+                    status: PaymentStatus.PENDING,
+                },
+            }),
+            prisma.payment.aggregate({
+                where: {
+                    reconciliationStatus: ReconciliationStatus.MATCHED,
+                    status: PaymentStatus.PENDING,
+                },
+                _sum: { amount: true },
+            }),
+            prisma.payment.aggregate({
+                where: {
+                    reconciliationStatus: ReconciliationStatus.UNMATCHED,
+                    status: PaymentStatus.PENDING,
+                },
+                _sum: { amount: true },
+            }),
+            prisma.payment.count({
+                where: {
+                    reconciliationStatus: ReconciliationStatus.UNMATCHED,
+                    status: PaymentStatus.PENDING,
+                    submittedAt: { lte: threeDaysAgo },
+                },
+            }),
+            prisma.payment.count({
+                where: {
+                    reconciliationStatus: ReconciliationStatus.UNMATCHED,
+                    status: PaymentStatus.PENDING,
+                    submittedAt: { lte: sevenDaysAgo },
+                },
+            }),
+            prisma.payment.findMany({
+                where: {
+                    reconciliationStatus: ReconciliationStatus.MATCHED,
+                },
+                include: {
+                    student: {
+                        select: {
+                            id: true,
+                            firstName: true,
+                            lastName: true,
+                            studentCode: true,
+                        },
+                    },
+                    reconciler: {
+                        select: {
+                            id: true,
+                            firstName: true,
+                            lastName: true,
+                            email: true,
+                        },
+                    },
+                },
+                orderBy: {
+                    reconciledAt: 'desc',
+                },
+                take: 5,
+            }),
+            prisma.payment.findMany({
+                where: {
+                    reconciliationStatus: ReconciliationStatus.UNMATCHED,
+                    status: PaymentStatus.PENDING,
+                },
+                include: {
+                    student: {
+                        select: {
+                            id: true,
+                            firstName: true,
+                            lastName: true,
+                            studentCode: true,
+                        },
+                    },
+                },
+                orderBy: {
+                    submittedAt: 'asc',
+                },
+                take: 5,
+            }),
         ]);
+
+        const currentMonthValue = Number(monthlyRevenue._sum.amount || 0);
+        const previousMonthValue = Number(previousMonthRevenue._sum.amount || 0);
+        const revenueChange =
+            previousMonthValue > 0
+                ? ((currentMonthValue - previousMonthValue) / previousMonthValue) * 100
+                : currentMonthValue > 0
+                    ? 100
+                    : 0;
 
         res.status(200).json({
             totalStudents: studentCount,
             pendingPayments: pendingCount,
             approvedToday: approvedTodayCount,
-            monthlyRevenue: Number(monthlyRevenue._sum.amount || 0),
+            monthlyRevenue: currentMonthValue,
+            previousMonthRevenue: previousMonthValue,
+            revenueChange,
+            totalRevenue: Number(totalRevenue._sum.amount || 0),
+            reconciliation: {
+                matchedPayments: matchedCount,
+                unmatchedPayments: unmatchedCount,
+                matchedAmount: Number(matchedAmount._sum.amount || 0),
+                unmatchedAmount: Number(unmatchedAmount._sum.amount || 0),
+                aging: {
+                    overThreeDays: overThreeDaysCount,
+                    overSevenDays: overSevenDaysCount,
+                },
+                recentReconciliations: recentReconciliations.map((payment) => ({
+                    id: payment.id,
+                    amount: Number(payment.amount),
+                    reconciledAt: payment.reconciledAt,
+                    reconciliationNote: payment.reconciliationNote,
+                    student: payment.student,
+                    reconciler: payment.reconciler,
+                })),
+                oldestUnmatched: oldestUnmatched.map((payment) => ({
+                    id: payment.id,
+                    amount: Number(payment.amount),
+                    submittedAt: payment.submittedAt,
+                    externalReference: payment.externalReference,
+                    receiptNumber: payment.receiptNumber,
+                    student: payment.student,
+                    ageDays: Math.max(
+                        0,
+                        Math.floor((now.getTime() - new Date(payment.submittedAt).getTime()) / (24 * 60 * 60 * 1000))
+                    ),
+                })),
+            },
         });
     })
 );

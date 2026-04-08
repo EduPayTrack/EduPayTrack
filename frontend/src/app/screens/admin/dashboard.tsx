@@ -13,7 +13,10 @@ import {
   AlertCircle, 
   Target, 
   BarChart3, 
-  AlertTriangle 
+  AlertTriangle,
+  Link2,
+  NotebookPen,
+  TimerReset,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Link } from 'react-router-dom';
@@ -123,6 +126,18 @@ export function AdminDashboardPage() {
     };
   }, [stats]);
 
+  const reconciliationStats = useMemo(() => {
+    return stats?.reconciliation || {
+      matchedPayments: 0,
+      unmatchedPayments: 0,
+      matchedAmount: 0,
+      unmatchedAmount: 0,
+      aging: { overThreeDays: 0, overSevenDays: 0 },
+      recentReconciliations: [],
+      oldestUnmatched: [],
+    };
+  }, [stats]);
+
   if (error) {
     return (
       <div className="p-4 md:p-6 space-y-6 max-w-[1400px]">
@@ -226,6 +241,36 @@ export function AdminDashboardPage() {
         <StatCard icon={DollarSign} label="Collection" value={`MK ${collectionStats.rate.toFixed(0)}%`} iconColor="text-success" />
       </div>
 
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <StatCard
+          icon={Link2}
+          label="Matched Queue"
+          value={reconciliationStats.matchedPayments}
+          iconColor="text-success"
+          valueColor="text-success"
+        />
+        <StatCard
+          icon={NotebookPen}
+          label="Needs Matching"
+          value={reconciliationStats.unmatchedPayments}
+          iconColor="text-warning"
+          valueColor="text-warning"
+        />
+        <StatCard
+          icon={DollarSign}
+          label="Matched Amount"
+          value={formatCurrency(reconciliationStats.matchedAmount)}
+          iconColor="text-success"
+        />
+        <StatCard
+          icon={TimerReset}
+          label="Aged 7+ Days"
+          value={reconciliationStats.aging?.overSevenDays ?? 0}
+          iconColor="text-destructive"
+          valueColor="text-destructive"
+        />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card className="p-4">
           <div className="flex items-center gap-2 mb-3"><Target className="h-5 w-5 text-primary" /><h2 className="text-[15px] font-semibold">Collection Rate</h2></div>
@@ -249,6 +294,84 @@ export function AdminDashboardPage() {
         </Card>
       </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <NotebookPen className="h-5 w-5 text-warning" />
+            <h2 className="text-[15px] font-semibold">Reconciliation Queue Health</h2>
+          </div>
+          <div className="space-y-4">
+            <div>
+              <div className="mb-2 flex items-center justify-between text-[12px] text-muted-foreground">
+                <span>Matched in pending queue</span>
+                <span>{reconciliationStats.matchedPayments}</span>
+              </div>
+              <div className="h-2 rounded-full bg-muted overflow-hidden">
+                <div
+                  className="h-full bg-success transition-all duration-500"
+                  style={{
+                    width: `${Math.min(
+                      reconciliationStats.matchedPayments + reconciliationStats.unmatchedPayments > 0
+                        ? (reconciliationStats.matchedPayments / (reconciliationStats.matchedPayments + reconciliationStats.unmatchedPayments)) * 100
+                        : 0,
+                      100
+                    )}%`,
+                  }}
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-xl border bg-warning/5 p-3">
+                <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Unmatched Value</p>
+                <p className="mt-2 text-[18px] font-semibold text-warning">{formatCurrency(reconciliationStats.unmatchedAmount)}</p>
+              </div>
+              <div className="rounded-xl border bg-destructive/5 p-3">
+                <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Aged 3+ Days</p>
+                <p className="mt-2 text-[18px] font-semibold text-destructive">{reconciliationStats.aging?.overThreeDays ?? 0}</p>
+              </div>
+            </div>
+            <p className="text-[12px] text-muted-foreground">
+              Use this to spot payment proofs that are still waiting for bank statement or mobile money matching.
+            </p>
+          </div>
+        </Card>
+
+        <Card className="p-4">
+          <div className="flex items-center gap-2 mb-3">
+            <Link2 className="h-5 w-5 text-success" />
+            <h2 className="text-[15px] font-semibold">Recent Reconciliations</h2>
+          </div>
+          <div className="space-y-3">
+            {reconciliationStats.recentReconciliations?.length ? (
+              reconciliationStats.recentReconciliations.map((item: any) => (
+                <div key={item.id} className="rounded-xl border p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <button
+                      className="text-left"
+                      onClick={() => setViewingStudentHistory(item.student)}
+                    >
+                      <p className="text-[13px] font-medium hover:underline">
+                        {item.student?.firstName} {item.student?.lastName}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground">{item.student?.studentCode}</p>
+                    </button>
+                    <span className="text-[12px] font-semibold text-success">{formatCurrency(Number(item.amount || 0))}</span>
+                  </div>
+                  <p className="mt-2 text-[11px] text-muted-foreground">
+                    Matched by {item.reconciler?.firstName || item.reconciler?.email || 'Staff'} on {formatDate(item.reconciledAt)}
+                  </p>
+                  {item.reconciliationNote && (
+                    <p className="mt-1 text-[12px] text-muted-foreground">{item.reconciliationNote}</p>
+                  )}
+                </div>
+              ))
+            ) : (
+              <p className="py-4 text-sm text-muted-foreground">No reconciliations recorded yet.</p>
+            )}
+          </div>
+        </Card>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-6">
           <Card>
@@ -267,6 +390,51 @@ export function AdminDashboardPage() {
                   </TableRow>
                 ))}
                 {payments.length === 0 && <TableRow><TableCell colSpan={3} className="text-center py-8 text-muted-foreground">No pending payments</TableCell></TableRow>}
+              </TableBody>
+            </Table>
+          </Card>
+
+          <Card>
+            <div className="p-4 border-b flex justify-between items-center">
+              <h2 className="text-[15px] font-medium">Oldest Unmatched Payments</h2>
+              <Link to="/admin/verify-payments" className="text-[12px] text-primary hover:underline">Open Queue</Link>
+            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Student</TableHead>
+                  <TableHead>Amount</TableHead>
+                  <TableHead>Age</TableHead>
+                  <TableHead>Reference</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {reconciliationStats.oldestUnmatched?.map((payment: any) => (
+                  <TableRow key={payment.id}>
+                    <TableCell>
+                      <button className="text-left hover:underline" onClick={() => setViewingStudentHistory(payment.student)}>
+                        <div className="text-[13px] font-medium">{payment.student?.firstName} {payment.student?.lastName}</div>
+                        <div className="text-[11px] text-muted-foreground">{payment.student?.studentCode}</div>
+                      </button>
+                    </TableCell>
+                    <TableCell className="text-[13px] font-medium">{formatCurrency(Number(payment.amount || 0))}</TableCell>
+                    <TableCell className="text-[13px]">
+                      <span className={payment.ageDays >= 7 ? 'text-destructive font-medium' : 'text-warning font-medium'}>
+                        {payment.ageDays} day{payment.ageDays === 1 ? '' : 's'}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-[12px] font-mono text-muted-foreground">
+                      {payment.receiptNumber || payment.externalReference || 'N/A'}
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {!reconciliationStats.oldestUnmatched?.length && (
+                  <TableRow>
+                    <TableCell colSpan={4} className="py-8 text-center text-muted-foreground">
+                      No unmatched payments are aging in the queue.
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </Card>
