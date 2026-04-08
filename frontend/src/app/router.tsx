@@ -9,6 +9,7 @@ import {
   AuditLogsPage,
   AuthLayout,
   FeeStructurePage,
+  LandingPage,
   LoginPage,
   PaymentHistoryPage,
   RegisterPage,
@@ -75,6 +76,8 @@ export function AppRouter() {
         <Route path="/register" element={user ? <Navigate replace to="/student/dashboard" /> : <RegisterPage />} />
       </Route>
 
+      <Route path="/" element={<LandingPage />} />
+
       <Route
         element={(
           <RequireAuth>
@@ -133,10 +136,6 @@ export function AppRouter() {
         <Route path="/settings" element={<SettingsPage />} />
       </Route>
 
-      <Route
-        path="/"
-        element={<Navigate replace to={user ? (user.role === 'student' ? '/student/dashboard' : '/admin/dashboard') : '/login'} />}
-      />
       <Route path="*" element={<Navigate replace to="/" />} />
     </Routes>
   );
