@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Upload, TrendingDown, CheckCircle, DollarSign, Loader2, FileImage, X, AlertCircle } from 'lucide-react';
+import { Upload, TrendingDown, CheckCircle, DollarSign, Loader2, FileImage, X, AlertCircle, Download, Clock3, ShieldCheck, ShieldAlert } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useAuth } from '../state/auth-context';
@@ -13,6 +13,7 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '.
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Skeleton } from '../../components/ui/skeleton';
 import { formatCurrency, formatDate } from '../../lib/utils';
+import { getFullImageUrl } from '../components/admin/common/payment-helpers';
 
 /* ---- Status badge helper ---- */
 function PaymentStatusBadge({ status }: { status: string }) {
@@ -491,13 +492,19 @@ export function UploadPaymentPage() {
 /* ===== PAYMENT HISTORY ===== */
 
 export function PaymentHistoryPage() {
+  const { user } = useAuth();
+  const [dashboard, setDashboard] = useState<any>(null);
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
+  const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(null);
 
   useEffect(() => {
     apiFetch<any>('/students/me')
-      .then((data) => setPayments(data.payments || []))
+      .then((data) => {
+        setDashboard(data);
+        setPayments(data.payments || []);
+      })
       .catch(() => toast.error('Failed to load payment history'))
       .finally(() => setLoading(false));
   }, []);
@@ -505,6 +512,79 @@ export function PaymentHistoryPage() {
   const filtered = statusFilter === 'ALL'
     ? payments
     : payments.filter(p => p.status === statusFilter);
+
+  const getVerificationState = (payment: any) => {
+    if (payment.verificationStatus === 'FLAGGED') {
+      return { icon: ShieldAlert, label: 'Flagged', className: 'text-destructive bg-destructive/10 border-destructive/20' };
+    }
+    if (payment.verificationStatus === 'VERIFIED') {
+      return { icon: ShieldCheck, label: 'Verified', className: 'text-success bg-success/10 border-success/20' };
+    }
+    return { icon: Clock3, label: 'Awaiting verification', className: 'text-warning bg-warning/10 border-warning/20' };
+  };
+
+  const downloadStatement = () => {
+    if (!dashboard) return;
+
+    const printWindow = window.open('', '_blank', 'width=960,height=720');
+    if (!printWindow) {
+      toast.error('Unable to open statement window');
+      return;
+    }
+
+    const rows = filtered.map((payment: any) => `
+      <tr>
+        <td>${formatDate(payment.paymentDate || payment.submittedAt)}</td>
+        <td>${payment.receiptNumber || payment.externalReference || 'N/A'}</td>
+        <td>${payment.method?.replace(/_/g, ' ') || 'N/A'}</td>
+        <td>${Number(payment.amount || 0).toLocaleString()}</td>
+        <td>${payment.status}</td>
+      </tr>
+    `).join('');
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>EduPayTrack Fee Statement</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 32px; color: #111; }
+            h1, h2, p { margin: 0; }
+            .summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 20px 0 28px; }
+            .card { border: 1px solid #dcdcdc; border-radius: 8px; padding: 14px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+            th, td { border: 1px solid #ddd; padding: 10px; text-align: left; font-size: 13px; }
+            th { background: #f6f6f6; }
+          </style>
+        </head>
+        <body>
+          <h1>EduPayTrack Fee Statement</h1>
+          <p style="margin-top: 6px;">Generated for ${user?.name || 'Student'}</p>
+          <div class="summary">
+            <div class="card"><strong>Student ID</strong><br/>${dashboard.student?.studentCode || user?.studentId || 'N/A'}</div>
+            <div class="card"><strong>Program</strong><br/>${dashboard.student?.program || 'N/A'}</div>
+            <div class="card"><strong>Total Paid</strong><br/>${formatCurrency(Number(dashboard.summary?.totalPaid || 0))}</div>
+            <div class="card"><strong>Current Balance</strong><br/>${formatCurrency(Number(dashboard.summary?.currentBalance || 0))}</div>
+          </div>
+          <h2>Payment Activity</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Reference</th>
+                <th>Method</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+  };
 
   if (loading) {
     return (
@@ -524,53 +604,137 @@ export function PaymentHistoryPage() {
             {payments.length} payment{payments.length !== 1 ? 's' : ''} submitted
           </p>
         </div>
-        <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[140px] h-9">
-            <SelectValue placeholder="Filter..." />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">All statuses</SelectItem>
-            <SelectItem value="PENDING">Pending</SelectItem>
-            <SelectItem value="APPROVED">Approved</SelectItem>
-            <SelectItem value="REJECTED">Rejected</SelectItem>
-          </SelectContent>
-        </Select>
+        <div className="flex flex-wrap gap-2">
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-[140px] h-9">
+              <SelectValue placeholder="Filter..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="ALL">All statuses</SelectItem>
+              <SelectItem value="PENDING">Pending</SelectItem>
+              <SelectItem value="APPROVED">Approved</SelectItem>
+              <SelectItem value="REJECTED">Rejected</SelectItem>
+            </SelectContent>
+          </Select>
+          <Button variant="outline" className="h-9 gap-2" onClick={downloadStatement}>
+            <Download className="h-4 w-4" />
+            Download Statement
+          </Button>
+        </div>
       </div>
 
-      <Card>
-        <CardContent className="p-0">
-          {filtered.length === 0 ? (
-            <div className="py-12 text-center text-[13px] text-muted-foreground">
+      {dashboard && (
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
+          <Card>
+            <CardContent className="p-4">
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Total Paid</p>
+              <p className="mt-2 text-[24px] font-semibold text-success">{formatCurrency(Number(dashboard.summary?.totalPaid || 0))}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Current Balance</p>
+              <p className="mt-2 text-[24px] font-semibold">{formatCurrency(Number(dashboard.summary?.currentBalance || 0))}</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-4">
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Pending Reviews</p>
+              <p className="mt-2 text-[24px] font-semibold text-warning">{dashboard.summary?.pendingVerifications || 0}</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      <div className="space-y-4">
+        {filtered.length === 0 ? (
+          <Card>
+            <CardContent className="py-12 text-center text-[13px] text-muted-foreground">
               {statusFilter !== 'ALL'
                 ? `No ${statusFilter.toLowerCase()} payments found.`
                 : 'No payments submitted yet.'}
-            </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Reference</TableHead>
-                  <TableHead>Method</TableHead>
-                  <TableHead>Amount</TableHead>
-                  <TableHead>Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filtered.map((p: any) => (
-                  <TableRow key={p.id}>
-                    <TableCell className="text-[13px]">{formatDate(p.paymentDate || p.submittedAt)}</TableCell>
-                    <TableCell className="text-[13px] text-muted-foreground font-mono">{p.receiptNumber || p.externalReference || 'N/A'}</TableCell>
-                    <TableCell className="text-[13px]">{p.method?.replace(/_/g, ' ')}</TableCell>
-                    <TableCell className="text-[13px] font-medium">{formatCurrency(Number(p.amount))}</TableCell>
-                    <TableCell><PaymentStatusBadge status={p.status} /></TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        ) : (
+          filtered.map((payment: any) => {
+            const verification = getVerificationState(payment);
+            const VerificationIcon = verification.icon;
+            const isOpen = selectedPaymentId === payment.id;
+
+            return (
+              <Card key={payment.id} className="overflow-hidden">
+                <CardContent className="p-0">
+                  <button
+                    className="w-full p-4 text-left transition-colors hover:bg-muted/30"
+                    onClick={() => setSelectedPaymentId(isOpen ? null : payment.id)}
+                  >
+                    <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                      <div className="space-y-2">
+                        <div className="flex flex-wrap items-center gap-2">
+                          <PaymentStatusBadge status={payment.status} />
+                          <Badge variant="outline" className={`text-[10px] ${verification.className}`}>
+                            <VerificationIcon className="mr-1 h-3 w-3" />
+                            {verification.label}
+                          </Badge>
+                        </div>
+                        <p className="text-[15px] font-medium">
+                          {formatCurrency(Number(payment.amount || 0))} via {payment.method?.replace(/_/g, ' ') || 'Unknown'}
+                        </p>
+                        <div className="flex flex-wrap gap-3 text-[12px] text-muted-foreground">
+                          <span>{formatDate(payment.paymentDate || payment.submittedAt)}</span>
+                          <span className="font-mono">{payment.receiptNumber || payment.externalReference || 'N/A'}</span>
+                        </div>
+                      </div>
+                      <div className="text-[12px] text-muted-foreground">{isOpen ? 'Hide details' : 'View details'}</div>
+                    </div>
+                  </button>
+
+                  {isOpen && (
+                    <div className="space-y-4 border-t border-border bg-muted/20 p-4">
+                      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                        <div className="rounded-lg border border-border bg-background p-3">
+                          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Submission notes</p>
+                          <p className="mt-2 text-[13px]">{payment.notes || 'No notes provided.'}</p>
+                        </div>
+                        <div className="rounded-lg border border-border bg-background p-3">
+                          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Review outcome</p>
+                          <p className="mt-2 text-[13px]">{payment.reviewNotes || payment.verificationNotes || 'No reviewer notes yet.'}</p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-3 text-[13px] md:grid-cols-3">
+                        <div className="rounded-lg border border-border bg-background p-3">
+                          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Submitted</p>
+                          <p className="mt-1">{formatDate(payment.submittedAt)}</p>
+                        </div>
+                        <div className="rounded-lg border border-border bg-background p-3">
+                          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Verification status</p>
+                          <p className="mt-1">{payment.verificationStatus || 'UNVERIFIED'}</p>
+                        </div>
+                        <div className="rounded-lg border border-border bg-background p-3">
+                          <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Receipt</p>
+                          {payment.proofUrl ? (
+                            <a
+                              className="mt-1 inline-block text-primary hover:underline"
+                              href={getFullImageUrl(payment.proofUrl)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              Open receipt
+                            </a>
+                          ) : (
+                            <p className="mt-1">No receipt attached</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 }
