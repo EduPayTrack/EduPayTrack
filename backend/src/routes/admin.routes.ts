@@ -133,6 +133,36 @@ adminRouter.get(
     })
 );
 
+// Get payments for a specific student
+adminRouter.get(
+    '/students/:studentId/payments',
+    asyncHandler(async (req, res) => {
+        const { studentId } = req.params;
+        const payments = await prisma.payment.findMany({
+            where: { studentId },
+            orderBy: { createdAt: 'desc' },
+            include: {
+                student: {
+                    include: {
+                        user: {
+                            select: {
+                                name: true,
+                                email: true,
+                            },
+                        },
+                    },
+                },
+                reviewedBy: {
+                    select: {
+                        name: true,
+                    },
+                },
+            },
+        });
+        res.status(200).json(payments);
+    })
+);
+
 adminRouter.get(
     '/users',
     requireRole(UserRole.ADMIN),
