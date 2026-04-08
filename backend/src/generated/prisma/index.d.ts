@@ -8205,6 +8205,7 @@ export namespace Prisma {
     transactionDate: Date | null
     matchState: string | null
     resolvedPaymentId: string | null
+    autoApprovedPaymentId: string | null
     reconciledAt: Date | null
   }
 
@@ -8219,6 +8220,7 @@ export namespace Prisma {
     transactionDate: Date | null
     matchState: string | null
     resolvedPaymentId: string | null
+    autoApprovedPaymentId: string | null
     reconciledAt: Date | null
   }
 
@@ -8235,6 +8237,7 @@ export namespace Prisma {
     matchState: number
     suggestions: number
     resolvedPaymentId: number
+    autoApprovedPaymentId: number
     reconciledAt: number
     _all: number
   }
@@ -8261,6 +8264,7 @@ export namespace Prisma {
     transactionDate?: true
     matchState?: true
     resolvedPaymentId?: true
+    autoApprovedPaymentId?: true
     reconciledAt?: true
   }
 
@@ -8275,6 +8279,7 @@ export namespace Prisma {
     transactionDate?: true
     matchState?: true
     resolvedPaymentId?: true
+    autoApprovedPaymentId?: true
     reconciledAt?: true
   }
 
@@ -8291,6 +8296,7 @@ export namespace Prisma {
     matchState?: true
     suggestions?: true
     resolvedPaymentId?: true
+    autoApprovedPaymentId?: true
     reconciledAt?: true
     _all?: true
   }
@@ -8394,6 +8400,7 @@ export namespace Prisma {
     matchState: string
     suggestions: JsonValue
     resolvedPaymentId: string | null
+    autoApprovedPaymentId: string | null
     reconciledAt: Date | null
     _count: StatementImportRowCountAggregateOutputType | null
     _avg: StatementImportRowAvgAggregateOutputType | null
@@ -8429,6 +8436,7 @@ export namespace Prisma {
     matchState?: boolean
     suggestions?: boolean
     resolvedPaymentId?: boolean
+    autoApprovedPaymentId?: boolean
     reconciledAt?: boolean
     statementImport?: boolean | StatementImportDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["statementImportRow"]>
@@ -8446,6 +8454,7 @@ export namespace Prisma {
     matchState?: boolean
     suggestions?: boolean
     resolvedPaymentId?: boolean
+    autoApprovedPaymentId?: boolean
     reconciledAt?: boolean
     statementImport?: boolean | StatementImportDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["statementImportRow"]>
@@ -8463,6 +8472,7 @@ export namespace Prisma {
     matchState?: boolean
     suggestions?: boolean
     resolvedPaymentId?: boolean
+    autoApprovedPaymentId?: boolean
     reconciledAt?: boolean
     statementImport?: boolean | StatementImportDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["statementImportRow"]>
@@ -8480,10 +8490,11 @@ export namespace Prisma {
     matchState?: boolean
     suggestions?: boolean
     resolvedPaymentId?: boolean
+    autoApprovedPaymentId?: boolean
     reconciledAt?: boolean
   }
 
-  export type StatementImportRowOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "importId" | "rowNumber" | "rawData" | "reference" | "payerName" | "description" | "amount" | "transactionDate" | "matchState" | "suggestions" | "resolvedPaymentId" | "reconciledAt", ExtArgs["result"]["statementImportRow"]>
+  export type StatementImportRowOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "importId" | "rowNumber" | "rawData" | "reference" | "payerName" | "description" | "amount" | "transactionDate" | "matchState" | "suggestions" | "resolvedPaymentId" | "autoApprovedPaymentId" | "reconciledAt", ExtArgs["result"]["statementImportRow"]>
   export type StatementImportRowInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     statementImport?: boolean | StatementImportDefaultArgs<ExtArgs>
   }
@@ -8512,6 +8523,7 @@ export namespace Prisma {
       matchState: string
       suggestions: Prisma.JsonValue
       resolvedPaymentId: string | null
+      autoApprovedPaymentId: string | null
       reconciledAt: Date | null
     }, ExtArgs["result"]["statementImportRow"]>
     composites: {}
@@ -8949,6 +8961,7 @@ export namespace Prisma {
     readonly matchState: FieldRef<"StatementImportRow", 'String'>
     readonly suggestions: FieldRef<"StatementImportRow", 'Json'>
     readonly resolvedPaymentId: FieldRef<"StatementImportRow", 'String'>
+    readonly autoApprovedPaymentId: FieldRef<"StatementImportRow", 'String'>
     readonly reconciledAt: FieldRef<"StatementImportRow", 'DateTime'>
   }
     
@@ -12680,6 +12693,7 @@ export namespace Prisma {
     matchState: 'matchState',
     suggestions: 'suggestions',
     resolvedPaymentId: 'resolvedPaymentId',
+    autoApprovedPaymentId: 'autoApprovedPaymentId',
     reconciledAt: 'reconciledAt'
   };
 
@@ -13550,6 +13564,7 @@ export namespace Prisma {
     matchState?: StringFilter<"StatementImportRow"> | string
     suggestions?: JsonFilter<"StatementImportRow">
     resolvedPaymentId?: StringNullableFilter<"StatementImportRow"> | string | null
+    autoApprovedPaymentId?: StringNullableFilter<"StatementImportRow"> | string | null
     reconciledAt?: DateTimeNullableFilter<"StatementImportRow"> | Date | string | null
     statementImport?: XOR<StatementImportScalarRelationFilter, StatementImportWhereInput>
   }
@@ -13567,6 +13582,7 @@ export namespace Prisma {
     matchState?: SortOrder
     suggestions?: SortOrder
     resolvedPaymentId?: SortOrderInput | SortOrder
+    autoApprovedPaymentId?: SortOrderInput | SortOrder
     reconciledAt?: SortOrderInput | SortOrder
     statementImport?: StatementImportOrderByWithRelationInput
   }
@@ -13587,6 +13603,7 @@ export namespace Prisma {
     matchState?: StringFilter<"StatementImportRow"> | string
     suggestions?: JsonFilter<"StatementImportRow">
     resolvedPaymentId?: StringNullableFilter<"StatementImportRow"> | string | null
+    autoApprovedPaymentId?: StringNullableFilter<"StatementImportRow"> | string | null
     reconciledAt?: DateTimeNullableFilter<"StatementImportRow"> | Date | string | null
     statementImport?: XOR<StatementImportScalarRelationFilter, StatementImportWhereInput>
   }, "id">
@@ -13604,6 +13621,7 @@ export namespace Prisma {
     matchState?: SortOrder
     suggestions?: SortOrder
     resolvedPaymentId?: SortOrderInput | SortOrder
+    autoApprovedPaymentId?: SortOrderInput | SortOrder
     reconciledAt?: SortOrderInput | SortOrder
     _count?: StatementImportRowCountOrderByAggregateInput
     _avg?: StatementImportRowAvgOrderByAggregateInput
@@ -13628,6 +13646,7 @@ export namespace Prisma {
     matchState?: StringWithAggregatesFilter<"StatementImportRow"> | string
     suggestions?: JsonWithAggregatesFilter<"StatementImportRow">
     resolvedPaymentId?: StringNullableWithAggregatesFilter<"StatementImportRow"> | string | null
+    autoApprovedPaymentId?: StringNullableWithAggregatesFilter<"StatementImportRow"> | string | null
     reconciledAt?: DateTimeNullableWithAggregatesFilter<"StatementImportRow"> | Date | string | null
   }
 
@@ -14516,6 +14535,7 @@ export namespace Prisma {
     matchState: string
     suggestions: JsonNullValueInput | InputJsonValue
     resolvedPaymentId?: string | null
+    autoApprovedPaymentId?: string | null
     reconciledAt?: Date | string | null
     statementImport: StatementImportCreateNestedOneWithoutRowsInput
   }
@@ -14533,6 +14553,7 @@ export namespace Prisma {
     matchState: string
     suggestions: JsonNullValueInput | InputJsonValue
     resolvedPaymentId?: string | null
+    autoApprovedPaymentId?: string | null
     reconciledAt?: Date | string | null
   }
 
@@ -14548,6 +14569,7 @@ export namespace Prisma {
     matchState?: StringFieldUpdateOperationsInput | string
     suggestions?: JsonNullValueInput | InputJsonValue
     resolvedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    autoApprovedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     statementImport?: StatementImportUpdateOneRequiredWithoutRowsNestedInput
   }
@@ -14565,6 +14587,7 @@ export namespace Prisma {
     matchState?: StringFieldUpdateOperationsInput | string
     suggestions?: JsonNullValueInput | InputJsonValue
     resolvedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    autoApprovedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -14581,6 +14604,7 @@ export namespace Prisma {
     matchState: string
     suggestions: JsonNullValueInput | InputJsonValue
     resolvedPaymentId?: string | null
+    autoApprovedPaymentId?: string | null
     reconciledAt?: Date | string | null
   }
 
@@ -14596,6 +14620,7 @@ export namespace Prisma {
     matchState?: StringFieldUpdateOperationsInput | string
     suggestions?: JsonNullValueInput | InputJsonValue
     resolvedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    autoApprovedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -14612,6 +14637,7 @@ export namespace Prisma {
     matchState?: StringFieldUpdateOperationsInput | string
     suggestions?: JsonNullValueInput | InputJsonValue
     resolvedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    autoApprovedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -15643,6 +15669,7 @@ export namespace Prisma {
     matchState?: SortOrder
     suggestions?: SortOrder
     resolvedPaymentId?: SortOrder
+    autoApprovedPaymentId?: SortOrder
     reconciledAt?: SortOrder
   }
 
@@ -15662,6 +15689,7 @@ export namespace Prisma {
     transactionDate?: SortOrder
     matchState?: SortOrder
     resolvedPaymentId?: SortOrder
+    autoApprovedPaymentId?: SortOrder
     reconciledAt?: SortOrder
   }
 
@@ -15676,6 +15704,7 @@ export namespace Prisma {
     transactionDate?: SortOrder
     matchState?: SortOrder
     resolvedPaymentId?: SortOrder
+    autoApprovedPaymentId?: SortOrder
     reconciledAt?: SortOrder
   }
 
@@ -17934,6 +17963,7 @@ export namespace Prisma {
     matchState: string
     suggestions: JsonNullValueInput | InputJsonValue
     resolvedPaymentId?: string | null
+    autoApprovedPaymentId?: string | null
     reconciledAt?: Date | string | null
   }
 
@@ -17949,6 +17979,7 @@ export namespace Prisma {
     matchState: string
     suggestions: JsonNullValueInput | InputJsonValue
     resolvedPaymentId?: string | null
+    autoApprovedPaymentId?: string | null
     reconciledAt?: Date | string | null
   }
 
@@ -18047,6 +18078,7 @@ export namespace Prisma {
     matchState?: StringFilter<"StatementImportRow"> | string
     suggestions?: JsonFilter<"StatementImportRow">
     resolvedPaymentId?: StringNullableFilter<"StatementImportRow"> | string | null
+    autoApprovedPaymentId?: StringNullableFilter<"StatementImportRow"> | string | null
     reconciledAt?: DateTimeNullableFilter<"StatementImportRow"> | Date | string | null
   }
 
@@ -18972,6 +19004,7 @@ export namespace Prisma {
     matchState: string
     suggestions: JsonNullValueInput | InputJsonValue
     resolvedPaymentId?: string | null
+    autoApprovedPaymentId?: string | null
     reconciledAt?: Date | string | null
   }
 
@@ -18987,6 +19020,7 @@ export namespace Prisma {
     matchState?: StringFieldUpdateOperationsInput | string
     suggestions?: JsonNullValueInput | InputJsonValue
     resolvedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    autoApprovedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -19002,6 +19036,7 @@ export namespace Prisma {
     matchState?: StringFieldUpdateOperationsInput | string
     suggestions?: JsonNullValueInput | InputJsonValue
     resolvedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    autoApprovedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 
@@ -19017,6 +19052,7 @@ export namespace Prisma {
     matchState?: StringFieldUpdateOperationsInput | string
     suggestions?: JsonNullValueInput | InputJsonValue
     resolvedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
+    autoApprovedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   }
 

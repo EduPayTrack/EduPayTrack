@@ -160,20 +160,21 @@ model StatementImport {
 }
 
 model StatementImportRow {
-  id                String          @id @default(cuid())
-  importId          String
-  rowNumber         Int
-  rawData           Json
-  reference         String?
-  payerName         String?
-  description       String?
-  amount            Decimal?        @db.Decimal(12, 2)
-  transactionDate   DateTime?
-  matchState        String
-  suggestions       Json
-  resolvedPaymentId String?
-  reconciledAt      DateTime?
-  statementImport   StatementImport @relation(fields: [importId], references: [id], onDelete: Cascade)
+  id                    String          @id @default(cuid())
+  importId              String
+  rowNumber             Int
+  rawData               Json
+  reference             String?
+  payerName             String?
+  description           String?
+  amount                Decimal?        @db.Decimal(12, 2)
+  transactionDate       DateTime?
+  matchState            String
+  suggestions           Json
+  resolvedPaymentId     String?
+  autoApprovedPaymentId String?
+  reconciledAt          DateTime?
+  statementImport       StatementImport @relation(fields: [importId], references: [id], onDelete: Cascade)
 
   @@index([importId, rowNumber])
 }

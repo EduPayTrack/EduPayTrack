@@ -227,6 +227,7 @@ exports.Prisma.StatementImportRowScalarFieldEnum = {
   matchState: 'matchState',
   suggestions: 'suggestions',
   resolvedPaymentId: 'resolvedPaymentId',
+  autoApprovedPaymentId: 'autoApprovedPaymentId',
   reconciledAt: 'reconciledAt'
 };
 

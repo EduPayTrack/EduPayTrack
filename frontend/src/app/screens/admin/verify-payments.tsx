@@ -687,6 +687,12 @@ export function VerifyPaymentsPage() {
                                   Reconciled
                                 </Badge>
                               )}
+                              {row.autoApprovedPaymentId && (
+                                <Badge variant="outline" className="text-[10px] bg-primary/10 text-primary border-primary/20">
+                                  <Sparkles className="mr-1 h-3 w-3" />
+                                  Assisted Approval
+                                </Badge>
+                              )}
                             </div>
                             <p className="mt-2 text-[13px] font-medium">
                               {row.payerName || 'Unknown payer'} {row.reference ? `• ${row.reference}` : ''}
@@ -711,16 +717,33 @@ export function VerifyPaymentsPage() {
                                     {suggestion.student?.studentCode} • {suggestion.reference} • score {suggestion.score}
                                   </p>
                                   <p className="mt-1 text-[11px] text-muted-foreground">{suggestion.reasons?.join(', ')}</p>
+                                  {suggestion.canAutoApprove && (
+                                    <p className="mt-1 text-[11px] font-medium text-primary">Eligible for assisted approval</p>
+                                  )}
                                 </div>
-                                <Button
-                                  size="sm"
-                                  className="h-8 gap-1.5"
-                                  disabled={!!row.resolvedPaymentId || actionLoading === suggestion.id}
-                                  onClick={() => reconcileFromStatement(row, suggestion)}
-                                >
-                                  {actionLoading === suggestion.id ? <RotateCw className="h-3.5 w-3.5 animate-spin" /> : <Link2 className="h-3.5 w-3.5" />}
-                                  Match Payment
-                                </Button>
+                                <div className="flex flex-wrap gap-2">
+                                  {suggestion.canAutoApprove && (
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="h-8 gap-1.5 border-primary/30 text-primary hover:bg-primary/10"
+                                      disabled={!!row.resolvedPaymentId || actionLoading === suggestion.id}
+                                      onClick={() => assistApproveFromStatement(row, suggestion)}
+                                    >
+                                      {actionLoading === suggestion.id ? <RotateCw className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                                      Assist Approve
+                                    </Button>
+                                  )}
+                                  <Button
+                                    size="sm"
+                                    className="h-8 gap-1.5"
+                                    disabled={!!row.resolvedPaymentId || actionLoading === suggestion.id}
+                                    onClick={() => reconcileFromStatement(row, suggestion)}
+                                  >
+                                    {actionLoading === suggestion.id ? <RotateCw className="h-3.5 w-3.5 animate-spin" /> : <Link2 className="h-3.5 w-3.5" />}
+                                    Match Payment
+                                  </Button>
+                                </div>
                               </div>
                             ))}
                           </div>
