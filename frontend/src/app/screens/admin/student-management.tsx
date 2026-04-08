@@ -56,6 +56,13 @@ interface Payment {
   proofUrl?: string;
   payerName?: string;
   notes?: string;
+  verificationStatus?: 'UNVERIFIED' | 'VERIFIED' | 'FLAGGED';
+  verificationNotes?: string;
+  reviewNotes?: string;
+  reviewer?: {
+    name?: string;
+    email?: string;
+  };
 }
 
 export function StudentManagementPage() {
@@ -75,10 +82,13 @@ export function StudentManagementPage() {
   }, []);
 
   useEffect(() => {
-    if (viewingStudentHistory?.id) {
-      loadStudentPayments(viewingStudentHistory.id);
+    const activeStudentId = viewingStudentHistory?.id || viewingStudentDetails?.id;
+    if (activeStudentId) {
+      loadStudentPayments(activeStudentId);
+    } else {
+      setStudentPayments([]);
     }
-  }, [viewingStudentHistory?.id]);
+  }, [viewingStudentHistory?.id, viewingStudentDetails?.id]);
 
   const loadStudents = async () => {
     setLoading(true);
@@ -127,6 +137,83 @@ export function StudentManagementPage() {
       selected: filtered.filter((student) => selectedStudentIds.includes(student.id)),
     };
   }, [filtered, selectedStudentIds]);
+
+  const studentActivityTimeline = useMemo(() => {
+    return studentPayments
+      .flatMap((payment) => {
+        const events = [
+          payment.submittedAt
+            ? {
+                id: `${payment.id}-submitted`,
+                date: payment.submittedAt,
+                title: 'Receipt submitted',
+                detail: `${formatCurrency(Number(payment.amount))} submitted via ${payment.method?.replace(/_/g, ' ') || 'payment upload'}.`,
+                tone: 'border-primary/20 bg-primary/5',
+              }
+            : null,
+          payment.paymentDate
+            ? {
+                id: `${payment.id}-paid`,
+                date: payment.paymentDate,
+                title: 'Payment date recorded',
+                detail: `${payment.receiptNumber || payment.externalReference || 'Reference unavailable'} recorded as the payment date entry.`,
+                tone: 'border-success/20 bg-success/5',
+              }
+            : null,
+          payment.verificationStatus === 'VERIFIED'
+            ? {
+                id: `${payment.id}-verified`,
+                date: payment.submittedAt || payment.paymentDate || new Date().toISOString(),
+                title: 'Receipt verified',
+                detail: payment.verificationNotes || 'Accounts confirmed the receipt details.',
+                tone: 'border-success/20 bg-success/5',
+              }
+            : null,
+          payment.verificationStatus === 'FLAGGED'
+            ? {
+                id: `${payment.id}-flagged`,
+                date: payment.submittedAt || payment.paymentDate || new Date().toISOString(),
+                title: 'Receipt flagged',
+                detail: payment.verificationNotes || 'This receipt needs closer review.',
+                tone: 'border-warning/20 bg-warning/5',
+              }
+            : null,
+          payment.status === 'APPROVED'
+            ? {
+                id: `${payment.id}-approved`,
+                date: payment.paymentDate || payment.submittedAt || new Date().toISOString(),
+                title: 'Payment approved',
+                detail: payment.reviewNotes || 'Payment cleared successfully.',
+                tone: 'border-success/20 bg-success/5',
+              }
+            : null,
+          payment.status === 'REJECTED'
+            ? {
+                id: `${payment.id}-rejected`,
+                date: payment.paymentDate || payment.submittedAt || new Date().toISOString(),
+                title: 'Payment rejected',
+                detail: payment.reviewNotes || 'Submission was rejected during review.',
+                tone: 'border-destructive/20 bg-destructive/5',
+              }
+            : null,
+        ].filter(Boolean);
+
+        return events;
+      })
+      .sort((a: any, b: any) => Number(new Date(b.date)) - Number(new Date(a.date)))
+      .slice(0, 8);
+  }, [studentPayments]);
+
+  const paymentSummary = useMemo(() => {
+    return {
+      totalPayments: studentPayments.length,
+      approvedPayments: studentPayments.filter((payment) => payment.status === 'APPROVED').length,
+      pendingPayments: studentPayments.filter((payment) => payment.status === 'PENDING').length,
+      totalPaid: studentPayments
+        .filter((payment) => payment.status === 'APPROVED')
+        .reduce((sum, payment) => sum + Number(payment.amount || 0), 0),
+    };
+  }, [studentPayments]);
 
   const handleNotifyReminders = async (studentIds?: string[], successLabel = 'Reminders sent') => {
     setSendingAlerts(true);
@@ -558,6 +645,69 @@ export function StudentManagementPage() {
                       <p className="font-medium">{viewingStudentDetails.nationality || '—'}</p>
                     </div>
                   </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardContent className="p-4 space-y-4">
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <h4 className="text-[14px] font-medium">Student Activity</h4>
+                      <p className="text-[12px] text-muted-foreground">
+                        Recent payment and review events for this student.
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                      <div className="rounded-lg border bg-muted/20 px-3 py-2">
+                        <p className="text-[10px] uppercase text-muted-foreground">Payments</p>
+                        <p className="text-[16px] font-semibold">{paymentSummary.totalPayments}</p>
+                      </div>
+                      <div className="rounded-lg border bg-success/5 px-3 py-2">
+                        <p className="text-[10px] uppercase text-muted-foreground">Approved</p>
+                        <p className="text-[16px] font-semibold text-success">{paymentSummary.approvedPayments}</p>
+                      </div>
+                      <div className="rounded-lg border bg-warning/5 px-3 py-2">
+                        <p className="text-[10px] uppercase text-muted-foreground">Pending</p>
+                        <p className="text-[16px] font-semibold text-warning">{paymentSummary.pendingPayments}</p>
+                      </div>
+                      <div className="rounded-lg border bg-primary/5 px-3 py-2">
+                        <p className="text-[10px] uppercase text-muted-foreground">Collected</p>
+                        <p className="text-[16px] font-semibold text-primary">{formatCurrency(paymentSummary.totalPaid)}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {paymentsLoading ? (
+                    <div className="space-y-3">
+                      <Skeleton className="h-16" />
+                      <Skeleton className="h-16" />
+                    </div>
+                  ) : studentActivityTimeline.length > 0 ? (
+                    <div className="space-y-3">
+                      {studentActivityTimeline.map((event: any) => (
+                        <div key={event.id} className={`rounded-xl border p-3 ${event.tone}`}>
+                          <div className="flex flex-wrap items-center justify-between gap-2">
+                            <p className="text-[13px] font-semibold">{event.title}</p>
+                            <span className="text-[11px] text-muted-foreground">{formatDate(event.date)}</span>
+                          </div>
+                          <p className="mt-1 text-[13px] text-muted-foreground">{event.detail}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="rounded-xl border border-dashed p-4 text-[13px] text-muted-foreground">
+                      No payment activity has been recorded for this student yet.
+                    </div>
+                  )}
+
+                  {Number(viewingStudentDetails.currentBalance) > 0 && (
+                    <div className="rounded-xl border border-warning/20 bg-warning/5 p-4">
+                      <p className="text-[12px] font-medium text-warning">Recommended next step</p>
+                      <p className="mt-1 text-[13px] text-muted-foreground">
+                        Send a reminder for the outstanding balance of {formatCurrency(Number(viewingStudentDetails.currentBalance))}.
+                      </p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 

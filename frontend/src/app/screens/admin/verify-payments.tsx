@@ -10,6 +10,8 @@ import {
   ShieldAlert,
   Clock3,
   ArrowDownUp,
+  Link2,
+  NotebookPen,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
@@ -47,6 +49,14 @@ import { formatCurrency } from '../../lib/utils';
 import { PaymentStatusBadge, getFullImageUrl } from '../../components/admin/common/payment-helpers';
 import { StudentPaymentHistoryDialog } from '../../components/admin/common/student-history-dialog';
 
+const RECONCILIATION_STORAGE_KEY = 'edupaytrack-reconciliation-records';
+
+interface ReconciliationRecord {
+  status: 'MATCHED' | 'UNMATCHED';
+  note: string;
+  updatedAt: string;
+}
+
 export function VerifyPaymentsPage() {
   const { user } = useAuth();
   const [payments, setPayments] = useState<any[]>([]);
@@ -54,6 +64,7 @@ export function VerifyPaymentsPage() {
   const [filter, setFilter] = useState('PENDING');
   const [verificationFilter, setVerificationFilter] = useState('ALL');
   const [riskFilter, setRiskFilter] = useState('ALL');
+  const [reconciliationFilter, setReconciliationFilter] = useState('ALL');
   const [sortBy, setSortBy] = useState('NEWEST');
   const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -61,6 +72,7 @@ export function VerifyPaymentsPage() {
   const [viewingStudentHistory, setViewingStudentHistory] = useState<any>(null);
   const [actionLoading, setActionLoading] = useState<string | undefined>(undefined);
   const [bulkActionLoading, setBulkActionLoading] = useState(false);
+  const [reconciliationRecords, setReconciliationRecords] = useState<Record<string, ReconciliationRecord>>({});
 
   const isAdminOrAccountant = user?.role === 'admin' || user?.role === 'accounts';
   const isAccounts = user?.role === 'accounts';
@@ -70,6 +82,19 @@ export function VerifyPaymentsPage() {
 
   useEffect(() => {
     loadPayments();
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    try {
+      const raw = window.localStorage.getItem(RECONCILIATION_STORAGE_KEY);
+      if (raw) {
+        setReconciliationRecords(JSON.parse(raw));
+      }
+    } catch {
+      toast.error('Could not load saved reconciliation notes');
+    }
   }, []);
 
   const loadPayments = async () => {
@@ -91,19 +116,24 @@ export function VerifyPaymentsPage() {
       (payment) =>
         payment.duplicateFlag || payment.verificationStatus === 'FLAGGED' || Number(payment.amount || 0) >= 100000
     );
+    const matched = pending.filter((payment) => reconciliationRecords[payment.id]?.status === 'MATCHED');
 
     return {
       pending: pending.length,
       highRisk: highRisk.length,
       unverified: pending.filter((payment) => payment.verificationStatus === 'UNVERIFIED').length,
       flagged: pending.filter((payment) => payment.verificationStatus === 'FLAGGED').length,
+      matched: matched.length,
     };
-  }, [payments]);
+  }, [payments, reconciliationRecords]);
 
   const filtered = useMemo(() => {
     return payments
       .map((payment) => ({
         ...payment,
+        reconciliationStatus: reconciliationRecords[payment.id]?.status || 'UNMATCHED',
+        reconciliationNote: reconciliationRecords[payment.id]?.note || '',
+        reconciliationUpdatedAt: reconciliationRecords[payment.id]?.updatedAt,
         riskScore:
           (payment.duplicateFlag ? 3 : 0) +
           (payment.verificationStatus === 'FLAGGED' ? 3 : 0) +
@@ -119,6 +149,10 @@ export function VerifyPaymentsPage() {
           (riskFilter === 'HIGH' && payment.riskScore >= 4) ||
           (riskFilter === 'MEDIUM' && payment.riskScore >= 2 && payment.riskScore < 4) ||
           (riskFilter === 'LOW' && payment.riskScore < 2);
+        const matchesReconciliation =
+          reconciliationFilter === 'ALL' ||
+          (reconciliationFilter === 'MATCHED' && payment.reconciliationStatus === 'MATCHED') ||
+          (reconciliationFilter === 'UNMATCHED' && payment.reconciliationStatus !== 'MATCHED');
         const matchesSearch =
           !search ||
           payment.student?.firstName?.toLowerCase().includes(search.toLowerCase()) ||
@@ -126,7 +160,7 @@ export function VerifyPaymentsPage() {
           payment.externalReference?.toLowerCase().includes(search.toLowerCase()) ||
           payment.receiptNumber?.toLowerCase().includes(search.toLowerCase());
 
-        return matchesFilter && matchesVerification && matchesRisk && matchesSearch;
+        return matchesFilter && matchesVerification && matchesRisk && matchesReconciliation && matchesSearch;
       })
       .sort((a, b) => {
         if (sortBy === 'HIGHEST') return Number(b.amount || 0) - Number(a.amount || 0);
@@ -134,7 +168,7 @@ export function VerifyPaymentsPage() {
         if (sortBy === 'OLDEST') return Number(new Date(a.submittedAt)) - Number(new Date(b.submittedAt));
         return Number(new Date(b.submittedAt)) - Number(new Date(a.submittedAt));
       });
-  }, [payments, filter, verificationFilter, riskFilter, search, sortBy]);
+  }, [payments, filter, verificationFilter, riskFilter, reconciliationFilter, search, sortBy, reconciliationRecords]);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]));
@@ -174,6 +208,45 @@ export function VerifyPaymentsPage() {
         {value.charAt(0) + value.slice(1).toLowerCase()}
       </Badge>
     );
+  };
+
+  const persistReconciliationRecords = (records: Record<string, ReconciliationRecord>) => {
+    setReconciliationRecords(records);
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(RECONCILIATION_STORAGE_KEY, JSON.stringify(records));
+    }
+  };
+
+  const handleReconciliation = (payment: any, status: 'MATCHED' | 'UNMATCHED') => {
+    const note = window.prompt(
+      status === 'MATCHED'
+        ? 'Add a reconciliation note (bank statement, mobile money export, teller batch, etc.)'
+        : 'Why should this stay unmatched?',
+      status === 'MATCHED'
+        ? payment.reconciliationNote || 'Matched against the statement export.'
+        : payment.reconciliationNote || 'Still waiting for the statement match.'
+    );
+
+    if (note === null) return;
+
+    const nextRecords = {
+      ...reconciliationRecords,
+      [payment.id]: {
+        status,
+        note: note.trim(),
+        updatedAt: new Date().toISOString(),
+      },
+    };
+
+    persistReconciliationRecords(nextRecords);
+    toast.success(status === 'MATCHED' ? 'Payment marked as matched' : 'Payment kept in unmatched queue');
+  };
+
+  const clearReconciliation = (paymentId: string) => {
+    const nextRecords = { ...reconciliationRecords };
+    delete nextRecords[paymentId];
+    persistReconciliationRecords(nextRecords);
+    toast.success('Reconciliation status cleared');
   };
 
   const handleVerification = async (payment: any, verificationStatus: 'VERIFIED' | 'FLAGGED') => {
@@ -282,12 +355,13 @@ export function VerifyPaymentsPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-5">
         {[
           { label: 'Pending Queue', value: queueMetrics.pending, icon: Clock3, tone: 'text-warning' },
           { label: 'High Risk', value: queueMetrics.highRisk, icon: AlertTriangle, tone: 'text-destructive' },
           { label: 'Needs Verification', value: queueMetrics.unverified, icon: ShieldAlert, tone: 'text-primary' },
           { label: 'Flagged', value: queueMetrics.flagged, icon: ShieldCheck, tone: 'text-destructive' },
+          { label: 'Statement Matched', value: queueMetrics.matched, icon: Link2, tone: 'text-success' },
         ].map((item) => (
           <Card key={item.label}>
             <CardContent className="flex items-center justify-between p-4">
@@ -342,6 +416,15 @@ export function VerifyPaymentsPage() {
           </SelectContent>
         </Select>
 
+        <Select value={reconciliationFilter} onValueChange={setReconciliationFilter}>
+          <SelectTrigger className="h-9 w-[160px]"><SelectValue placeholder="Reconciliation" /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">All Reconciliation</SelectItem>
+            <SelectItem value="MATCHED">Statement Matched</SelectItem>
+            <SelectItem value="UNMATCHED">Needs Matching</SelectItem>
+          </SelectContent>
+        </Select>
+
         <Select value={sortBy} onValueChange={setSortBy}>
           <SelectTrigger className="h-9 w-[150px]">
             <ArrowDownUp className="mr-2 h-4 w-4" />
@@ -386,6 +469,7 @@ export function VerifyPaymentsPage() {
                   <TableHead>Reference</TableHead>
                   <TableHead>Risk</TableHead>
                   <TableHead>Verification</TableHead>
+                  <TableHead>Reconciliation</TableHead>
                   <TableHead>Receipt</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -418,6 +502,23 @@ export function VerifyPaymentsPage() {
                         {getVerificationBadge(payment.verificationStatus)}
                         {payment.duplicateFlag && <div className="text-[10px] text-destructive">Duplicate reference detected</div>}
                       </TableCell>
+                      <TableCell className="space-y-1">
+                        <Badge
+                          variant="outline"
+                          className={`text-[10px] ${
+                            payment.reconciliationStatus === 'MATCHED'
+                              ? 'bg-success/10 text-success border-success/20'
+                              : 'bg-muted text-muted-foreground'
+                          }`}
+                        >
+                          {payment.reconciliationStatus === 'MATCHED' ? 'Matched' : 'Needs Match'}
+                        </Badge>
+                        {payment.reconciliationNote && (
+                          <div className="line-clamp-2 max-w-[190px] text-[10px] text-muted-foreground">
+                            {payment.reconciliationNote}
+                          </div>
+                        )}
+                      </TableCell>
                       <TableCell>
                         {payment.proofUrl ? (
                           <Button variant="ghost" size="sm" className="h-8 gap-1.5 text-primary" onClick={() => setViewingReceipt(payment)}>
@@ -439,6 +540,14 @@ export function VerifyPaymentsPage() {
                                 <Button size="sm" variant="outline" className="h-8 border-warning/30 text-warning hover:bg-warning/10" onClick={() => handleVerification(payment, 'FLAGGED')} disabled={!!actionLoading}>
                                   Flag
                                 </Button>
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 border-primary/30 text-primary hover:bg-primary/10"
+                                  onClick={() => handleReconciliation(payment, payment.reconciliationStatus === 'MATCHED' ? 'UNMATCHED' : 'MATCHED')}
+                                >
+                                  {payment.reconciliationStatus === 'MATCHED' ? 'Unmatch' : 'Match'}
+                                </Button>
                               </>
                             )}
                             <Button size="sm" variant="outline" className="h-8 border-success/30 text-success hover:bg-success/10" onClick={() => handleAction(payment, 'APPROVED')} disabled={!!actionLoading}>
@@ -457,7 +566,7 @@ export function VerifyPaymentsPage() {
                 })}
                 {filtered.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={9} className="py-12 text-center text-muted-foreground">No payments found</TableCell>
+                    <TableCell colSpan={10} className="py-12 text-center text-muted-foreground">No payments found</TableCell>
                   </TableRow>
                 )}
               </TableBody>
@@ -506,7 +615,26 @@ export function VerifyPaymentsPage() {
                 {getRiskConfig(viewingReceipt).label}
               </Badge>
             </div>
+            <div>
+              <p className="mb-1 text-[10px] uppercase text-muted-foreground">Reconciliation</p>
+              <Badge
+                variant="outline"
+                className={`text-[10px] ${
+                  viewingReceipt?.reconciliationStatus === 'MATCHED'
+                    ? 'bg-success/10 text-success border-success/20'
+                    : 'bg-muted text-muted-foreground'
+                }`}
+              >
+                {viewingReceipt?.reconciliationStatus === 'MATCHED' ? 'Statement Matched' : 'Needs Matching'}
+              </Badge>
+            </div>
           </div>
+          {viewingReceipt?.reconciliationNote && (
+            <div className="rounded-lg border border-border bg-muted/20 p-3 text-sm">
+              <p className="text-[10px] uppercase text-muted-foreground">Reconciliation Note</p>
+              <p className="mt-1">{viewingReceipt.reconciliationNote}</p>
+            </div>
+          )}
           {(viewingReceipt?.verificationNotes || viewingReceipt?.reviewNotes) && (
             <div className="space-y-2 rounded-lg border border-border bg-muted/30 p-3 text-sm">
               {viewingReceipt?.verificationNotes && (
@@ -525,6 +653,32 @@ export function VerifyPaymentsPage() {
           )}
           <DialogFooter className="gap-2">
             <Button variant="outline" onClick={() => setViewingReceipt(null)}>Close</Button>
+            {isAccounts && viewingReceipt && (
+              <>
+                <Button
+                  variant="outline"
+                  className="gap-2"
+                  onClick={() => {
+                    handleReconciliation(viewingReceipt, viewingReceipt.reconciliationStatus === 'MATCHED' ? 'UNMATCHED' : 'MATCHED');
+                    setViewingReceipt(null);
+                  }}
+                >
+                  <NotebookPen className="h-4 w-4" />
+                  {viewingReceipt.reconciliationStatus === 'MATCHED' ? 'Keep Unmatched' : 'Mark Matched'}
+                </Button>
+                {viewingReceipt.reconciliationStatus && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      clearReconciliation(viewingReceipt.id);
+                      setViewingReceipt(null);
+                    }}
+                  >
+                    Clear Match
+                  </Button>
+                )}
+              </>
+            )}
             {viewingReceipt?.status === 'PENDING' && isAdminOrAccountant && (
               <>
                 {isAccounts && (
