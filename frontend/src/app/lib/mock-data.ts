@@ -59,7 +59,7 @@ export type NotificationItem = {
   description: string;
   time: string;
   group: 'Today' | 'This Week' | 'Earlier';
-  type: 'approved' | 'rejected' | 'deadline' | 'system';
+  type: string;
   read: boolean;
 };
 

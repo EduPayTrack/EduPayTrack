@@ -91,8 +91,8 @@ export function VerifyPaymentsPage() {
   const handleAction = async (id: string, status: 'APPROVED' | 'REJECTED') => {
     setActionLoading(id);
     try {
-      await apiFetch(`/admin/payments/${id}/verify`, {
-        method: 'POST',
+      await apiFetch(`/admin/payments/${id}/review`, {
+        method: 'PATCH',
         body: JSON.stringify({ status }),
       });
       toast.success(`Payment ${status.toLowerCase()}`);
@@ -109,8 +109,8 @@ export function VerifyPaymentsPage() {
     setBulkActionLoading(true);
     try {
       await Promise.all(selectedIds.map(id => 
-        apiFetch(`/admin/payments/${id}/verify`, {
-          method: 'POST',
+        apiFetch(`/admin/payments/${id}/review`, {
+          method: 'PATCH',
           body: JSON.stringify({ status }),
         })
       ));

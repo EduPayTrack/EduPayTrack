@@ -12,7 +12,7 @@ import {
     deleteFeeStructure,
 } from '../services/fee.service';
 import { listPaymentsForReview, reviewPayment, verifyPayment, getPaymentDetailsById } from '../services/payment.service';
-import { createStaffUser, listSystemUsers, resetUserPassword, suspendUser, deactivateUser, deleteUser, activateUser } from '../services/user.service';
+import { createStaffUser, listSystemUsers, resetUserPassword, suspendUser, deactivateUser, deleteUser, activateUser, updateSystemUser } from '../services/user.service';
 import { getRegistry, updateRegistry } from '../services/registry.service';
 import { readAuditLogs, deleteAuditLogs } from '../utils/audit-log';
 
@@ -203,6 +203,15 @@ adminRouter.post(
     asyncHandler(async (req, res) => {
         const result = await resetUserPassword(req.params.userId, req.body);
         res.status(200).json(result);
+    })
+);
+
+adminRouter.patch(
+    '/users/:userId',
+    requireRole(UserRole.ADMIN),
+    asyncHandler(async (req, res) => {
+        const user = await updateSystemUser(req.params.userId, req.body);
+        res.status(200).json(user);
     })
 );
 

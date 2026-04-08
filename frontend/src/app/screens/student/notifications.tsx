@@ -87,7 +87,7 @@ const groupNotificationsByDate = (notifications: any[]) => {
 };
 
 export function StudentNotificationsPage() {
-  const { notifications, markAllRead } = useAuth();
+  const { notifications, markAllRead, refreshNotifications } = useAuth();
   const [activeTab, setActiveTab] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -137,7 +137,8 @@ export function StudentNotificationsPage() {
 
   const handleMarkOneRead = async (id: string) => {
     try {
-      await apiFetch(`/notifications/${id}/read`, { method: 'POST' });
+      await apiFetch(`/notifications/${id}/read`, { method: 'PATCH' });
+      await refreshNotifications();
       toast.success('Marked as read');
     } catch {
       toast.error('Failed to mark as read');
@@ -148,6 +149,7 @@ export function StudentNotificationsPage() {
     if (!window.confirm('Delete this notification?')) return;
     try {
       await apiFetch(`/notifications/${id}`, { method: 'DELETE' });
+      await refreshNotifications();
       toast.success('Notification deleted');
     } catch {
       toast.error('Failed to delete notification');
@@ -158,6 +160,7 @@ export function StudentNotificationsPage() {
     if (!window.confirm('Delete all notifications? This cannot be undone.')) return;
     try {
       await apiFetch('/notifications', { method: 'DELETE' });
+      await refreshNotifications();
       toast.success('All notifications cleared');
     } catch {
       toast.error('Failed to clear notifications');

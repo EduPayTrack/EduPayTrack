@@ -9,7 +9,16 @@ import { writeAuditLog } from '../utils/audit-log';
 const createStaffUserSchema = z.object({
     email: z.string().email(),
     password: z.string().min(8),
+    firstName: z.string().trim().min(1).optional(),
+    lastName: z.string().trim().min(1).optional(),
     role: z.enum([UserRole.ADMIN, UserRole.ACCOUNTS]),
+});
+
+const updateSystemUserSchema = z.object({
+    email: z.string().email(),
+    firstName: z.string().trim().optional(),
+    lastName: z.string().trim().optional(),
+    role: z.nativeEnum(UserRole),
 });
 
 const resetUserPasswordSchema = z.object({
@@ -35,6 +44,8 @@ export const createStaffUser = async (input: unknown) => {
         data: {
             email: data.email,
             passwordHash,
+            firstName: data.firstName,
+            lastName: data.lastName,
             role: data.role,
         },
     });
@@ -56,6 +67,8 @@ export const createStaffUser = async (input: unknown) => {
     return {
         id: user.id,
         email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
         role: user.role,
         createdAt: user.createdAt,
     };
@@ -66,9 +79,12 @@ export const listSystemUsers = async () => {
         select: {
             id: true,
             email: true,
+            firstName: true,
+            lastName: true,
             role: true,
             status: true,
             createdAt: true,
+            updatedAt: true,
             student: {
                 select: {
                     id: true,
@@ -82,6 +98,64 @@ export const listSystemUsers = async () => {
             createdAt: 'desc',
         },
     });
+};
+
+export const updateSystemUser = async (userId: string, input: unknown) => {
+    const data = updateSystemUserSchema.parse(input);
+
+    const existingUser = await prisma.user.findUnique({
+        where: { id: userId },
+    });
+
+    if (!existingUser) {
+        throw new AppError('User not found', 404);
+    }
+
+    const emailOwner = await prisma.user.findFirst({
+        where: {
+            email: data.email,
+            NOT: { id: userId },
+        },
+        select: { id: true },
+    });
+
+    if (emailOwner) {
+        throw new AppError('A user with that email already exists', 409);
+    }
+
+    const user = await prisma.user.update({
+        where: { id: userId },
+        data: {
+            email: data.email,
+            firstName: data.firstName || null,
+            lastName: data.lastName || null,
+            role: data.role,
+        },
+        select: {
+            id: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            role: true,
+            status: true,
+            createdAt: true,
+            updatedAt: true,
+        },
+    });
+
+    writeAuditLog({
+        action: 'user.updated',
+        targetType: 'user',
+        targetId: user.id,
+        details: {
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
+        },
+    });
+
+    return user;
 };
 
 export const resetUserPassword = async (userId: string, input: unknown) => {

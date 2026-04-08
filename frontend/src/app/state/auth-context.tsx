@@ -104,7 +104,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
           id: n.id,
           title: n.title,
           description: n.message,
-          type: n.type.toLowerCase(),
+          type: (n.type || 'system').toLowerCase(),
           time: new Intl.DateTimeFormat('en-MW', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(n.createdAt)),
           read: n.read,
           group: 'Today',

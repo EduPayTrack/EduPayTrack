@@ -11,7 +11,6 @@ import {
   Clock,
   MoreHorizontal,
   CheckCircle,
-  XCircle,
   UserX,
   UserCheck
 } from 'lucide-react';
@@ -58,6 +57,8 @@ import { formatDate } from '../../lib/utils';
 
 interface User {
   id: string;
+  firstName?: string;
+  lastName?: string;
   name: string;
   email: string;
   role: 'ADMIN' | 'ACCOUNTS' | 'STUDENT';
@@ -95,7 +96,7 @@ export function UserManagementPage() {
   // Form fields
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [role, setRole] = useState<'ADMIN' | 'ACCOUNTS' | 'STUDENT'>('STUDENT');
+  const [role, setRole] = useState<'ADMIN' | 'ACCOUNTS' | 'STUDENT'>('ACCOUNTS');
   const [password, setPassword] = useState('');
   const [saving, setSaving] = useState(false);
 
@@ -109,7 +110,12 @@ export function UserManagementPage() {
     setLoading(true);
     try {
       const result = await apiFetch<any[]>('/admin/users');
-      setUsers(result || []);
+      setUsers((result || []).map((u) => ({
+        ...u,
+        name:
+          `${u.firstName || u.student?.firstName || ''} ${u.lastName || u.student?.lastName || ''}`.trim() ||
+          u.email,
+      })));
     } catch {
       toast.error('Failed to load users');
     } finally {
@@ -141,7 +147,13 @@ export function UserManagementPage() {
     try {
       await apiFetch('/admin/users', {
         method: 'POST',
-        body: JSON.stringify({ name, email, role, password }),
+        body: JSON.stringify({
+          firstName: name.trim().split(/\s+/)[0] || '',
+          lastName: name.trim().split(/\s+/).slice(1).join(' '),
+          email,
+          role,
+          password,
+        }),
       });
       toast.success('User created');
       setShowCreateModal(false);
@@ -163,7 +175,12 @@ export function UserManagementPage() {
     try {
       await apiFetch(`/admin/users/${editingUser.id}`, {
         method: 'PATCH',
-        body: JSON.stringify({ email, role }),
+        body: JSON.stringify({
+          firstName: editingUser.firstName || editingUser.name.split(' ')[0] || '',
+          lastName: editingUser.lastName || editingUser.name.split(' ').slice(1).join(' '),
+          email,
+          role,
+        }),
       });
       toast.success('User updated');
       setShowEditModal(false);
@@ -251,7 +268,7 @@ export function UserManagementPage() {
     try {
       await apiFetch(`/admin/users/${id}/reset-password`, {
         method: 'POST',
-        body: JSON.stringify({ password: newPass }),
+        body: JSON.stringify({ newPassword: newPass }),
       });
       toast.success('Password reset successfully');
     } catch (err: any) {

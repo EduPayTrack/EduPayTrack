@@ -30,6 +30,7 @@ import {
   AreaChart,
   Area
 } from 'recharts';
+import type { ValueType, NameType } from 'recharts/types/component/DefaultTooltipContent';
 
 import { apiFetch } from '../../lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
@@ -54,6 +55,21 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../../components/ui
 import { formatCurrency, formatDate } from '../../../lib/utils';
 
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4'];
+
+const toCurrencyValue = (value: ValueType | undefined) => {
+  const numeric = typeof value === 'number' ? value : Number(value || 0);
+  return formatCurrency(Number.isFinite(numeric) ? numeric : 0);
+};
+
+const tooltipCurrencyFormatter = (value: ValueType | undefined) => toCurrencyValue(value);
+
+const pieTooltipFormatter = (value: ValueType | undefined, name: NameType | undefined, item: any) => {
+  const count = typeof value === 'number' ? value : Number(value || 0);
+  return [
+    `${count} payments (${formatCurrency(Number(item?.payload?.amount || 0))})`,
+    String(name || ''),
+  ] as [string, string];
+};
 
 export function ReportsPage() {
   const [payments, setPayments] = useState<any[]>([]);
@@ -177,7 +193,9 @@ export function ReportsPage() {
       p.status,
       p.method?.replace(/_/g, ' ') || 'N/A',
       p.externalReference || p.receiptNumber || 'N/A',
-      p.reviewedBy?.name || 'N/A'
+      p.reviewer
+        ? `${p.reviewer.firstName || ''} ${p.reviewer.lastName || ''}`.trim() || p.reviewer.email || 'N/A'
+        : 'N/A'
     ]);
 
     const csv = [headers.join(','), ...rows.map(r => r.map(cell => `"${cell}"`).join(','))].join('\n');
@@ -364,12 +382,7 @@ export function ReportsPage() {
                           <Cell key={`cell-${index}`} fill={entry.color} />
                         ))}
                       </Pie>
-                      <Tooltip
-                        formatter={(value: number, name: string, props: any) => [
-                          `${value} payments (${formatCurrency(props.payload.amount)})`,
-                          name
-                        ]}
-                      />
+                      <Tooltip formatter={pieTooltipFormatter} />
                       <Legend />
                     </PieChart>
                   </ResponsiveContainer>
@@ -392,7 +405,7 @@ export function ReportsPage() {
                       <CartesianGrid strokeDasharray="3 3" horizontal={false} />
                       <XAxis type="number" tickFormatter={(v) => `K${(v / 1000).toFixed(0)}`} />
                       <YAxis type="category" dataKey="name" width={100} tick={{ fontSize: 12 }} />
-                      <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                      <Tooltip formatter={tooltipCurrencyFormatter} />
                       <Bar dataKey="value" fill="#3b82f6" radius={[0, 4, 4, 0]}>
                         {methodData.map((_, index) => (
                           <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -426,7 +439,7 @@ export function ReportsPage() {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="day" tick={{ fontSize: 12 }} />
                     <YAxis tickFormatter={(v) => `K${(v / 1000).toFixed(0)}`} />
-                    <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                    <Tooltip formatter={tooltipCurrencyFormatter} />
                     <Area
                       type="monotone"
                       dataKey="amount"
@@ -458,7 +471,7 @@ export function ReportsPage() {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="month" tick={{ fontSize: 12 }} />
                     <YAxis tickFormatter={(v) => `K${(v / 1000).toFixed(0)}`} />
-                    <Tooltip formatter={(value: number) => formatCurrency(value)} />
+                    <Tooltip formatter={tooltipCurrencyFormatter} />
                     <Legend />
                     <Line type="monotone" dataKey="approved" name="Approved" stroke="#10b981" strokeWidth={3} dot={{ r: 4 }} />
                     <Line type="monotone" dataKey="pending" name="Pending" stroke="#f59e0b" strokeWidth={2} strokeDasharray="5 5" />
