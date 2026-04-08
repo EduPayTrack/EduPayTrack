@@ -269,7 +269,7 @@ export const studentNav: NavItem[] = [
   { label: 'Dashboard', href: '/student/dashboard', icon: LayoutDashboard },
   { label: 'Upload Payment', href: '/student/upload-payment', icon: Upload },
   { label: 'Payment History', href: '/student/payment-history', icon: CreditCard },
-  { label: 'Notifications', href: '/notifications', icon: Bell },
+  { label: 'Notifications', href: '/student/notifications', icon: Bell },
   { label: 'Settings', href: '/settings', icon: Settings },
 ];
 
@@ -281,7 +281,7 @@ export const adminNav: NavItem[] = [
   { label: 'Users', href: '/admin/users', icon: UserCog },
   { label: 'Reports', href: '/admin/reports', icon: FileBarChart2 },
   { label: 'Audit Logs', href: '/admin/audit-logs', icon: Shield },
-  { label: 'Notifications', href: '/notifications', icon: Bell },
+  { label: 'Notifications', href: '/admin/notifications', icon: Bell },
   { label: 'Settings', href: '/settings', icon: Settings },
 ];
 

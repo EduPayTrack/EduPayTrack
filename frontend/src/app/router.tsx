@@ -5,17 +5,18 @@ import { Loader2 } from 'lucide-react';
 import { AppLayout } from './components/layout';
 import {
   AdminDashboardPage,
+  AdminNotificationsPage,
   AuditLogsPage,
   AuthLayout,
   FeeStructurePage,
   LoginPage,
-  NotificationsPage,
   PaymentHistoryPage,
   RegisterPage,
   ReportsPage,
   SettingsPage,
   StudentDashboardPage,
   StudentManagementPage,
+  StudentNotificationsPage,
   UploadPaymentPage,
   UserManagementPage,
   VerifyPaymentsPage,
@@ -121,7 +122,14 @@ export function AppRouter() {
           path="/admin/audit-logs"
           element={<RequireRoles allowedRoles={['admin']}><AuditLogsPage /></RequireRoles>}
         />
-        <Route path="/notifications" element={<NotificationsPage />} />
+        <Route
+          path="/admin/notifications"
+          element={<RequireRoles allowedRoles={['admin', 'accounts']}><AdminNotificationsPage /></RequireRoles>}
+        />
+        <Route
+          path="/student/notifications"
+          element={<RequireRoles allowedRoles={['student']}><StudentNotificationsPage /></RequireRoles>}
+        />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>
 
