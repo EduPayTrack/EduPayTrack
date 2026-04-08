@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   AlertTriangle,
   Download,
   Link2,
+  ExternalLink,
   RotateCw,
   Search,
   Sparkles,
@@ -27,9 +29,11 @@ import {
 import { formatCurrency, formatDate } from '../../../lib/utils';
 
 export function ReconciliationExceptionsPage() {
+  const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
 
   const loadExceptions = async () => {
     setLoading(true);
@@ -101,6 +105,50 @@ export function ReconciliationExceptionsPage() {
     anchor.remove();
     URL.revokeObjectURL(url);
     toast.success('Exception queue exported');
+  };
+
+  const resolveWithTopSuggestion = async (item: any) => {
+    const topSuggestion = item.topSuggestion;
+    if (!topSuggestion) return;
+
+    setActionLoading(item.id);
+    try {
+      await apiFetch(`/admin/reconciliation/imports/${item.importId}/rows/${item.id}/resolve`, {
+        method: 'PATCH',
+        body: JSON.stringify({ paymentId: topSuggestion.id }),
+      });
+      toast.success(`Matched ${topSuggestion.student?.firstName} ${topSuggestion.student?.lastName}`);
+      await loadExceptions();
+    } catch (err: any) {
+      toast.error(err.message || 'Could not resolve exception');
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const assistApproveTopSuggestion = async (item: any) => {
+    const topSuggestion = item.topSuggestion;
+    if (!topSuggestion) return;
+
+    const confirmed = window.confirm(
+      `Approve ${topSuggestion.student?.firstName} ${topSuggestion.student?.lastName}'s payment from the exception queue?\n\nThis will reconcile, verify, and approve the payment in one step.`
+    );
+
+    if (!confirmed) return;
+
+    setActionLoading(item.id);
+    try {
+      await apiFetch(`/admin/reconciliation/imports/${item.importId}/rows/${item.id}/assist-approve`, {
+        method: 'PATCH',
+        body: JSON.stringify({ paymentId: topSuggestion.id }),
+      });
+      toast.success(`Approved ${topSuggestion.student?.firstName} ${topSuggestion.student?.lastName}`);
+      await loadExceptions();
+    } catch (err: any) {
+      toast.error(err.message || 'Could not assist approve payment');
+    } finally {
+      setActionLoading(null);
+    }
   };
 
   const renderExceptionBadge = (type: string) => {
@@ -200,6 +248,7 @@ export function ReconciliationExceptionsPage() {
                       <TableHead>Reason</TableHead>
                       <TableHead>Top Suggestion</TableHead>
                       <TableHead>Signals</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -258,11 +307,47 @@ export function ReconciliationExceptionsPage() {
                             )}
                           </div>
                         </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex flex-wrap justify-end gap-2">
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-8 gap-1.5"
+                              onClick={() => navigate(`/admin/reconciliation-history?importId=${item.importId}`)}
+                            >
+                              <ExternalLink className="h-3.5 w-3.5" />
+                              Open Import
+                            </Button>
+                            {item.topSuggestion && item.exceptionType !== 'NO_MATCH' && (
+                              <Button
+                                size="sm"
+                                className="h-8 gap-1.5"
+                                disabled={actionLoading === item.id}
+                                onClick={() => resolveWithTopSuggestion(item)}
+                              >
+                                {actionLoading === item.id ? <RotateCw className="h-3.5 w-3.5 animate-spin" /> : <Link2 className="h-3.5 w-3.5" />}
+                                Match Top
+                              </Button>
+                            )}
+                            {item.topSuggestion?.canAutoApprove && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 gap-1.5 border-primary/30 text-primary hover:bg-primary/10"
+                                disabled={actionLoading === item.id}
+                                onClick={() => assistApproveTopSuggestion(item)}
+                              >
+                                {actionLoading === item.id ? <RotateCw className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                                Assist Approve
+                              </Button>
+                            )}
+                          </div>
+                        </TableCell>
                       </TableRow>
                     ))}
                     {filteredItems.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={6} className="py-10 text-center text-muted-foreground">
+                        <TableCell colSpan={7} className="py-10 text-center text-muted-foreground">
                           No exception rows matched your search.
                         </TableCell>
                       </TableRow>

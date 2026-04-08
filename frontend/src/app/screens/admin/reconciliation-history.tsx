@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import {
   Download,
   FileSpreadsheet,
@@ -27,6 +28,7 @@ import {
 import { formatCurrency, formatDate } from '../../../lib/utils';
 
 export function ReconciliationHistoryPage() {
+  const [searchParams] = useSearchParams();
   const [imports, setImports] = useState<any[]>([]);
   const [selectedImport, setSelectedImport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +40,10 @@ export function ReconciliationHistoryPage() {
     try {
       const result = await apiFetch<any[]>('/admin/reconciliation/imports');
       setImports(result || []);
-      if (!selectedImport && result?.[0]?.id) {
+      const requestedImportId = searchParams.get('importId');
+      if (requestedImportId && result?.some((item) => item.id === requestedImportId)) {
+        void loadImportDetail(requestedImportId);
+      } else if (!selectedImport && result?.[0]?.id) {
         void loadImportDetail(result[0].id);
       }
     } catch {
@@ -62,7 +67,7 @@ export function ReconciliationHistoryPage() {
 
   useEffect(() => {
     void loadImports();
-  }, []);
+  }, [searchParams]);
 
   const filteredRows = useMemo(() => {
     if (!selectedImport?.rows) return [];
