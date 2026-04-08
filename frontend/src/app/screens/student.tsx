@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import { Upload, TrendingDown, CheckCircle, DollarSign, Loader2, FileImage, X, AlertCircle, Download, Clock3, ShieldCheck, ShieldAlert } from 'lucide-react';
+import { Upload, TrendingDown, CheckCircle, DollarSign, Loader2, FileImage, X, AlertCircle, Download, Clock3, ShieldCheck, ShieldAlert, BadgeCheck } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useAuth } from '../state/auth-context';
@@ -76,6 +76,51 @@ export function StudentDashboardPage() {
   const remaining = data.summary.currentBalance;
   const totalFees = totalPaid + remaining;
   const paidPercent = totalFees > 0 ? Math.round((totalPaid / totalFees) * 100) : 0;
+  const isCleared = Number(remaining) <= 0;
+
+  const downloadClearanceLetter = () => {
+    if (!isCleared) {
+      toast.error('Clearance letter is only available when your balance is fully cleared.');
+      return;
+    }
+
+    const printWindow = window.open('', '_blank', 'width=900,height=700');
+    if (!printWindow) {
+      toast.error('Unable to open clearance letter window');
+      return;
+    }
+
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Fee Clearance Letter</title>
+          <style>
+            body { font-family: Arial, sans-serif; padding: 40px; color: #111; line-height: 1.6; }
+            h1, h2, p { margin: 0; }
+            .header { margin-bottom: 28px; }
+            .box { border: 1px solid #ddd; border-radius: 10px; padding: 20px; margin: 24px 0; }
+          </style>
+        </head>
+        <body>
+          <div class="header">
+            <h1>EduPayTrack Fee Clearance Letter</h1>
+            <p>Issued on ${new Date().toLocaleDateString()}</p>
+          </div>
+          <p>This letter confirms that <strong>${user?.name || 'Student'}</strong> (${data.student?.studentCode || user?.studentId || 'N/A'}) has fully settled the required school fees.</p>
+          <div class="box">
+            <p><strong>Program:</strong> ${data.student?.program || 'N/A'}</p>
+            <p><strong>Academic Year:</strong> ${data.student?.academicYear || 'N/A'}</p>
+            <p><strong>Total Paid:</strong> ${formatCurrency(Number(data.summary?.totalPaid || 0))}</p>
+            <p><strong>Outstanding Balance:</strong> ${formatCurrency(Number(data.summary?.currentBalance || 0))}</p>
+          </div>
+          <p>The student is financially cleared as of the issue date shown above.</p>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+    printWindow.focus();
+    printWindow.print();
+  };
 
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-[1000px] animate-fade-in relative">
@@ -129,6 +174,33 @@ export function StudentDashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      <Card className={isCleared ? 'border-success/30 bg-success/5' : 'border-warning/30 bg-warning/5'}>
+        <CardContent className="flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-start gap-3">
+            <div className={`mt-0.5 rounded-full p-2 ${isCleared ? 'bg-success/15 text-success' : 'bg-warning/15 text-warning'}`}>
+              {isCleared ? <BadgeCheck className="h-5 w-5" /> : <Clock3 className="h-5 w-5" />}
+            </div>
+            <div>
+              <h2 className="text-[16px] font-semibold">{isCleared ? 'Financial clearance available' : 'Clearance pending'}</h2>
+              <p className="mt-1 text-[13px] text-muted-foreground">
+                {isCleared
+                  ? 'Your balance is fully cleared. You can download a printable fee clearance letter now.'
+                  : `You still have ${formatCurrency(Number(remaining))} outstanding. Settle the balance to unlock your clearance letter.`}
+              </p>
+            </div>
+          </div>
+          <Button
+            variant={isCleared ? 'default' : 'outline'}
+            className="gap-2"
+            disabled={!isCleared}
+            onClick={downloadClearanceLetter}
+          >
+            <Download className="h-4 w-4" />
+            Download Clearance Letter
+          </Button>
+        </CardContent>
+      </Card>
 
       {/* Progress bar */}
       <Card>

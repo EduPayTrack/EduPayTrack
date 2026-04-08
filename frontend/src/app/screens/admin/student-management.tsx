@@ -4,6 +4,8 @@ import {
   BellRing, 
   Loader2, 
   MoreHorizontal, 
+  CheckSquare,
+  Square,
   History, 
   Mail, 
   Eye, 
@@ -61,6 +63,7 @@ export function StudentManagementPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [sendingAlerts, setSendingAlerts] = useState(false);
+  const [selectedStudentIds, setSelectedStudentIds] = useState<string[]>([]);
   const [viewingStudentHistory, setViewingStudentHistory] = useState<any>(null);
   const [viewingStudentDetails, setViewingStudentDetails] = useState<any>(null);
   const [studentPayments, setStudentPayments] = useState<Payment[]>([]);
@@ -112,19 +115,47 @@ export function StudentManagementPage() {
     });
   }, [students, search]);
 
-  const handleNotifyReminders = async () => {
+  const campaignMetrics = useMemo(() => {
+    const unpaid = filtered.filter((student) => Number(student.currentBalance) > 0);
+    const partial = unpaid.filter((student) => Number(student.currentBalance) <= 50000);
+    const highBalance = unpaid.filter((student) => Number(student.currentBalance) > 50000);
+
+    return {
+      unpaid,
+      partial,
+      highBalance,
+      selected: filtered.filter((student) => selectedStudentIds.includes(student.id)),
+    };
+  }, [filtered, selectedStudentIds]);
+
+  const handleNotifyReminders = async (studentIds?: string[], successLabel = 'Reminders sent') => {
     setSendingAlerts(true);
     try {
       const result = await apiFetch<any>('/notifications/admin-send', {
         method: 'POST',
-        body: JSON.stringify({}),
+        body: JSON.stringify(studentIds?.length ? { studentIds } : {}),
       });
-      toast.success(result.message || 'Reminders sent');
+      toast.success(result.message || successLabel);
     } catch (err: any) {
       toast.error(err.message || 'Failed to send reminders');
     } finally {
       setSendingAlerts(false);
     }
+  };
+
+  const toggleStudentSelection = (studentId: string) => {
+    setSelectedStudentIds((current) =>
+      current.includes(studentId) ? current.filter((id) => id !== studentId) : [...current, studentId]
+    );
+  };
+
+  const toggleSelectAllFiltered = () => {
+    if (filtered.length > 0 && selectedStudentIds.length === filtered.length) {
+      setSelectedStudentIds([]);
+      return;
+    }
+
+    setSelectedStudentIds(filtered.map((student) => student.id));
   };
 
   const handleEmailRemainder = (s: any) => {
@@ -162,11 +193,85 @@ export function StudentManagementPage() {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Search students..." className="pl-9 h-9" value={search} onChange={(e: any) => setSearch(e.target.value)} />
           </div>
-          <Button size="sm" variant="outline" className="h-9 gap-1.5" onClick={handleNotifyReminders} disabled={sendingAlerts}>
+          <Button size="sm" variant="outline" className="h-9 gap-1.5" onClick={() => handleNotifyReminders()} disabled={sendingAlerts}>
             {sendingAlerts ? <Loader2 className="h-4 w-4 animate-spin" /> : <BellRing className="h-4 w-4" />}
             Notify Unpaid
           </Button>
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-4">
+        <Card>
+          <CardContent className="p-4 space-y-3">
+            <div>
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Filtered Unpaid</p>
+              <p className="mt-1 text-[24px] font-semibold text-warning">{campaignMetrics.unpaid.length}</p>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full h-8"
+              disabled={sendingAlerts || campaignMetrics.unpaid.length === 0}
+              onClick={() => handleNotifyReminders(campaignMetrics.unpaid.map((student) => student.id), 'Sent reminders to filtered unpaid students')}
+            >
+              Send reminder
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 space-y-3">
+            <div>
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">High Balance</p>
+              <p className="mt-1 text-[24px] font-semibold text-destructive">{campaignMetrics.highBalance.length}</p>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full h-8"
+              disabled={sendingAlerts || campaignMetrics.highBalance.length === 0}
+              onClick={() => handleNotifyReminders(campaignMetrics.highBalance.map((student) => student.id), 'Sent reminders to high-balance students')}
+            >
+              Escalate reminder
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 space-y-3">
+            <div>
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Partial Balance</p>
+              <p className="mt-1 text-[24px] font-semibold text-primary">{campaignMetrics.partial.length}</p>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full h-8"
+              disabled={sendingAlerts || campaignMetrics.partial.length === 0}
+              onClick={() => handleNotifyReminders(campaignMetrics.partial.map((student) => student.id), 'Sent reminders to partial-balance students')}
+            >
+              Gentle reminder
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardContent className="p-4 space-y-3">
+            <div>
+              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Selected Students</p>
+              <p className="mt-1 text-[24px] font-semibold">{campaignMetrics.selected.length}</p>
+            </div>
+            <Button
+              size="sm"
+              variant="outline"
+              className="w-full h-8"
+              disabled={sendingAlerts || campaignMetrics.selected.length === 0}
+              onClick={() => handleNotifyReminders(campaignMetrics.selected.map((student) => student.id), 'Sent reminders to selected students')}
+            >
+              Target selected
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
       <Card>
@@ -177,6 +282,11 @@ export function StudentManagementPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-10">
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={toggleSelectAllFiltered}>
+                      {filtered.length > 0 && selectedStudentIds.length === filtered.length ? <CheckSquare className="h-4 w-4" /> : <Square className="h-4 w-4" />}
+                    </Button>
+                  </TableHead>
                   <TableHead>Student ID</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Program</TableHead>
@@ -189,6 +299,11 @@ export function StudentManagementPage() {
               <TableBody>
                 {filtered.map(s => (
                   <TableRow key={s.id}>
+                    <TableCell>
+                      <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => toggleStudentSelection(s.id)}>
+                        {selectedStudentIds.includes(s.id) ? <CheckSquare className="h-4 w-4 text-primary" /> : <Square className="h-4 w-4" />}
+                      </Button>
+                    </TableCell>
                     <TableCell className="text-[13px] font-mono">{s.studentCode}</TableCell>
                     <TableCell className="text-[13px] font-medium">
                       {s.firstName} {s.lastName}
