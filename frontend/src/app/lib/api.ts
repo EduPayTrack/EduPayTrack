@@ -3,6 +3,8 @@ const configuredApiBaseUrl = import.meta.env.VITE_API_BASE_URL as string | undef
 export const API_BASE_URL = (configuredApiBaseUrl || DEFAULT_API_BASE_URL).replace(/\/+$/, '');
 export const API_ORIGIN = new URL(API_BASE_URL).origin;
 const TOKEN_KEY = 'edu-pay-track-token';
+const RETRYABLE_STATUS_CODES = new Set([408, 429, 500, 502, 503, 504]);
+const MAX_RETRIES = 2;
 
 /**
  * Retrieve the stored JWT token.
@@ -40,6 +42,22 @@ export class ApiError extends Error {
   }
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function shouldRetry(method: string, error: unknown, attempt: number): boolean {
+  if (method !== 'GET' || attempt >= MAX_RETRIES) {
+    return false;
+  }
+
+  if (error instanceof ApiError) {
+    return RETRYABLE_STATUS_CODES.has(error.status);
+  }
+
+  return true;
+}
+
 /**
  * Low-level API client.
  * - Automatically attaches JWT Bearer token
@@ -51,6 +69,7 @@ export async function apiFetch<T>(
   options: RequestInit = {},
   timeoutMs = 30000
 ): Promise<T> {
+  const method = (options.method || 'GET').toUpperCase();
   const token = getToken();
   const isFormData = options.body instanceof FormData;
 
@@ -64,43 +83,51 @@ export async function apiFetch<T>(
     headers['Authorization'] = `Bearer ${token}`;
   }
 
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt += 1) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-  try {
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      ...options,
-      headers,
-      signal: controller.signal,
-    });
+    try {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+        ...options,
+        headers,
+        signal: controller.signal,
+      });
 
-    const isJson = response.headers.get('content-type')?.includes('application/json');
-    const rawData = isJson ? await response.json() : null;
+      const isJson = response.headers.get('content-type')?.includes('application/json');
+      const rawData = isJson ? await response.json() : null;
 
-    if (!response.ok) {
-      // Backend now sends { success: false, message?: string, ... }
-      const errorMessage = rawData?.message || `Request failed (${response.status})`;
-      throw new ApiError(errorMessage, response.status, rawData);
+      if (!response.ok) {
+        // Backend sends { success: false, message?: string, code?: string, ... }
+        const errorMessage = rawData?.message || `Request failed (${response.status})`;
+        throw new ApiError(errorMessage, response.status, rawData);
+      }
+
+      // Unwrap standard { success, data, message } wrapper
+      if (rawData && typeof rawData === 'object' && 'success' in rawData) {
+        return rawData.data as T;
+      }
+
+      return rawData as T;
+    } catch (error) {
+      const normalizedError =
+        error instanceof ApiError
+          ? error
+          : (error as Error).name === 'AbortError'
+            ? new ApiError('Request timed out', 408)
+            : new ApiError((error as Error).message || 'Network error', 0);
+
+      if (!shouldRetry(method, normalizedError, attempt)) {
+        throw normalizedError;
+      }
+
+      await sleep(300 * 2 ** attempt);
+    } finally {
+      clearTimeout(timeoutId);
     }
-
-    // Unwrap standard { success, data, message } wrapper
-    if (rawData && typeof rawData === 'object' && 'success' in rawData) {
-      return rawData.data as T;
-    }
-
-    return rawData as T;
-  } catch (error) {
-    if (error instanceof ApiError) throw error;
-    if ((error as Error).name === 'AbortError') {
-      throw new ApiError('Request timed out', 408);
-    }
-    throw new ApiError(
-      (error as Error).message || 'Network error',
-      0
-    );
-  } finally {
-    clearTimeout(timeoutId);
   }
+
+  throw new ApiError('Request failed after retries', 0);
 }
 
 export async function downloadApiFile(

@@ -3,10 +3,14 @@ import { ZodError } from 'zod';
 
 export class AppError extends Error {
     statusCode: number;
+    code?: string;
+    details?: unknown;
 
-    constructor(message: string, statusCode = 400) {
+    constructor(message: string, statusCode = 400, code?: string, details?: unknown) {
         super(message);
         this.statusCode = statusCode;
+        this.code = code;
+        this.details = details;
     }
 }
 
@@ -23,13 +27,17 @@ export const errorHandler = (
     if (error instanceof ZodError) {
         return res.status(400).json({
             message: 'Validation failed',
+            code: 'VALIDATION_ERROR',
             errors: error.flatten(),
+            details: error.flatten(),
         });
     }
 
     if (error instanceof AppError) {
         return res.status(error.statusCode).json({
             message: error.message,
+            ...(error.code ? { code: error.code } : {}),
+            ...(error.details !== undefined ? { details: error.details } : {}),
         });
     }
 
@@ -37,5 +45,6 @@ export const errorHandler = (
 
     return res.status(500).json({
         message: 'Internal server error',
+        code: 'INTERNAL_SERVER_ERROR',
     });
 };
