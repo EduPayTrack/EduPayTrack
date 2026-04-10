@@ -6,7 +6,6 @@ import {
   Link2,
   ExternalLink,
   RotateCw,
-  Search,
   Sparkles,
   Split,
 } from 'lucide-react';
@@ -22,7 +21,6 @@ import {
 import { Card, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
-import { Input } from '../../../components/ui/input';
 import { Skeleton } from '../../../components/ui/skeleton';
 import {
   Dialog,
@@ -41,6 +39,8 @@ import {
   TableRow,
 } from '../../../components/ui/table';
 import { formatCurrency, formatDate } from '../../../lib/utils';
+import { exportCsv } from '../../lib/csv-export';
+import { SearchInput } from '../../components/common/search-input';
 
 export function ReconciliationExceptionsPage() {
   const navigate = useNavigate();
@@ -94,7 +94,7 @@ export function ReconciliationExceptionsPage() {
       'Top Suggestion Score',
     ];
 
-    const rows = (filteredItems || []).map((item: any) => [
+    const rows = (filteredItems || []).map((item: ReconciliationExceptionItem) => [
       item.exceptionType,
       item.importFileName || '',
       item.rowNumber,
@@ -109,16 +109,11 @@ export function ReconciliationExceptionsPage() {
       item.topSuggestion?.score || '',
     ]);
 
-    const csv = [headers.join(','), ...rows.map((row: any[]) => row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(','))].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = `reconciliation-exceptions-${new Date().toISOString().split('T')[0]}.csv`;
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-    URL.revokeObjectURL(url);
+    exportCsv({
+      headers,
+      rows,
+      fileName: `reconciliation-exceptions-${new Date().toISOString().split('T')[0]}.csv`,
+    });
     toast.success('Exception queue exported');
   };
 
@@ -231,15 +226,11 @@ export function ReconciliationExceptionsPage() {
                     means the row was close to assisted approval but missed at least one safeguard.
                   </p>
                 </div>
-                <div className="relative min-w-[220px] flex-1 max-w-[320px]">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search exceptions..."
-                    className="h-9 pl-9"
-                    value={search}
-                    onChange={(event: any) => setSearch(event.target.value)}
-                  />
-                </div>
+                <SearchInput
+                  placeholder="Search exceptions..."
+                  value={search}
+                  onChange={setSearch}
+                />
               </div>
 
               <div className="overflow-x-auto">

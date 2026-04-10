@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import {
-  Search,
   RotateCw,
   CheckSquare,
   Square,
@@ -39,7 +38,6 @@ import {
 import { Card, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
-import { Input } from '../../../components/ui/input';
 import { Skeleton } from '../../../components/ui/skeleton';
 import {
   Table,
@@ -69,6 +67,7 @@ import { PaymentStatusBadge, getFullImageUrl } from '../../components/admin/comm
 import { StudentPaymentHistoryDialog } from '../../components/admin/common/student-history-dialog';
 import { StatementImportSummaryCards } from '../../components/admin/statement-import-summary-cards';
 import { StatementRowMatchCard } from '../../components/admin/statement-row-match-card';
+import { SearchInput } from '../../components/common/search-input';
 
 export function VerifyPaymentsPage() {
   type StudentHistoryView = {
@@ -726,15 +725,12 @@ export function VerifyPaymentsPage() {
       )}
 
       <div className="flex flex-wrap items-center gap-3">
-        <div className="relative min-w-[200px] flex-1 max-w-[320px]">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search student or reference..."
-            className="h-9 pl-9"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-        </div>
+        <SearchInput
+          placeholder="Search student or reference..."
+          value={search}
+          onChange={setSearch}
+          wrapperClassName="relative min-w-[200px] flex-1 max-w-[320px]"
+        />
 
         <Select value={filter} onValueChange={setFilter}>
           <SelectTrigger className="h-9 w-[140px]"><SelectValue /></SelectTrigger>

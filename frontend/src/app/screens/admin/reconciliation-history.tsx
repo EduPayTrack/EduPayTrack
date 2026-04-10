@@ -5,7 +5,6 @@ import {
   FileSpreadsheet,
   History,
   RotateCw,
-  Search,
   Sparkles,
   Link2,
 } from 'lucide-react';
@@ -20,7 +19,6 @@ import {
 import { Card, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
-import { Input } from '../../../components/ui/input';
 import { Skeleton } from '../../../components/ui/skeleton';
 import {
   Table,
@@ -32,6 +30,8 @@ import {
 } from '../../../components/ui/table';
 import { formatCurrency, formatDate } from '../../../lib/utils';
 import { StatementImportSummaryCards } from '../../components/admin/statement-import-summary-cards';
+import { exportCsv } from '../../lib/csv-export';
+import { SearchInput } from '../../components/common/search-input';
 
 export function ReconciliationHistoryPage() {
   const [searchParams] = useSearchParams();
@@ -124,16 +124,11 @@ export function ReconciliationHistoryPage() {
       row.suggestions?.[0]?.reasons?.join(' | ') || '',
     ]);
 
-    const csv = [headers.join(','), ...rows.map((row: any[]) => row.map((value) => `"${String(value).replace(/"/g, '""')}"`).join(','))].join('\n');
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    anchor.download = `reconciliation-history-${selectedImport.fileName || selectedImport.id}.csv`;
-    document.body.appendChild(anchor);
-    anchor.click();
-    anchor.remove();
-    URL.revokeObjectURL(url);
+    exportCsv({
+      headers,
+      rows,
+      fileName: `reconciliation-history-${selectedImport.fileName || selectedImport.id}.csv`,
+    });
     toast.success('Reconciliation history exported');
   };
 
@@ -234,15 +229,11 @@ export function ReconciliationHistoryPage() {
                         Imported on {new Date(selectedImport.uploadedAt).toLocaleString()}
                       </p>
                     </div>
-                    <div className="relative min-w-[220px] flex-1 max-w-[320px]">
-                      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        placeholder="Search rows or students..."
-                        className="h-9 pl-9"
-                        value={search}
-                        onChange={(event: any) => setSearch(event.target.value)}
-                      />
-                    </div>
+                    <SearchInput
+                      placeholder="Search rows or students..."
+                      value={search}
+                      onChange={setSearch}
+                    />
                   </div>
 
                   <div className="overflow-x-auto">
