@@ -41,7 +41,7 @@ paymentRouter.post(
     requireRole(UserRole.STUDENT, UserRole.ADMIN, UserRole.ACCOUNTS),
     asyncHandler(async (req, res) => {
         const { fileName } = req.body;
-        if (!fileName) return res.status(400).json({ error: 'File name is required' });
+        if (!fileName) return res.status(400).json({ message: 'File name is required' });
         
         // Construct full path to file inside project's uploads folder
         const uploadsDir = path.join(process.cwd(), 'uploads');

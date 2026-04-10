@@ -228,7 +228,10 @@ adminRouter.get(
 adminRouter.get(
     '/payments',
     asyncHandler(async (req, res) => {
-        const payments = await listPaymentsForReview(req.query.status as string | undefined);
+        const status = typeof req.query.status === 'string' && req.query.status.trim().length > 0
+            ? req.query.status.trim()
+            : undefined;
+        const payments = await listPaymentsForReview(status);
         res.status(200).json(payments);
     })
 );
@@ -580,15 +583,3 @@ adminRouter.patch(
     })
 );
 
-adminRouter.delete(
-    '/users/:id',
-    requireRole(UserRole.ADMIN),
-    asyncHandler(async (req, res) => {
-        const { id } = req.params;
-        if (id === req.user?.userId) {
-            return res.status(403).json({ message: 'Cannot delete your own admin account.' });
-        }
-        await prisma.user.delete({ where: { id } });
-        res.status(200).json({ message: 'User deleted successfully' });
-    })
-);

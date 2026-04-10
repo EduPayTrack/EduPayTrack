@@ -80,7 +80,7 @@ export function ReportsPage() {
 
   useEffect(() => {
     Promise.all([
-      apiFetch<any[]>('/admin/payments?status=ALL'),
+      apiFetch<any[]>('/admin/payments'),
       apiFetch<any[]>('/admin/students'),
     ])
       .then(([p, s]) => { setPayments(p); setStudents(s); })

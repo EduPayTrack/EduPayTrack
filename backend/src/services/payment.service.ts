@@ -194,9 +194,11 @@ export const getPaymentDetailsById = async (paymentId: string) => {
 };
 
 export const listPaymentsForReview = async (status?: string) => {
-    const selectedStatus = Object.values(PaymentStatus).includes(status as PaymentStatus)
-        ? (status as PaymentStatus)
-        : undefined;
+    if (status !== undefined && !Object.values(PaymentStatus).includes(status as PaymentStatus)) {
+        throw new AppError(`Invalid payment status: ${status}`, 400);
+    }
+
+    const selectedStatus = status as PaymentStatus | undefined;
 
     return prisma.payment.findMany({
         where: {
