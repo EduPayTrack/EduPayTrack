@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { Bell, CheckCheck, Settings as SettingsIcon, User, Lock, Palette, Loader2, AlertTriangle, XCircle, FileText, Clock, Search, Filter, Trash2, Mail, Smartphone, Eye, HelpCircle, MessageCircle, Globe, LogOut, Laptop, Moon, Sun } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTheme } from 'next-themes';
@@ -19,6 +19,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '../../components/ui/dialog';
+import { useNotificationFilters } from '../lib/notification-filters';
+import { NotificationConfirmDialogs } from '../components/notification-confirm-dialogs';
 
 /* ===== NOTIFICATIONS ===== */
 
@@ -35,31 +37,6 @@ const getNotificationConfig = (type: string) => {
   return notificationConfig[type] || notificationConfig.system;
 };
 
-const groupNotificationsByDate = (notifications: any[]) => {
-  const groups: Record<string, any[]> = { today: [], yesterday: [], thisWeek: [], earlier: [] };
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  const weekAgo = new Date(today);
-  weekAgo.setDate(weekAgo.getDate() - 7);
-
-  notifications.forEach(n => {
-    const date = new Date(n.createdAt || n.time);
-    if (date >= today) {
-      groups.today.push(n);
-    } else if (date >= yesterday) {
-      groups.yesterday.push(n);
-    } else if (date >= weekAgo) {
-      groups.thisWeek.push(n);
-    } else {
-      groups.earlier.push(n);
-    }
-  });
-
-  return groups;
-};
-
 export function NotificationsPage() {
   const { notifications, markAllRead, refreshNotifications } = useAuth();
   const [activeTab, setActiveTab] = useState('all');
@@ -68,33 +45,24 @@ export function NotificationsPage() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [showClearAllConfirm, setShowClearAllConfirm] = useState(false);
 
-  const unreadCount = notifications.filter(n => !n.read).length;
-  const readCount = notifications.filter(n => n.read).length;
+  const matchesTypeFilter = useCallback((notification: any, currentTypeFilter: string) => {
+    if (currentTypeFilter === 'all') return true;
+    return notification.type === currentTypeFilter;
+  }, []);
 
-  // Filter notifications based on tab, type, and search
-  const filteredNotifications = useMemo(() => {
-    return notifications.filter(n => {
-      // Tab filter
-      if (activeTab === 'unread' && n.read) return false;
-      if (activeTab === 'read' && !n.read) return false;
-
-      // Type filter
-      if (typeFilter !== 'all' && n.type !== typeFilter) return false;
-
-      // Search filter
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        const searchable = `${n.title} ${n.description}`.toLowerCase();
-        if (!searchable.includes(query)) return false;
-      }
-
-      return true;
-    });
-  }, [notifications, activeTab, typeFilter, searchQuery]);
-
-  const groupedNotifications = useMemo(() => {
-    return groupNotificationsByDate(filteredNotifications);
-  }, [filteredNotifications]);
+  const {
+    unreadCount,
+    readCount,
+    groupedNotifications,
+    hasNotifications,
+    hasAnyNotifications,
+  } = useNotificationFilters({
+    notifications,
+    activeTab,
+    typeFilter,
+    searchQuery,
+    matchesTypeFilter,
+  });
 
   const handleMarkOneRead = async (id: string) => {
     try {
@@ -211,9 +179,6 @@ export function NotificationsPage() {
       </div>
     );
   };
-
-  const hasNotifications = filteredNotifications.length > 0;
-  const hasAnyNotifications = notifications.length > 0;
 
   return (
     <div className="p-4 md:p-6 space-y-6 max-w-[900px] animate-fade-in">
@@ -347,33 +312,14 @@ export function NotificationsPage() {
         </div>
       )}
 
-      <Dialog open={!!deletingId} onOpenChange={(open) => !open && setDeletingId(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Delete Notification</DialogTitle>
-            <DialogDescription>Delete this notification?</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeletingId(null)}>Cancel</Button>
-            <Button variant="destructive" onClick={() => deletingId && handleDelete(deletingId)}>
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showClearAllConfirm} onOpenChange={setShowClearAllConfirm}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Clear All Notifications</DialogTitle>
-            <DialogDescription>Delete all notifications? This cannot be undone.</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowClearAllConfirm(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleClearAll}>Delete All</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <NotificationConfirmDialogs
+        deletingId={deletingId}
+        setDeletingId={setDeletingId}
+        showClearAllConfirm={showClearAllConfirm}
+        setShowClearAllConfirm={setShowClearAllConfirm}
+        onDelete={handleDelete}
+        onClearAll={handleClearAll}
+      />
     </div>
   );
 }

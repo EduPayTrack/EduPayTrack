@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import {
   Bell,
   CheckCheck,
@@ -32,14 +32,8 @@ import {
   SelectTrigger,
   SelectValue
 } from '../../../components/ui/select';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '../../../components/ui/dialog';
+import { useNotificationFilters } from '../../lib/notification-filters';
+import { NotificationConfirmDialogs } from '../../components/notification-confirm-dialogs';
 
 // Admin-specific notification types
 const notificationConfig: Record<string, { icon: any; color: string; bg: string; label: string }> = {
@@ -70,31 +64,6 @@ const getNotificationConfig = (type: string) => {
   return notificationConfig[type] || notificationConfig.default;
 };
 
-const groupNotificationsByDate = (notifications: any[]) => {
-  const groups: Record<string, any[]> = { today: [], yesterday: [], thisWeek: [], earlier: [] };
-  const now = new Date();
-  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
-  const weekAgo = new Date(today);
-  weekAgo.setDate(weekAgo.getDate() - 7);
-
-  notifications.forEach(n => {
-    const date = new Date(n.createdAt || n.time);
-    if (date >= today) {
-      groups.today.push(n);
-    } else if (date >= yesterday) {
-      groups.yesterday.push(n);
-    } else if (date >= weekAgo) {
-      groups.thisWeek.push(n);
-    } else {
-      groups.earlier.push(n);
-    }
-  });
-
-  return groups;
-};
-
 export function AdminNotificationsPage() {
   const { notifications, markAllRead, refreshNotifications } = useAuth();
   const [activeTab, setActiveTab] = useState('all');
@@ -113,38 +82,30 @@ export function AdminNotificationsPage() {
     return notifications.filter(n => adminTypes.includes(n.type) || !n.type);
   }, [notifications]);
 
-  const unreadCount = adminNotifications.filter(n => !n.read).length;
-  const readCount = adminNotifications.filter(n => n.read).length;
+  const matchesTypeFilter = useCallback((notification: any, currentTypeFilter: string) => {
+    if (currentTypeFilter === 'all') return true;
+    if (currentTypeFilter === 'payment') return !!notification.type?.includes('payment');
+    if (currentTypeFilter === 'user') return !!notification.type?.includes('user');
+    if (currentTypeFilter === 'system') {
+      return !!notification.type?.includes('system') || !!notification.type?.includes('audit');
+    }
+    if (currentTypeFilter === 'action_required') return !notification.read;
+    return true;
+  }, []);
 
-  // Filter notifications based on tab, type, and search
-  const filteredNotifications = useMemo(() => {
-    return adminNotifications.filter(n => {
-      // Tab filter
-      if (activeTab === 'unread' && n.read) return false;
-      if (activeTab === 'read' && !n.read) return false;
-
-      // Type filter
-      if (typeFilter !== 'all') {
-        if (typeFilter === 'payment' && !n.type?.includes('payment')) return false;
-        if (typeFilter === 'user' && !n.type?.includes('user')) return false;
-        if (typeFilter === 'system' && !n.type?.includes('system') && !n.type?.includes('audit')) return false;
-        if (typeFilter === 'action_required' && n.read) return false;
-      }
-
-      // Search filter
-      if (searchQuery) {
-        const query = searchQuery.toLowerCase();
-        const searchable = `${n.title} ${n.description}`.toLowerCase();
-        if (!searchable.includes(query)) return false;
-      }
-
-      return true;
-    });
-  }, [adminNotifications, activeTab, typeFilter, searchQuery]);
-
-  const groupedNotifications = useMemo(() => {
-    return groupNotificationsByDate(filteredNotifications);
-  }, [filteredNotifications]);
+  const {
+    unreadCount,
+    readCount,
+    groupedNotifications,
+    hasNotifications,
+    hasAnyNotifications,
+  } = useNotificationFilters({
+    notifications: adminNotifications,
+    activeTab,
+    typeFilter,
+    searchQuery,
+    matchesTypeFilter,
+  });
 
   const handleMarkOneRead = async (id: string) => {
     try {
@@ -280,9 +241,6 @@ export function AdminNotificationsPage() {
       </div>
     );
   };
-
-  const hasNotifications = filteredNotifications.length > 0;
-  const hasAnyNotifications = adminNotifications.length > 0;
 
   return (
     <div className="p-4 md:p-6 space-y-6 animate-fade-in">
@@ -475,33 +433,14 @@ export function AdminNotificationsPage() {
         </div>
       )}
 
-      <Dialog open={!!deletingId} onOpenChange={(open) => !open && setDeletingId(null)}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Delete Notification</DialogTitle>
-            <DialogDescription>Delete this notification?</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeletingId(null)}>Cancel</Button>
-            <Button variant="destructive" onClick={() => deletingId && handleDelete(deletingId)}>
-              Delete
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      <Dialog open={showClearAllConfirm} onOpenChange={setShowClearAllConfirm}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Clear All Notifications</DialogTitle>
-            <DialogDescription>Delete all notifications? This cannot be undone.</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowClearAllConfirm(false)}>Cancel</Button>
-            <Button variant="destructive" onClick={handleClearAll}>Delete All</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <NotificationConfirmDialogs
+        deletingId={deletingId}
+        setDeletingId={setDeletingId}
+        showClearAllConfirm={showClearAllConfirm}
+        setShowClearAllConfirm={setShowClearAllConfirm}
+        onDelete={handleDelete}
+        onClearAll={handleClearAll}
+      />
     </div>
   );
 }
