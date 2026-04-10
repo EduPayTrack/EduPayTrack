@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import { apiFetch, setToken, clearToken, getToken } from '../lib/api';
+import { listNotifications, markAllNotificationsRead } from '../lib/notifications-api';
 
 import {
   adminNav,
@@ -97,7 +98,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
   const refreshNotifications = useCallback(async () => {
     if (!getToken()) return;
     try {
-      const data = await apiFetch<any[]>('/notifications');
+      const data = await listNotifications();
       // map backend schema to NotificationItem format
       setAppNotifications(
         data.map(n => ({
@@ -182,7 +183,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const markAllRead = useCallback(async () => {
     try {
-      await apiFetch('/notifications/read-all', { method: 'PATCH' });
+      await markAllNotificationsRead();
       setAppNotifications((current) =>
         current.map((item) => ({ ...item, read: true }))
       );
