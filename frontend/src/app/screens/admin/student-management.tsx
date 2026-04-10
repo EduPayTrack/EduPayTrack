@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
 import { 
-  Search, 
   BellRing, 
   Loader2, 
   MoreHorizontal, 
@@ -22,7 +21,6 @@ import { toast } from 'sonner';
 import { apiFetch, downloadApiFile } from '../../lib/api';
 import { Card, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
-import { Input } from '../../../components/ui/input';
 import { Skeleton } from '../../../components/ui/skeleton';
 import { Badge } from '../../../components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../../../components/ui/dialog';
@@ -43,6 +41,7 @@ import {
 import { formatCurrency, formatDate } from '../../../lib/utils';
 import { PaymentStatusBadge } from '../../components/admin/common/payment-helpers';
 import { getFullImageUrl } from '../../components/admin/common/payment-helpers';
+import { SearchInput } from '../../components/common/search-input';
 
 interface Payment {
   id: string;
@@ -285,10 +284,12 @@ export function StudentManagementPage() {
           <p className="text-[13px] text-muted-foreground mt-0.5">{students.length} student{students.length !== 1 ? 's' : ''} enrolled</p>
         </div>
         <div className="flex items-center gap-3">
-          <div className="relative w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search students..." className="pl-9 h-9" value={search} onChange={(e: any) => setSearch(e.target.value)} />
-          </div>
+          <SearchInput
+            placeholder="Search students..."
+            value={search}
+            onChange={setSearch}
+            wrapperClassName="relative w-64"
+          />
           <Button size="sm" variant="outline" className="h-9 gap-1.5" onClick={() => handleNotifyReminders()} disabled={sendingAlerts}>
             {sendingAlerts ? <Loader2 className="h-4 w-4 animate-spin" /> : <BellRing className="h-4 w-4" />}
             Notify Unpaid

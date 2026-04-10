@@ -4,7 +4,6 @@ import {
   KeyRound, 
   Pencil, 
   Trash2, 
-  Search, 
   Power, 
   PowerOff,
   Download,
@@ -54,6 +53,7 @@ import {
   DialogFooter 
 } from '../../../components/ui/dialog';
 import { formatDate } from '../../lib/utils';
+import { SearchInput } from '../../components/common/search-input';
 
 interface User {
   id: string;
@@ -400,15 +400,12 @@ export function UserManagementPage() {
       </div>
 
       <div className="flex flex-wrap gap-3 items-center">
-        <div className="relative flex-1 min-w-[200px] max-w-[320px]">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input 
-            placeholder="Search users..." 
-            className="pl-9 h-9" 
-            value={search} 
-            onChange={(e: any) => setSearch(e.target.value)} 
-          />
-        </div>
+        <SearchInput
+          placeholder="Search users..."
+          value={search}
+          onChange={setSearch}
+          wrapperClassName="relative flex-1 min-w-[200px] max-w-[320px]"
+        />
         <Select value={roleFilter} onValueChange={setRoleFilter}>
           <SelectTrigger className="w-[140px] h-9">
             <SelectValue placeholder="All roles" />
