@@ -1,5 +1,29 @@
 import { apiFetch } from './api';
 
+export type PaymentReviewStudent = {
+  id: string;
+  firstName?: string;
+  lastName?: string;
+  studentCode?: string;
+};
+
+export type PaymentReviewItem = {
+  id: string;
+  amount?: number | string;
+  status: 'PENDING' | 'APPROVED' | 'REJECTED' | string;
+  submittedAt?: string;
+  externalReference?: string;
+  receiptNumber?: string;
+  proofUrl?: string;
+  duplicateFlag?: boolean;
+  verificationStatus?: 'UNVERIFIED' | 'VERIFIED' | 'FLAGGED' | string;
+  verificationNotes?: string;
+  reviewNotes?: string;
+  reconciliationStatus?: 'MATCHED' | 'UNMATCHED' | string;
+  reconciliationNote?: string;
+  student?: PaymentReviewStudent;
+};
+
 export type StatementSuggestion = {
   id: string;
   score: number;
@@ -74,7 +98,7 @@ export type ReconciliationExceptionsResponse = {
 };
 
 export async function listPaymentsForReview() {
-  return apiFetch<any[]>('/admin/payments');
+  return apiFetch<PaymentReviewItem[]>('/admin/payments');
 }
 
 export async function reviewPayment(paymentId: string, payload: { status: 'APPROVED' | 'REJECTED'; reviewNotes?: string }) {

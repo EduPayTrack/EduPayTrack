@@ -28,6 +28,10 @@ import {
   importStatement,
   listPaymentsForReview,
   listStatementImports as listStatementImportsApi,
+  type PaymentReviewItem,
+  type StatementImportRecord,
+  type StatementImportRow,
+  type StatementSuggestion,
   reconcilePaymentAdmin,
   resolveStatementRow,
   reviewPayment,
@@ -67,8 +71,16 @@ import { PaymentStatusBadge, getFullImageUrl } from '../../components/admin/comm
 import { StudentPaymentHistoryDialog } from '../../components/admin/common/student-history-dialog';
 
 export function VerifyPaymentsPage() {
+  type StudentHistoryView = {
+    id: string;
+    name: string;
+    studentId?: string;
+    email?: string;
+    program?: string;
+  };
+
   const { user } = useAuth();
-  const [payments, setPayments] = useState<any[]>([]);
+  const [payments, setPayments] = useState<PaymentReviewItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('PENDING');
   const [verificationFilter, setVerificationFilter] = useState('ALL');
@@ -77,14 +89,14 @@ export function VerifyPaymentsPage() {
   const [sortBy, setSortBy] = useState('NEWEST');
   const [search, setSearch] = useState('');
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
-  const [viewingReceipt, setViewingReceipt] = useState<any>(null);
-  const [viewingStudentHistory, setViewingStudentHistory] = useState<any>(null);
+  const [viewingReceipt, setViewingReceipt] = useState<PaymentReviewItem | null>(null);
+  const [viewingStudentHistory, setViewingStudentHistory] = useState<StudentHistoryView | null>(null);
   const [actionLoading, setActionLoading] = useState<string | undefined>(undefined);
   const [bulkActionLoading, setBulkActionLoading] = useState(false);
-  const [statementImport, setStatementImport] = useState<any>(null);
+  const [statementImport, setStatementImport] = useState<StatementImportRecord | null>(null);
   const [statementImportLoading, setStatementImportLoading] = useState(false);
-  const [statementImports, setStatementImports] = useState<any[]>([]);
-  const [statementMapping, setStatementMapping] = useState<any>({
+  const [statementImports, setStatementImports] = useState<StatementImportRecord[]>([]);
+  const [statementMapping, setStatementMapping] = useState<Record<string, string>>({
     reference: '',
     payerName: '',
     description: '',
@@ -209,9 +221,11 @@ export function VerifyPaymentsPage() {
       })
       .sort((a, b) => {
         if (sortBy === 'HIGHEST') return Number(b.amount || 0) - Number(a.amount || 0);
-        if (sortBy === 'RISK') return b.riskScore - a.riskScore || Number(new Date(b.submittedAt)) - Number(new Date(a.submittedAt));
-        if (sortBy === 'OLDEST') return Number(new Date(a.submittedAt)) - Number(new Date(b.submittedAt));
-        return Number(new Date(b.submittedAt)) - Number(new Date(a.submittedAt));
+        const dateA = Number(new Date(a.submittedAt || 0));
+        const dateB = Number(new Date(b.submittedAt || 0));
+        if (sortBy === 'RISK') return b.riskScore - a.riskScore || dateB - dateA;
+        if (sortBy === 'OLDEST') return dateA - dateB;
+        return dateB - dateA;
       });
   }, [payments, filter, verificationFilter, riskFilter, reconciliationFilter, search, sortBy]);
 
@@ -224,7 +238,7 @@ export function VerifyPaymentsPage() {
     else setSelectedIds(filtered.map((payment) => payment.id));
   };
 
-  const getRiskConfig = (payment: any) => {
+  const getRiskConfig = (payment: PaymentReviewItem | null | undefined) => {
     if (!payment) {
       return { label: 'Normal', className: 'bg-success/10 text-success border-success/20' };
     }
@@ -255,7 +269,7 @@ export function VerifyPaymentsPage() {
     );
   };
 
-  const handleReconciliation = async (payment: any, status: 'MATCHED' | 'UNMATCHED') => {
+  const handleReconciliation = async (payment: PaymentReviewItem, status: 'MATCHED' | 'UNMATCHED') => {
     setNoteDialog({
       open: true,
       title: status === 'MATCHED' ? 'Mark as Matched' : 'Keep Unmatched',
@@ -364,7 +378,8 @@ export function VerifyPaymentsPage() {
     }
   };
 
-  const reconcileFromStatement = async (row: any, suggestion: any) => {
+  const reconcileFromStatement = async (row: StatementImportRow, suggestion: StatementSuggestion) => {
+    if (!statementImport?.id) return;
     const note = [
       'Matched from imported statement',
       statementImport?.fileName ? `file: ${statementImport.fileName}` : null,
@@ -387,7 +402,8 @@ export function VerifyPaymentsPage() {
     }
   };
 
-  const assistApproveFromStatement = async (row: any, suggestion: any) => {
+  const assistApproveFromStatement = async (row: StatementImportRow, suggestion: StatementSuggestion) => {
+    if (!statementImport?.id) return;
     setConfirmDialog({
       open: true,
       title: 'Assist Approve Payment',
@@ -410,7 +426,7 @@ export function VerifyPaymentsPage() {
     });
   };
 
-  const handleVerification = async (payment: any, verificationStatus: 'VERIFIED' | 'FLAGGED') => {
+  const handleVerification = async (payment: PaymentReviewItem, verificationStatus: 'VERIFIED' | 'FLAGGED') => {
     setNoteDialog({
       open: true,
       title: verificationStatus === 'FLAGGED' ? 'Flag Payment' : 'Verify Payment',
@@ -443,7 +459,7 @@ export function VerifyPaymentsPage() {
     });
   };
 
-  const handleAction = async (payment: any, status: 'APPROVED' | 'REJECTED') => {
+  const handleAction = async (payment: PaymentReviewItem, status: 'APPROVED' | 'REJECTED') => {
     if (user?.role === 'admin' && status === 'APPROVED' && payment.verificationStatus === 'UNVERIFIED') {
       toast.error('Accounts must verify this payment before an admin can approve it.');
       return;
@@ -642,7 +658,7 @@ export function VerifyPaymentsPage() {
                           <label className="text-[11px] font-medium text-muted-foreground">{field.label}</label>
                           <Select
                             value={statementMapping?.[field.key] || ''}
-                            onValueChange={(value) => setStatementMapping((current: any) => ({ ...current, [field.key]: value }))}
+                            onValueChange={(value) => setStatementMapping((current) => ({ ...current, [field.key]: value }))}
                           >
                             <SelectTrigger className="h-9">
                               <SelectValue placeholder="Select column" />
@@ -699,7 +715,7 @@ export function VerifyPaymentsPage() {
                     <h3 className="text-[13px] font-medium">Top Statement Rows</h3>
                   </div>
                   <div className="divide-y">
-                    {statementImport.rows?.slice(0, 6).map((row: any) => (
+                    {statementImport.rows?.slice(0, 6).map((row: StatementImportRow) => (
                       <div key={row.id} className="space-y-3 p-3">
                         <div className="flex flex-wrap items-start justify-between gap-3">
                           <div>
@@ -744,9 +760,9 @@ export function VerifyPaymentsPage() {
                           </div>
                         </div>
 
-                        {row.suggestions?.length > 0 ? (
+                        {(row.suggestions?.length || 0) > 0 ? (
                           <div className="space-y-2">
-                            {row.suggestions.map((suggestion: any) => (
+                            {(row.suggestions || []).map((suggestion: StatementSuggestion) => (
                               <div key={suggestion.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-muted/20 p-3">
                                 <div>
                                   <p className="text-[13px] font-medium">
@@ -818,7 +834,7 @@ export function VerifyPaymentsPage() {
             placeholder="Search student or reference..."
             className="h-9 pl-9"
             value={search}
-            onChange={(e: any) => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value)}
           />
         </div>
 
@@ -922,7 +938,16 @@ export function VerifyPaymentsPage() {
                         </Button>
                       </TableCell>
                       <TableCell>
-                        <div className="cursor-pointer text-[13px] font-medium hover:underline" onClick={() => setViewingStudentHistory(payment.student)}>
+                        <div
+                          className="cursor-pointer text-[13px] font-medium hover:underline"
+                          onClick={() =>
+                            setViewingStudentHistory({
+                              id: payment.student?.id || '',
+                              name: `${payment.student?.firstName || ''} ${payment.student?.lastName || ''}`.trim() || 'Unknown Student',
+                              studentId: payment.student?.studentCode,
+                            })
+                          }
+                        >
                           {payment.student?.firstName} {payment.student?.lastName}
                         </div>
                         <div className="text-[11px] text-muted-foreground">{payment.student?.studentCode}</div>
