@@ -12,7 +12,11 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { apiFetch } from '../../lib/api';
+import {
+  assistApproveStatementRow,
+  listReconciliationExceptions,
+  resolveStatementRow,
+} from '../../lib/admin-payments-api';
 import { Card, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
@@ -47,7 +51,7 @@ export function ReconciliationExceptionsPage() {
   const loadExceptions = async () => {
     setLoading(true);
     try {
-      const result = await apiFetch<any>('/admin/reconciliation/exceptions');
+      const result = await listReconciliationExceptions();
       setData(result);
     } catch {
       toast.error('Failed to load reconciliation exceptions');
@@ -122,10 +126,7 @@ export function ReconciliationExceptionsPage() {
 
     setActionLoading(item.id);
     try {
-      await apiFetch(`/admin/reconciliation/imports/${item.importId}/rows/${item.id}/resolve`, {
-        method: 'PATCH',
-        body: JSON.stringify({ paymentId: topSuggestion.id }),
-      });
+      await resolveStatementRow(item.importId, item.id, topSuggestion.id);
       toast.success(`Matched ${topSuggestion.student?.firstName} ${topSuggestion.student?.lastName}`);
       await loadExceptions();
     } catch (err: any) {
@@ -141,10 +142,7 @@ export function ReconciliationExceptionsPage() {
 
     setActionLoading(item.id);
     try {
-      await apiFetch(`/admin/reconciliation/imports/${item.importId}/rows/${item.id}/assist-approve`, {
-        method: 'PATCH',
-        body: JSON.stringify({ paymentId: topSuggestion.id }),
-      });
+      await assistApproveStatementRow(item.importId, item.id, topSuggestion.id);
       toast.success(`Approved ${topSuggestion.student?.firstName} ${topSuggestion.student?.lastName}`);
       setConfirmAssistItem(null);
       await loadExceptions();

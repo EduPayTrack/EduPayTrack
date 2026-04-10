@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { apiFetch } from '../../lib/api';
+import { getStatementImport, listStatementImports } from '../../lib/admin-payments-api';
 import { Card, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
@@ -38,7 +38,7 @@ export function ReconciliationHistoryPage() {
   const loadImports = async () => {
     setLoading(true);
     try {
-      const result = await apiFetch<any[]>('/admin/reconciliation/imports');
+      const result = await listStatementImports();
       setImports(result || []);
       const requestedImportId = searchParams.get('importId');
       if (requestedImportId && result?.some((item) => item.id === requestedImportId)) {
@@ -56,7 +56,7 @@ export function ReconciliationHistoryPage() {
   const loadImportDetail = async (importId: string) => {
     setDetailLoading(true);
     try {
-      const result = await apiFetch<any>(`/admin/reconciliation/imports/${importId}`);
+      const result = await getStatementImport(importId);
       setSelectedImport(result);
     } catch {
       toast.error('Failed to load statement import details');

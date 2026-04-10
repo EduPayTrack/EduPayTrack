@@ -21,8 +21,19 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { apiFetch } from '../../lib/api';
 import { useAuth } from '../../state/auth-context';
+import {
+  assistApproveStatementRow,
+  getStatementImport,
+  importStatement,
+  listPaymentsForReview,
+  listStatementImports as listStatementImportsApi,
+  reconcilePaymentAdmin,
+  resolveStatementRow,
+  reviewPayment,
+  updateStatementMapping,
+  verifyPaymentAdmin,
+} from '../../lib/admin-payments-api';
 import { Card, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
@@ -128,7 +139,7 @@ export function VerifyPaymentsPage() {
   const loadPayments = async () => {
     setLoading(true);
     try {
-      const result = await apiFetch<any[]>('/admin/payments');
+      const result = await listPaymentsForReview();
       setPayments(result || []);
     } catch {
       toast.error('Failed to load payments');
@@ -140,7 +151,7 @@ export function VerifyPaymentsPage() {
 
   const loadStatementImports = async () => {
     try {
-      const result = await apiFetch<any[]>('/admin/reconciliation/imports');
+      const result = await listStatementImportsApi();
       setStatementImports(result || []);
     } catch {
       toast.error('Failed to load statement imports');
@@ -261,12 +272,9 @@ export function VerifyPaymentsPage() {
       onConfirm: async (note: string) => {
         setActionLoading(payment.id);
         try {
-          await apiFetch(`/admin/payments/${payment.id}/reconcile`, {
-            method: 'PATCH',
-            body: JSON.stringify({
-              reconciliationStatus: status,
-              reconciliationNote: note.trim(),
-            }),
+          await reconcilePaymentAdmin(payment.id, {
+            reconciliationStatus: status,
+            reconciliationNote: note.trim(),
           });
           toast.success(status === 'MATCHED' ? 'Payment marked as matched' : 'Payment kept in unmatched queue');
           await loadPayments();
@@ -282,12 +290,9 @@ export function VerifyPaymentsPage() {
   const saveReconciliation = async (paymentId: string, status: 'MATCHED' | 'UNMATCHED', note: string) => {
     setActionLoading(paymentId);
     try {
-      await apiFetch(`/admin/payments/${paymentId}/reconcile`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          reconciliationStatus: status,
-          reconciliationNote: note,
-        }),
+      await reconcilePaymentAdmin(paymentId, {
+        reconciliationStatus: status,
+        reconciliationNote: note,
       });
       await loadPayments();
     } finally {
@@ -298,12 +303,9 @@ export function VerifyPaymentsPage() {
   const clearReconciliation = async (paymentId: string) => {
     setActionLoading(paymentId);
     try {
-      await apiFetch(`/admin/payments/${paymentId}/reconcile`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          reconciliationStatus: 'UNMATCHED',
-          reconciliationNote: '',
-        }),
+      await reconcilePaymentAdmin(paymentId, {
+        reconciliationStatus: 'UNMATCHED',
+        reconciliationNote: '',
       });
       toast.success('Reconciliation status cleared');
       await loadPayments();
@@ -319,12 +321,7 @@ export function VerifyPaymentsPage() {
 
     setStatementImportLoading(true);
     try {
-      const formData = new FormData();
-      formData.append('statement', file);
-      const preview = await apiFetch<any>('/admin/reconciliation/import-statement', {
-        method: 'POST',
-        body: formData,
-      });
+      const preview = await importStatement(file);
       setStatementImport(preview);
       setStatementMapping(preview.columnMapping || {});
       await loadStatementImports();
@@ -340,7 +337,7 @@ export function VerifyPaymentsPage() {
   const openStatementImport = async (importId: string) => {
     setStatementImportLoading(true);
     try {
-      const result = await apiFetch<any>(`/admin/reconciliation/imports/${importId}`);
+      const result = await getStatementImport(importId);
       setStatementImport(result);
       setStatementMapping(result.columnMapping || {});
     } catch (err: any) {
@@ -355,10 +352,7 @@ export function VerifyPaymentsPage() {
 
     setMappingLoading(true);
     try {
-      const remapped = await apiFetch<any>(`/admin/reconciliation/imports/${statementImport.id}/mapping`, {
-        method: 'PATCH',
-        body: JSON.stringify(statementMapping),
-      });
+      const remapped = await updateStatementMapping(statementImport.id, statementMapping);
       setStatementImport(remapped);
       setStatementMapping(remapped.columnMapping || {});
       await loadStatementImports();
@@ -384,10 +378,7 @@ export function VerifyPaymentsPage() {
 
     try {
       await saveReconciliation(suggestion.id, 'MATCHED', note);
-      const updatedImport = await apiFetch<any>(`/admin/reconciliation/imports/${statementImport.id}/rows/${row.id}/resolve`, {
-        method: 'PATCH',
-        body: JSON.stringify({ paymentId: suggestion.id }),
-      });
+      const updatedImport = await resolveStatementRow(statementImport.id, row.id, suggestion.id);
       setStatementImport(updatedImport);
       await loadStatementImports();
       toast.success(`Matched ${suggestion.student?.firstName} ${suggestion.student?.lastName}`);
@@ -405,13 +396,7 @@ export function VerifyPaymentsPage() {
       onConfirm: async () => {
         setActionLoading(suggestion.id);
         try {
-          const updatedImport = await apiFetch<any>(
-            `/admin/reconciliation/imports/${statementImport.id}/rows/${row.id}/assist-approve`,
-            {
-              method: 'PATCH',
-              body: JSON.stringify({ paymentId: suggestion.id }),
-            }
-          );
+          const updatedImport = await assistApproveStatementRow(statementImport.id, row.id, suggestion.id);
           setStatementImport(updatedImport);
           await loadPayments();
           await loadStatementImports();
@@ -443,12 +428,9 @@ export function VerifyPaymentsPage() {
         }
         setActionLoading(payment.id);
         try {
-          await apiFetch(`/admin/payments/${payment.id}/verify`, {
-            method: 'PATCH',
-            body: JSON.stringify({
-              verificationStatus,
-              verificationNotes: note.trim() || 'Verified against the receipt details.',
-            }),
+          await verifyPaymentAdmin(payment.id, {
+            verificationStatus,
+            verificationNotes: note.trim() || 'Verified against the receipt details.',
           });
           toast.success(verificationStatus === 'VERIFIED' ? 'Payment verified' : 'Payment flagged');
           loadPayments();
@@ -482,12 +464,9 @@ export function VerifyPaymentsPage() {
           }
           setActionLoading(payment.id);
           try {
-            await apiFetch(`/admin/payments/${payment.id}/review`, {
-              method: 'PATCH',
-              body: JSON.stringify({
-                status,
-                reviewNotes: reviewNotes.trim(),
-              }),
+            await reviewPayment(payment.id, {
+              status,
+              reviewNotes: reviewNotes.trim(),
             });
             toast.success(`Payment ${status.toLowerCase()}`);
             loadPayments();
@@ -503,10 +482,7 @@ export function VerifyPaymentsPage() {
 
     setActionLoading(payment.id);
     try {
-      await apiFetch(`/admin/payments/${payment.id}/review`, {
-        method: 'PATCH',
-        body: JSON.stringify({ status }),
-      });
+      await reviewPayment(payment.id, { status });
       toast.success(`Payment ${status.toLowerCase()}`);
       loadPayments();
     } catch (err: any) {
@@ -529,10 +505,7 @@ export function VerifyPaymentsPage() {
 
       await Promise.all(
         eligible.map((payment) =>
-          apiFetch(`/admin/payments/${payment.id}/review`, {
-            method: 'PATCH',
-            body: JSON.stringify({ status }),
-          })
+          reviewPayment(payment.id, { status })
         )
       );
 
