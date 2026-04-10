@@ -11,7 +11,12 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 
-import { getStatementImport, listStatementImports } from '../../lib/admin-payments-api';
+import {
+  getStatementImport,
+  listStatementImports,
+  type StatementImportRecord,
+  type StatementImportRow,
+} from '../../lib/admin-payments-api';
 import { Card, CardContent } from '../../../components/ui/card';
 import { Button } from '../../../components/ui/button';
 import { Badge } from '../../../components/ui/badge';
@@ -29,8 +34,8 @@ import { formatCurrency, formatDate } from '../../../lib/utils';
 
 export function ReconciliationHistoryPage() {
   const [searchParams] = useSearchParams();
-  const [imports, setImports] = useState<any[]>([]);
-  const [selectedImport, setSelectedImport] = useState<any>(null);
+  const [imports, setImports] = useState<StatementImportRecord[]>([]);
+  const [selectedImport, setSelectedImport] = useState<StatementImportRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [detailLoading, setDetailLoading] = useState(false);
   const [search, setSearch] = useState('');
@@ -74,11 +79,11 @@ export function ReconciliationHistoryPage() {
     const query = search.trim().toLowerCase();
     if (!query) return selectedImport.rows;
 
-    return selectedImport.rows.filter((row: any) =>
+    return selectedImport.rows.filter((row: StatementImportRow) =>
       row.reference?.toLowerCase().includes(query) ||
       row.payerName?.toLowerCase().includes(query) ||
       row.description?.toLowerCase().includes(query) ||
-      row.suggestions?.some((suggestion: any) =>
+      row.suggestions?.some((suggestion) =>
         `${suggestion.student?.firstName || ''} ${suggestion.student?.lastName || ''}`.toLowerCase().includes(query) ||
         suggestion.student?.studentCode?.toLowerCase().includes(query)
       )
@@ -102,7 +107,7 @@ export function ReconciliationHistoryPage() {
       'Top Suggestion Reasons',
     ];
 
-    const rows = (selectedImport.rows || []).map((row: any) => [
+    const rows = (selectedImport.rows || []).map((row: StatementImportRow) => [
       row.rowNumber,
       row.reference || '',
       row.payerName || '',
@@ -273,7 +278,7 @@ export function ReconciliationHistoryPage() {
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        {filteredRows.map((row: any) => (
+                        {filteredRows.map((row: StatementImportRow) => (
                           <TableRow key={row.id}>
                             <TableCell className="text-[12px]">{row.rowNumber}</TableCell>
                             <TableCell className="text-[12px] font-mono">{row.reference || 'N/A'}</TableCell>

@@ -14,6 +14,8 @@ import { toast } from 'sonner';
 
 import {
   assistApproveStatementRow,
+  type ReconciliationExceptionItem,
+  type ReconciliationExceptionsResponse,
   listReconciliationExceptions,
   resolveStatementRow,
 } from '../../lib/admin-payments-api';
@@ -42,11 +44,11 @@ import { formatCurrency, formatDate } from '../../../lib/utils';
 
 export function ReconciliationExceptionsPage() {
   const navigate = useNavigate();
-  const [data, setData] = useState<any>(null);
+  const [data, setData] = useState<ReconciliationExceptionsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [actionLoading, setActionLoading] = useState<string | null>(null);
-  const [confirmAssistItem, setConfirmAssistItem] = useState<any>(null);
+  const [confirmAssistItem, setConfirmAssistItem] = useState<ReconciliationExceptionItem | null>(null);
 
   const loadExceptions = async () => {
     setLoading(true);
@@ -120,7 +122,7 @@ export function ReconciliationExceptionsPage() {
     toast.success('Exception queue exported');
   };
 
-  const resolveWithTopSuggestion = async (item: any) => {
+  const resolveWithTopSuggestion = async (item: ReconciliationExceptionItem) => {
     const topSuggestion = item.topSuggestion;
     if (!topSuggestion) return;
 
@@ -136,7 +138,7 @@ export function ReconciliationExceptionsPage() {
     }
   };
 
-  const assistApproveTopSuggestion = async (item: any) => {
+  const assistApproveTopSuggestion = async (item: ReconciliationExceptionItem) => {
     const topSuggestion = item.topSuggestion;
     if (!topSuggestion) return;
 
@@ -254,12 +256,14 @@ export function ReconciliationExceptionsPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {filteredItems.map((item: any) => (
+                    {filteredItems.map((item: ReconciliationExceptionItem) => (
                       <TableRow key={item.id}>
                         <TableCell>{renderExceptionBadge(item.exceptionType)}</TableCell>
                         <TableCell className="text-[12px]">
                           <p className="font-medium">{item.importFileName}</p>
-                          <p className="text-muted-foreground">{new Date(item.importedAt).toLocaleString()}</p>
+                          <p className="text-muted-foreground">
+                            {item.importedAt ? new Date(item.importedAt).toLocaleString() : 'Unknown import time'}
+                          </p>
                         </TableCell>
                         <TableCell className="text-[12px]">
                           <p className="font-medium">Row {item.rowNumber}</p>
