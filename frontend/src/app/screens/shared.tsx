@@ -11,6 +11,14 @@ import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '../../components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../../components/ui/dialog';
 
 /* ===== NOTIFICATIONS ===== */
 
@@ -57,6 +65,8 @@ export function NotificationsPage() {
   const [activeTab, setActiveTab] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [showClearAllConfirm, setShowClearAllConfirm] = useState(false);
 
   const unreadCount = notifications.filter(n => !n.read).length;
   const readCount = notifications.filter(n => n.read).length;
@@ -96,10 +106,10 @@ export function NotificationsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Delete this notification?')) return;
     try {
       await apiFetch(`/notifications/${id}`, { method: 'DELETE' });
       await refreshNotifications();
+      setDeletingId(null);
       toast.success('Notification deleted');
     } catch {
       toast.error('Failed to delete notification');
@@ -107,10 +117,10 @@ export function NotificationsPage() {
   };
 
   const handleClearAll = async () => {
-    if (!window.confirm('Delete all notifications? This cannot be undone.')) return;
     try {
       await apiFetch('/notifications', { method: 'DELETE' });
       await refreshNotifications();
+      setShowClearAllConfirm(false);
       toast.success('All notifications cleared');
     } catch {
       toast.error('Failed to clear notifications');
@@ -184,7 +194,7 @@ export function NotificationsPage() {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-destructive hover:text-destructive"
-                            onClick={() => handleDelete(n.id)}
+                            onClick={() => setDeletingId(n.id)}
                             title="Delete"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -234,7 +244,7 @@ export function NotificationsPage() {
               variant="ghost"
               size="sm"
               className="gap-1.5 h-9 text-destructive hover:text-destructive"
-              onClick={handleClearAll}
+              onClick={() => setShowClearAllConfirm(true)}
             >
               <Trash2 className="h-4 w-4" /> Clear all
             </Button>
@@ -336,6 +346,34 @@ export function NotificationsPage() {
           {renderNotificationGroup('Earlier', groupedNotifications.earlier)}
         </div>
       )}
+
+      <Dialog open={!!deletingId} onOpenChange={(open) => !open && setDeletingId(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Notification</DialogTitle>
+            <DialogDescription>Delete this notification?</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeletingId(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={() => deletingId && handleDelete(deletingId)}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showClearAllConfirm} onOpenChange={setShowClearAllConfirm}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Clear All Notifications</DialogTitle>
+            <DialogDescription>Delete all notifications? This cannot be undone.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowClearAllConfirm(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleClearAll}>Delete All</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
@@ -360,6 +398,7 @@ export function SettingsPage() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
   const [largeText, setLargeText] = useState(false);
+  const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false);
 
   const handlePasswordChange = async () => {
     if (!currentPassword || !newPassword) {
@@ -390,7 +429,6 @@ export function SettingsPage() {
   };
 
   const handleDeleteAccount = async () => {
-    if (!window.confirm('WARNING: This will permanently delete your account and all associated data. Are you absolutely sure?')) return;
     try {
       await apiFetch('/auth/me', { method: 'DELETE' });
       toast.success('Account deleted successfully');
@@ -615,12 +653,27 @@ export function SettingsPage() {
                   : "Contact a system administrator to deactivate admin accounts."}
               </p>
               {user?.role === 'student' && (
-                <Button variant="destructive" onClick={handleDeleteAccount} className="h-9">
+                <Button variant="destructive" onClick={() => setShowDeleteAccountConfirm(true)} className="h-9">
                   Delete Account
                 </Button>
               )}
             </CardContent>
           </Card>
+
+          <Dialog open={showDeleteAccountConfirm} onOpenChange={setShowDeleteAccountConfirm}>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Delete Account</DialogTitle>
+                <DialogDescription>
+                  WARNING: This will permanently delete your account and all associated data. Are you absolutely sure?
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowDeleteAccountConfirm(false)}>Cancel</Button>
+                <Button variant="destructive" onClick={handleDeleteAccount}>Delete Account</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </TabsContent>
 
         <TabsContent value="appearance" className="space-y-4">

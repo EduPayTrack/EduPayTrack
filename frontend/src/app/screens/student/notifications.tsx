@@ -30,6 +30,14 @@ import {
   SelectTrigger,
   SelectValue
 } from '../../../components/ui/select';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../../../components/ui/dialog';
 
 // Student-specific notification types
 const notificationConfig: Record<string, { icon: any; color: string; bg: string; label: string }> = {
@@ -91,6 +99,8 @@ export function StudentNotificationsPage() {
   const [activeTab, setActiveTab] = useState('all');
   const [typeFilter, setTypeFilter] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [showClearAllConfirm, setShowClearAllConfirm] = useState(false);
 
   // Filter for student-relevant notifications
   const studentNotifications = useMemo(() => {
@@ -146,10 +156,10 @@ export function StudentNotificationsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!window.confirm('Delete this notification?')) return;
     try {
       await apiFetch(`/notifications/${id}`, { method: 'DELETE' });
       await refreshNotifications();
+      setDeletingId(null);
       toast.success('Notification deleted');
     } catch {
       toast.error('Failed to delete notification');
@@ -157,10 +167,10 @@ export function StudentNotificationsPage() {
   };
 
   const handleClearAll = async () => {
-    if (!window.confirm('Delete all notifications? This cannot be undone.')) return;
     try {
       await apiFetch('/notifications', { method: 'DELETE' });
       await refreshNotifications();
+      setShowClearAllConfirm(false);
       toast.success('All notifications cleared');
     } catch {
       toast.error('Failed to clear notifications');
@@ -253,7 +263,7 @@ export function StudentNotificationsPage() {
                             variant="ghost"
                             size="icon"
                             className="h-8 w-8 text-destructive hover:text-destructive"
-                            onClick={() => handleDelete(n.id)}
+                            onClick={() => setDeletingId(n.id)}
                             title="Delete"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -308,7 +318,7 @@ export function StudentNotificationsPage() {
               variant="ghost"
               size="sm"
               className="gap-1.5 h-9 text-destructive hover:text-destructive"
-              onClick={handleClearAll}
+              onClick={() => setShowClearAllConfirm(true)}
             >
               <Trash2 className="h-4 w-4" /> Clear all
             </Button>
@@ -452,6 +462,34 @@ export function StudentNotificationsPage() {
           {renderNotificationGroup('Earlier', groupedNotifications.earlier)}
         </div>
       )}
+
+      <Dialog open={!!deletingId} onOpenChange={(open) => !open && setDeletingId(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Delete Notification</DialogTitle>
+            <DialogDescription>Delete this notification?</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeletingId(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={() => deletingId && handleDelete(deletingId)}>
+              Delete
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showClearAllConfirm} onOpenChange={setShowClearAllConfirm}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Clear All Notifications</DialogTitle>
+            <DialogDescription>Delete all notifications? This cannot be undone.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowClearAllConfirm(false)}>Cancel</Button>
+            <Button variant="destructive" onClick={handleClearAll}>Delete All</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
