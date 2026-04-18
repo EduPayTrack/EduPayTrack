@@ -93,16 +93,32 @@ export function AuditLogsPage() {
   const [dateFilter, setDateFilter] = useState('all');
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [autoRefresh, setAutoRefresh] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [viewMode, setViewMode] = useState<'table' | 'timeline'>('table');
+  const [selectedActor, setSelectedActor] = useState<string | null>(null);
 
   useEffect(() => {
     loadLogs();
   }, []);
+
+  // Real-time updates via polling
+  useEffect(() => {
+    if (!autoRefresh) return;
+    
+    const interval = setInterval(() => {
+      loadLogs();
+    }, 30000); // Refresh every 30 seconds
+    
+    return () => clearInterval(interval);
+  }, [autoRefresh]);
 
   const loadLogs = async () => {
     setLoading(true);
     try {
       const result = await apiFetch<any[]>('/admin/audit-logs?limit=500');
       setLogs(result || []);
+      setLastUpdated(new Date());
     } catch {
       toast.error('Failed to load audit logs');
     } finally {
@@ -144,6 +160,9 @@ export function AuditLogsPage() {
         if (filter === 'auth' && !action.includes('auth')) return false;
       }
 
+      // Actor filter
+      if (selectedActor && log.actor?.email !== selectedActor) return false;
+
       // Date filter
       if (!isInDateRange(log.timestamp, dateFilter)) return false;
 
@@ -156,14 +175,16 @@ export function AuditLogsPage() {
           log.actor?.email,
           log.targetType,
           log.targetId,
-          log.reason
+          log.reason,
+          log.ipAddress,
+          log.userAgent
         ].filter(Boolean).join(' ').toLowerCase();
         if (!searchable.includes(query)) return false;
       }
 
       return true;
     });
-  }, [logs, filter, searchQuery, dateFilter]);
+  }, [logs, filter, searchQuery, dateFilter, selectedActor]);
 
   // Stats
   const stats = useMemo(() => {
@@ -171,8 +192,20 @@ export function AuditLogsPage() {
     const userActions = filteredLogs.filter(l => l.action?.includes('user')).length;
     const paymentActions = filteredLogs.filter(l => l.action?.includes('payment')).length;
     const authActions = filteredLogs.filter(l => l.action?.includes('auth')).length;
-    return { total, userActions, paymentActions, authActions };
+    const withIP = filteredLogs.filter(l => l.ipAddress).length;
+    return { total, userActions, paymentActions, authActions, withIP };
   }, [filteredLogs]);
+
+  // Get unique actors for filter
+  const uniqueActors = useMemo(() => {
+    const actors = new Map<string, { email: string; role: string }>();
+    logs.forEach(log => {
+      if (log.actor?.email) {
+        actors.set(log.actor.email, { email: log.actor.email, role: log.actor.role });
+      }
+    });
+    return Array.from(actors.values()).sort((a, b) => a.email.localeCompare(b.email));
+  }, [logs]);
 
   const toggleRowExpansion = (idx: number) => {
     const newSet = new Set(expandedRows);
@@ -234,13 +267,37 @@ export function AuditLogsPage() {
           <p className="text-[13px] text-muted-foreground mt-0.5">Track system activities, changes, and security events</p>
         </div>
         <div className="flex items-center gap-2">
+          {/* Auto Refresh Toggle */}
+          <Button
+            size="sm"
+            variant={autoRefresh ? 'default' : 'outline'}
+            onClick={() => setAutoRefresh(!autoRefresh)}
+            className="gap-1.5"
+          >
+            <RotateCw className={`h-4 w-4 ${autoRefresh ? 'animate-spin' : ''}`} />
+            {autoRefresh ? 'Auto' : 'Manual'}
+          </Button>
+
+          {/* View Mode Toggle */}
+          <Select value={viewMode} onValueChange={(v: 'table' | 'timeline') => setViewMode(v)}>
+            <SelectTrigger className="w-[110px] h-8">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="table">Table</SelectItem>
+              <SelectItem value="timeline">Timeline</SelectItem>
+            </SelectContent>
+          </Select>
+
           <Button size="sm" variant="outline" onClick={handleExportCSV}>
             <Download className="h-4 w-4 mr-1.5" /> Export
           </Button>
+
           <Button size="sm" variant="outline" onClick={loadLogs} disabled={loading}>
             <RotateCw className={`h-4 w-4 mr-1.5 ${loading ? 'animate-spin' : ''}`} />
             Refresh
           </Button>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button size="sm" variant="ghost" className="h-8 w-8 p-0">
@@ -256,8 +313,25 @@ export function AuditLogsPage() {
         </div>
       </div>
 
+      {/* Last Updated & Retention Info */}
+      <div className="flex flex-wrap items-center justify-between gap-2 text-[12px] text-muted-foreground">
+        <div className="flex items-center gap-4">
+          {lastUpdated && (
+            <span className="flex items-center gap-1.5">
+              <Clock className="h-3.5 w-3.5" />
+              Last updated: {lastUpdated.toLocaleTimeString()}
+            </span>
+          )}
+          <span className="flex items-center gap-1.5">
+            <Calendar className="h-3.5 w-3.5" />
+            Retention: 90 days
+          </span>
+        </div>
+        <span>{filteredLogs.length} of {logs.length} logs shown</span>
+      </div>
+
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <Card className="overflow-hidden border-primary/20 bg-gradient-to-br from-primary/5 via-background to-background">
           <CardContent className="pt-4 pb-4 px-4">
             <div className="flex items-center justify-between">
@@ -313,6 +387,20 @@ export function AuditLogsPage() {
             </div>
           </CardContent>
         </Card>
+
+        <Card className="overflow-hidden border-info/20 bg-gradient-to-br from-info/5 via-background to-background">
+          <CardContent className="pt-4 pb-4 px-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">With IP Data</p>
+                <p className="text-[24px] font-bold text-info mt-1">{stats.withIP}</p>
+              </div>
+              <div className="h-10 w-10 rounded-lg bg-info/15 flex items-center justify-center">
+                <Eye className="h-5 w-5 text-info" />
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Filters */}
@@ -352,6 +440,23 @@ export function AuditLogsPage() {
             <SelectItem value="month">This Month</SelectItem>
           </SelectContent>
         </Select>
+
+        {uniqueActors.length > 0 && (
+          <Select value={selectedActor || 'all'} onValueChange={(v) => setSelectedActor(v === 'all' ? null : v)}>
+            <SelectTrigger className="w-[180px] h-9">
+              <User className="h-4 w-4 mr-2" />
+              <SelectValue placeholder="Filter by user..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Users</SelectItem>
+              {uniqueActors.map((actor) => (
+                <SelectItem key={actor.email} value={actor.email}>
+                  {actor.email} ({actor.role})
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
       </div>
 
       {/* Logs Table */}
@@ -459,6 +564,34 @@ export function AuditLogsPage() {
                                   <p className="text-[13px]">{log.reason}</p>
                                 </div>
                               )}
+                              
+                              {/* Session & IP Info */}
+                              {(log.ipAddress || log.userAgent || log.sessionId) && (
+                                <div className="col-span-2 grid grid-cols-3 gap-3">
+                                  {log.ipAddress && (
+                                    <div>
+                                      <p className="text-[10px] uppercase text-muted-foreground font-medium mb-1">IP Address</p>
+                                      <p className="text-[12px] font-mono">{log.ipAddress}</p>
+                                    </div>
+                                  )}
+                                  {log.sessionId && (
+                                    <div>
+                                      <p className="text-[10px] uppercase text-muted-foreground font-medium mb-1">Session ID</p>
+                                      <p className="text-[12px] font-mono truncate">{log.sessionId.slice(0, 16)}...</p>
+                                    </div>
+                                  )}
+                                  {log.userAgent && (
+                                    <div>
+                                      <p className="text-[10px] uppercase text-muted-foreground font-medium mb-1">Device</p>
+                                      <p className="text-[12px] truncate" title={log.userAgent}>
+                                        {log.userAgent.includes('Mobile') ? 'Mobile' : 
+                                         log.userAgent.includes('Tablet') ? 'Tablet' : 'Desktop'}
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+
                               <div className="col-span-2">
                                 <p className="text-[10px] uppercase text-muted-foreground font-medium mb-1">Details</p>
                                 <pre className="bg-background p-2 rounded text-[11px] overflow-auto max-h-[150px]">
