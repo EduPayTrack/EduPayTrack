@@ -248,7 +248,6 @@ export function SettingsPage() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [highContrast, setHighContrast] = useState(false);
   const [largeText, setLargeText] = useState(false);
-  const [showDeleteAccountConfirm, setShowDeleteAccountConfirm] = useState(false);
 
   const handlePasswordChange = async () => {
     if (!currentPassword || !newPassword) {
@@ -275,16 +274,6 @@ export function SettingsPage() {
       setConfirmPassword('');
     } finally {
       setChangingPassword(false);
-    }
-  };
-
-  const handleDeleteAccount = async () => {
-    try {
-      await apiFetch('/auth/me', { method: 'DELETE' });
-      toast.success('Account deleted successfully');
-      window.location.href = '/login';
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to delete account');
     }
   };
 
@@ -492,38 +481,7 @@ export function SettingsPage() {
             </CardContent>
           </Card>
 
-          <Card className="border-destructive/30 bg-destructive/5">
-            <CardContent className="p-5 space-y-4 text-destructive">
-              <h3 className="text-[14px] font-medium flex items-center gap-2">
-                <AlertTriangle className="h-4 w-4" /> Danger Zone
-              </h3>
-              <p className="text-[13px] text-destructive/80">
-                {user?.role === 'student'
-                  ? "Once you delete your account, there is no going back. Please be certain."
-                  : "Contact a system administrator to deactivate admin accounts."}
-              </p>
-              {user?.role === 'student' && (
-                <Button variant="destructive" onClick={() => setShowDeleteAccountConfirm(true)} className="h-9">
-                  Delete Account
-                </Button>
-              )}
-            </CardContent>
-          </Card>
 
-          <Dialog open={showDeleteAccountConfirm} onOpenChange={setShowDeleteAccountConfirm}>
-            <DialogContent className="sm:max-w-md">
-              <DialogHeader>
-                <DialogTitle>Delete Account</DialogTitle>
-                <DialogDescription>
-                  WARNING: This will permanently delete your account and all associated data. Are you absolutely sure?
-                </DialogDescription>
-              </DialogHeader>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setShowDeleteAccountConfirm(false)}>Cancel</Button>
-                <Button variant="destructive" onClick={handleDeleteAccount}>Delete Account</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
         </TabsContent>
 
         <TabsContent value="appearance" className="space-y-4">
