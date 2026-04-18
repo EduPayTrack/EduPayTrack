@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { useTheme } from 'next-themes';
 
 import { useAuth } from '../state/auth-context';
+import { useAccessibility } from '../state/accessibility-context';
 import { apiFetch } from '../lib/api';
 import { clearAllNotifications, deleteNotification, markNotificationRead } from '../lib/notifications-api';
 import { Card, CardContent } from '../../components/ui/card';
@@ -233,6 +234,7 @@ export function NotificationsPage() {
 export function SettingsPage() {
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
+  const { reducedMotion, highContrast, largeText, setReducedMotion, setHighContrast, setLargeText } = useAccessibility();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -243,11 +245,6 @@ export function SettingsPage() {
   const [pushNotifs, setPushNotifs] = useState(true);
   const [paymentAlerts, setPaymentAlerts] = useState(true);
   const [systemAlerts, setSystemAlerts] = useState(true);
-
-  // Accessibility state
-  const [reducedMotion, setReducedMotion] = useState(false);
-  const [highContrast, setHighContrast] = useState(false);
-  const [largeText, setLargeText] = useState(false);
 
   const handlePasswordChange = async () => {
     if (!currentPassword || !newPassword) {
@@ -279,10 +276,6 @@ export function SettingsPage() {
 
   const saveNotificationPrefs = () => {
     toast.success('Notification preferences saved');
-  };
-
-  const saveAccessibilityPrefs = () => {
-    toast.success('Accessibility settings saved');
   };
 
   // Toggle switch component
@@ -533,6 +526,9 @@ export function SettingsPage() {
               <h3 className="text-[14px] font-medium flex items-center gap-2 mb-2">
                 <Eye className="h-4 w-4 text-muted-foreground" /> Accessibility Options
               </h3>
+              <p className="text-[12px] text-muted-foreground mb-4">
+                Changes are applied immediately and saved to your device.
+              </p>
               <Toggle
                 checked={reducedMotion}
                 onChange={setReducedMotion}
@@ -555,7 +551,6 @@ export function SettingsPage() {
                   description="Increase text size throughout the app"
                 />
               </div>
-              <Button size="sm" className="mt-4" onClick={saveAccessibilityPrefs}>Save Settings</Button>
             </CardContent>
           </Card>
         </TabsContent>

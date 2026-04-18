@@ -202,3 +202,111 @@
   background: hsl(var(--primary) / 0.2);
   color: hsl(var(--foreground));
 }
+
+/* ========== ACCESSIBILITY ========== */
+
+/* Reduced Motion - Disable animations and transitions */
+.reduce-motion,
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Also disable specific Tailwind animations */
+.reduce-motion .animate-fade-in,
+.reduce-motion .animate-slide-in-right,
+.reduce-motion .animate-scale-in,
+.reduce-motion .animate-gradient-x {
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* High Contrast - Increase color contrast */
+.high-contrast {
+  --foreground: 0 0% 0%;
+  --background: 0 0% 100%;
+  --primary: 240 100% 40%;
+  --primary-foreground: 0 0% 100%;
+  --muted-foreground: 0 0% 25%;
+  --border: 0 0% 0%;
+  --input: 0 0% 0%;
+  --ring: 240 100% 40%;
+}
+
+.high-contrast.dark {
+  --foreground: 0 0% 100%;
+  --background: 0 0% 0%;
+  --primary: 240 100% 60%;
+  --primary-foreground: 0 0% 0%;
+  --muted-foreground: 0 0% 75%;
+  --border: 0 0% 100%;
+  --input: 0 0% 100%;
+  --ring: 240 100% 60%;
+}
+
+/* High contrast focus indicators */
+.high-contrast :focus-visible {
+  outline: 3px solid hsl(var(--primary)) !important;
+  outline-offset: 3px !important;
+  ring: none !important;
+}
+
+/* High contrast borders on interactive elements */
+.high-contrast button,
+.high-contrast a,
+.high-contrast input,
+.high-contrast select,
+.high-contrast textarea {
+  border-width: 2px !important;
+}
+
+/* Large Text - Increase font sizes */
+.large-text {
+  font-size: 16px;
+}
+
+.large-text h1 {
+  font-size: 1.75rem;
+}
+
+.large-text h2 {
+  font-size: 1.5rem;
+}
+
+.large-text h3 {
+  font-size: 1.25rem;
+}
+
+.large-text h4 {
+  font-size: 1.125rem;
+}
+
+.large-text p,
+.large-text span,
+.large-text div:not([class*="icon"]):not([class*="logo"]):not([class*="avatar"]) {
+  font-size: 1rem;
+}
+
+.large-text button {
+  font-size: 0.9375rem;
+}
+
+.large-text input,
+.large-text select,
+.large-text textarea {
+  font-size: 1rem;
+}
+
+.large-text .text-\[10px\] { font-size: 0.75rem !important; }
+.large-text .text-\[11px\] { font-size: 0.8125rem !important; }
+.large-text .text-\[12px\] { font-size: 0.875rem !important; }
+.large-text .text-\[13px\] { font-size: 0.9375rem !important; }
+.large-text .text-\[14px\] { font-size: 1rem !important; }
+.large-text .text-\[15px\] { font-size: 1.0625rem !important; }
+.large-text .text-\[16px\] { font-size: 1.125rem !important; }
+.large-text .text-\[22px\] { font-size: 1.5rem !important; }
