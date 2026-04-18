@@ -28,6 +28,12 @@ export interface ReceiptData {
 
 const DEFAULT_SCHOOL_NAME = 'EduPayTrack Institution';
 
+// Get school name from localStorage or use default
+function getSchoolName(): string {
+  if (typeof window === 'undefined') return DEFAULT_SCHOOL_NAME;
+  return window.localStorage.getItem('edu-pay-track-school-name') || DEFAULT_SCHOOL_NAME;
+}
+
 export function generatePaymentReceipt(data: ReceiptData): jsPDF {
   const doc = new jsPDF();
   const pageWidth = doc.internal.pageSize.width;
@@ -58,7 +64,7 @@ export function generatePaymentReceipt(data: ReceiptData): jsPDF {
   doc.setFontSize(24);
   doc.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2]);
   doc.setFont('helvetica', 'bold');
-  doc.text(data.schoolName || DEFAULT_SCHOOL_NAME, margin, 30);
+  doc.text(data.schoolName || getSchoolName(), margin, 30);
   
   // Receipt Title
   doc.setFontSize(28);

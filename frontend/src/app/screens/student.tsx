@@ -15,6 +15,7 @@ import { Skeleton } from '../../components/ui/skeleton';
 import { formatCurrency, formatDate } from '../../lib/utils';
 import { getFullImageUrl } from '../components/admin/common/payment-helpers';
 import { downloadPaymentReceipt, type ReceiptData } from '../lib/receipt-pdf';
+import { PaymentDeadlineCalendar } from '../components/payment-deadline-calendar';
 
 /* ---- Status badge helper ---- */
 function PaymentStatusBadge({ status }: { status: string }) {
@@ -214,6 +215,9 @@ export function StudentDashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Payment Deadline Calendar */}
+      <PaymentDeadlineCalendar currentBalance={remaining} />
 
       {/* Recent payments */}
       <div>

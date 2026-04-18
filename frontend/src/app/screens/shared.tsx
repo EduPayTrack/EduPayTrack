@@ -1,5 +1,5 @@
-import { useState, useCallback } from 'react';
-import { Bell, CheckCheck, Settings as SettingsIcon, User, Lock, Palette, Loader2, AlertTriangle, XCircle, FileText, Search, Filter, Mail, Smartphone, Eye, HelpCircle, MessageCircle, Globe, LogOut, Laptop, Moon, Sun } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { Bell, CheckCheck, Settings as SettingsIcon, User, Lock, Palette, Loader2, AlertTriangle, XCircle, FileText, Search, Filter, Mail, Smartphone, Eye, HelpCircle, MessageCircle, Globe, LogOut, Laptop, Moon, Sun, Building2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useTheme } from 'next-themes';
 
@@ -229,6 +229,55 @@ export function NotificationsPage() {
   );
 }
 
+/* ===== SCHOOL NAME CONFIG COMPONENT ===== */
+
+function SchoolNameConfigCard() {
+  const [schoolName, setSchoolName] = useState('');
+  const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    const stored = localStorage.getItem('edu-pay-track-school-name');
+    if (stored) setSchoolName(stored);
+  }, []);
+
+  const handleSave = () => {
+    if (schoolName.trim()) {
+      localStorage.setItem('edu-pay-track-school-name', schoolName.trim());
+      setSaved(true);
+      toast.success('School name saved');
+      setTimeout(() => setSaved(false), 2000);
+    }
+  };
+
+  return (
+    <Card>
+      <CardContent className="p-5 space-y-4">
+        <h3 className="text-[14px] font-medium flex items-center gap-2">
+          <Building2 className="h-4 w-4 text-muted-foreground" /> Institution Settings
+        </h3>
+        <div className="space-y-2">
+          <label className="text-[12px] text-muted-foreground">School / Institution Name</label>
+          <div className="flex gap-2">
+            <Input
+              value={schoolName}
+              onChange={(e) => setSchoolName(e.target.value)}
+              placeholder="e.g., ABC International School"
+              className="flex-1"
+            />
+            <Button onClick={handleSave} size="sm" className="gap-1">
+              {saved ? <CheckCheck className="h-4 w-4" /> : null}
+              Save
+            </Button>
+          </div>
+          <p className="text-[11px] text-muted-foreground">
+            This name will appear on official payment receipts and documents.
+          </p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
 /* ===== SETTINGS ===== */
 
 export function SettingsPage() {
@@ -360,6 +409,11 @@ export function SettingsPage() {
               )}
             </CardContent>
           </Card>
+
+          {/* School Name Configuration (Admin only) */}
+          {(user?.role === 'admin' || user?.role === 'accounts') && (
+            <SchoolNameConfigCard />
+          )}
 
           <Card className="border-border/50">
             <CardContent className="p-5">
