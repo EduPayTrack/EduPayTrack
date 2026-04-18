@@ -12,7 +12,7 @@ import { Input } from '../../components/ui/input';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../../components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
 import { Skeleton } from '../../components/ui/skeleton';
-import { formatCurrency, formatDate } from '../../lib/utils';
+import { formatCurrency, formatDate, cn } from '../../lib/utils';
 import { getFullImageUrl } from '../components/admin/common/payment-helpers';
 import { downloadPaymentReceipt, type ReceiptData } from '../lib/receipt-pdf';
 import { PaymentDeadlineCalendar } from '../components/payment-deadline-calendar';
@@ -474,14 +474,38 @@ export function UploadPaymentPage() {
             <label className="text-[13px] font-medium mb-2 block">Receipt Image / PDF</label>
             {!file ? (
               <div
-                className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-lg py-10 bg-muted/30 cursor-pointer hover:border-primary/50 hover:bg-primary/5 transition-colors"
+                className={cn(
+                  "flex flex-col items-center justify-center border-2 border-dashed rounded-lg py-10 cursor-pointer transition-all duration-200",
+                  isDragging
+                    ? "border-primary bg-primary/10 scale-[1.02]"
+                    : "border-border bg-muted/30 hover:border-primary/50 hover:bg-primary/5"
+                )}
                 onClick={() => fileInputRef.current?.click()}
-                onDragOver={(e) => e.preventDefault()}
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
                 onDrop={handleDrop}
               >
-                <Upload className="h-8 w-8 text-muted-foreground mb-3" />
-                <p className="text-[14px] font-medium">Click or drag receipt here</p>
-                <p className="text-[12px] text-muted-foreground mt-1">Accepts JPG, PNG, PDF up to 5MB</p>
+                <div className={cn(
+                  "p-3 rounded-full mb-3 transition-all duration-200",
+                  isDragging ? "bg-primary text-white scale-110" : "bg-muted text-muted-foreground"
+                )}>
+                  <Upload className="h-6 w-6" />
+                </div>
+                <p className={cn(
+                  "text-[14px] font-medium transition-colors",
+                  isDragging ? "text-primary" : "text-foreground"
+                )}>
+                  {isDragging ? "Drop receipt here" : "Click or drag receipt here"}
+                </p>
+                <p className="text-[12px] text-muted-foreground mt-1">
+                  Accepts JPG, PNG, PDF up to 5MB
+                </p>
+                {isDragging && (
+                  <p className="text-[11px] text-primary mt-2 animate-pulse">
+                    Release to upload
+                  </p>
+                )}
                 <input
                   ref={fileInputRef}
                   type="file"
