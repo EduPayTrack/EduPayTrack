@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { Upload, TrendingDown, CheckCircle, DollarSign, Loader2, FileImage, X, AlertCircle, Download, Clock3, ShieldCheck, ShieldAlert, BadgeCheck } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Upload, TrendingDown, CheckCircle, DollarSign, Loader2, FileImage, X, AlertCircle, Download, Clock3, ShieldCheck, ShieldAlert, BadgeCheck, Keyboard } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useAuth } from '../state/auth-context';
@@ -18,6 +18,8 @@ import { downloadPaymentReceipt, type ReceiptData } from '../lib/receipt-pdf';
 import { PaymentDeadlineCalendar } from '../components/payment-deadline-calendar';
 import { PaymentReminders, type PaymentReminder, type ReminderPreferences, generateSampleReminders } from '../components/payment-reminders';
 import { useFormAutosave } from '../lib/use-form-autosave';
+import { useAppShortcuts } from '../lib/use-keyboard-shortcuts';
+import { KeyboardShortcutsHelp } from '../components/keyboard-shortcuts-help';
 
 /* ---- Status badge helper ---- */
 function PaymentStatusBadge({ status }: { status: string }) {
@@ -38,10 +40,19 @@ function PaymentStatusBadge({ status }: { status: string }) {
 
 export function StudentDashboardPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [downloadingClearance, setDownloadingClearance] = useState(false);
+
+  // Keyboard shortcuts
+  const { shortcuts, shortcutsHelpOpen, setShortcutsHelpOpen } = useAppShortcuts({
+    onUpload: () => navigate('/student/upload-payment'),
+    onNavigateHome: () => navigate('/student/dashboard'),
+    onNavigateHistory: () => navigate('/student/payment-history'),
+    onNavigateSettings: () => navigate('/student/settings'),
+  });
 
   useEffect(() => {
     setLoading(true);
@@ -271,6 +282,13 @@ export function StudentDashboardPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Keyboard Shortcuts Help Dialog */}
+      <KeyboardShortcutsHelp
+        open={shortcutsHelpOpen}
+        onOpenChange={setShortcutsHelpOpen}
+        shortcuts={shortcuts}
+      />
     </div>
   );
 }
@@ -278,6 +296,7 @@ export function StudentDashboardPage() {
 /* ===== UPLOAD PAYMENT ===== */
 
 export function UploadPaymentPage() {
+  const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -286,6 +305,13 @@ export function UploadPaymentPage() {
   const [proofUrl, setProofUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
+
+  // Keyboard shortcuts
+  const { shortcuts, shortcutsHelpOpen, setShortcutsHelpOpen } = useAppShortcuts({
+    onNavigateHome: () => navigate('/student/dashboard'),
+    onNavigateHistory: () => navigate('/student/payment-history'),
+    onNavigateSettings: () => navigate('/student/settings'),
+  });
 
   // Form state
   const [amount, setAmount] = useState('');
@@ -657,6 +683,13 @@ export function UploadPaymentPage() {
           )}
         </Button>
       </form>
+
+      {/* Keyboard Shortcuts Help Dialog */}
+      <KeyboardShortcutsHelp
+        open={shortcutsHelpOpen}
+        onOpenChange={setShortcutsHelpOpen}
+        shortcuts={shortcuts}
+      />
     </div>
   );
 }
@@ -664,12 +697,20 @@ export function UploadPaymentPage() {
 /* ===== PAYMENT HISTORY ===== */
 
 export function PaymentHistoryPage() {
+  const navigate = useNavigate();
   const [dashboard, setDashboard] = useState<any>(null);
   const [payments, setPayments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
   const [selectedPaymentId, setSelectedPaymentId] = useState<string | null>(null);
   const [downloadingStatement, setDownloadingStatement] = useState(false);
+
+  // Keyboard shortcuts
+  const { shortcuts, shortcutsHelpOpen, setShortcutsHelpOpen } = useAppShortcuts({
+    onUpload: () => navigate('/student/upload-payment'),
+    onNavigateHome: () => navigate('/student/dashboard'),
+    onNavigateSettings: () => navigate('/student/settings'),
+  });
 
   useEffect(() => {
     apiFetch<any>('/students/me')
@@ -806,7 +847,24 @@ export function PaymentHistoryPage() {
                           <span className="font-mono">{payment.receiptNumber || payment.externalReference || 'N/A'}</span>
                         </div>
                       </div>
-                      <div className="text-[12px] text-muted-foreground">{isOpen ? 'Hide details' : 'View details'}</div>
+                      <div className="flex items-center gap-3">
+                        {/* Receipt Thumbnail Preview */}
+                        {payment.proofUrl && (
+                          <div className="relative group">
+                            <img
+                              src={getFullImageUrl(payment.proofUrl)}
+                              alt="Receipt thumbnail"
+                              className="h-12 w-12 rounded-md object-cover border border-border cursor-pointer hover:border-primary transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                window.open(getFullImageUrl(payment.proofUrl), '_blank');
+                              }}
+                            />
+                            <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 rounded-md transition-colors" />
+                          </div>
+                        )}
+                        <div className="text-[12px] text-muted-foreground">{isOpen ? 'Hide details' : 'View details'}</div>
+                      </div>
                     </div>
                   </button>
 
@@ -835,14 +893,28 @@ export function PaymentHistoryPage() {
                         <div className="rounded-lg border border-border bg-background p-3">
                           <p className="text-[11px] uppercase tracking-wide text-muted-foreground">Receipt</p>
                           {payment.proofUrl ? (
-                            <a
-                              className="mt-1 inline-block text-primary hover:underline"
-                              href={getFullImageUrl(payment.proofUrl)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              Open receipt
-                            </a>
+                            <div className="mt-2 space-y-2">
+                              <a
+                                href={getFullImageUrl(payment.proofUrl)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="block overflow-hidden rounded-md border border-border hover:border-primary transition-colors"
+                              >
+                                <img
+                                  src={getFullImageUrl(payment.proofUrl)}
+                                  alt="Receipt preview"
+                                  className="w-full h-32 object-cover"
+                                />
+                              </a>
+                              <a
+                                className="text-[12px] text-primary hover:underline inline-flex items-center gap-1"
+                                href={getFullImageUrl(payment.proofUrl)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                View full receipt →
+                              </a>
+                            </div>
                           ) : (
                             <p className="mt-1">No receipt attached</p>
                           )}
@@ -887,6 +959,13 @@ export function PaymentHistoryPage() {
           })
         )}
       </div>
+
+      {/* Keyboard Shortcuts Help Dialog */}
+      <KeyboardShortcutsHelp
+        open={shortcutsHelpOpen}
+        onOpenChange={setShortcutsHelpOpen}
+        shortcuts={shortcuts}
+      />
     </div>
   );
 }
