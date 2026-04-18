@@ -493,11 +493,10 @@ export function SettingsPage() {
                   <button
                     key={t}
                     onClick={() => setTheme(t)}
-                    className={`border rounded-lg p-4 text-center transition-all ${
-                      theme === t
-                        ? 'border-primary bg-primary/5 ring-1 ring-primary'
-                        : 'border-border hover:border-primary/30 hover:bg-muted/50'
-                    }`}
+                    className={`border rounded-lg p-4 text-center transition-all ${theme === t
+                      ? 'border-primary bg-primary/5 ring-1 ring-primary'
+                      : 'border-border hover:border-primary/30 hover:bg-muted/50'
+                      }`}
                   >
                     <div className="h-8 w-8 mx-auto mb-2 rounded-full bg-muted flex items-center justify-center">
                       {t === 'light' ? <Sun className="h-4 w-4" /> : t === 'dark' ? <Moon className="h-4 w-4" /> : <Laptop className="h-4 w-4" />}
