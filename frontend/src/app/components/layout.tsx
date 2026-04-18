@@ -78,14 +78,14 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               to={item.href}
               onClick={onNavigate}
               className={cn(
-                'flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] font-medium transition-all duration-150 group',
+                'flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] font-medium transition-all duration-200 group',
                 isActive
                   ? 'bg-sidebar-accent text-sidebar-accent-foreground shadow-sm'
-                  : 'text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground'
+                  : 'text-sidebar-foreground hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground hover:translate-x-0.5'
               )}
             >
               <div className="relative">
-                <Icon className="h-4 w-4 shrink-0 transition-transform group-hover:scale-105" />
+                <Icon className="h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110" />
                 {isNotifs && unreadCount > 0 && (
                   <span
                     key={`dot-${unreadCount}`}

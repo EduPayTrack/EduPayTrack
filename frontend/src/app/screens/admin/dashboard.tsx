@@ -36,10 +36,10 @@ function StatCard({ icon: Icon, label, value, iconColor = 'text-muted-foreground
   icon: any; label: string; value: string | number; iconColor?: string; valueColor?: string;
 }) {
   return (
-    <Card className="glass-card">
+    <Card className="glass-card transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
       <CardContent className="pt-4 pb-4 px-4">
         <div className="flex items-center gap-2 mb-1.5">
-          <Icon className={`h-4 w-4 ${iconColor}`} />
+          <Icon className={`h-4 w-4 ${iconColor} transition-transform duration-300 group-hover:scale-110`} />
           <span className="text-[12px] text-muted-foreground uppercase tracking-wider font-semibold">{label}</span>
         </div>
         <span className={`text-[24px] font-bold tracking-tight ${valueColor}`}>{value}</span>
@@ -199,33 +199,33 @@ export function AdminDashboardPage() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <Link to="/admin/students" className="block">
-          <Card className="hover:bg-muted/50 transition-colors">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 stagger-children">
+        <Link to="/admin/students" className="block animate-slide-in-right">
+          <Card className="hover:bg-muted/50 transition-all duration-200 hover:-translate-y-0.5">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center"><Users className="h-5 w-5 text-primary" /></div>
               <span className="text-[13px] font-medium">Students</span>
             </CardContent>
           </Card>
         </Link>
-        <Link to="/admin/verify-payments" className="block">
-          <Card className="hover:bg-muted/50 transition-colors">
+        <Link to="/admin/verify-payments" className="block animate-slide-in-right" style={{ animationDelay: '50ms' }}>
+          <Card className="hover:bg-muted/50 transition-all duration-200 hover:-translate-y-0.5">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="h-10 w-10 rounded-lg bg-success/10 flex items-center justify-center"><DollarSign className="h-5 w-5 text-success" /></div>
               <span className="text-[13px] font-medium">Payments</span>
             </CardContent>
           </Card>
         </Link>
-        <button onClick={handleBulkReminders} className="text-left w-full">
-          <Card className="hover:bg-muted/50 transition-colors">
+        <button onClick={handleBulkReminders} className="text-left w-full animate-slide-in-right" style={{ animationDelay: '100ms' }}>
+          <Card className="hover:bg-muted/50 transition-all duration-200 hover:-translate-y-0.5">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="h-10 w-10 rounded-lg bg-warning/10 flex items-center justify-center"><Mail className="h-5 w-5 text-warning" /></div>
               <span className="text-[13px] font-medium">Reminders</span>
             </CardContent>
           </Card>
         </button>
-        <Link to="/admin/reports" className="block">
-          <Card className="hover:bg-muted/50 transition-colors">
+        <Link to="/admin/reports" className="block animate-slide-in-right" style={{ animationDelay: '150ms' }}>
+          <Card className="hover:bg-muted/50 transition-all duration-200 hover:-translate-y-0.5">
             <CardContent className="p-4 flex items-center gap-3">
               <div className="h-10 w-10 rounded-lg bg-info/10 flex items-center justify-center"><BarChart3 className="h-5 w-5 text-info" /></div>
               <span className="text-[13px] font-medium">Reports</span>
@@ -381,9 +381,9 @@ export function AdminDashboardPage() {
             </div>
             <Table>
               <TableHeader><TableRow><TableHead>Student</TableHead><TableHead>Amount</TableHead><TableHead>Status</TableHead></TableRow></TableHeader>
-              <TableBody>
-                {payments.slice(0, 5).map((p: any) => (
-                  <TableRow key={p.id}>
+              <TableBody className="stagger-children">
+                {payments.slice(0, 5).map((p: any, index: number) => (
+                  <TableRow key={p.id} className="animate-fade-in" style={{ animationDelay: `${index * 50}ms` }}>
                     <TableCell className="text-[13px]">{p.student?.firstName} {p.student?.lastName}</TableCell>
                     <TableCell className="text-[13px] font-medium">{formatCurrency(p.amount)}</TableCell>
                     <TableCell><PaymentStatusBadge status={p.status} /></TableCell>
@@ -443,9 +443,9 @@ export function AdminDashboardPage() {
           <Card>
             <div className="p-4 border-b"><h2 className="text-[15px] font-medium">Recent Activity</h2></div>
             <CardContent className="p-4">
-              <div className="space-y-4">
+              <div className="space-y-4 stagger-children">
                 {auditLogs.slice(0, 6).map((log, idx) => (
-                  <div key={idx} className="flex gap-3">
+                  <div key={idx} className="flex gap-3 animate-slide-up" style={{ animationDelay: `${idx * 75}ms` }}>
                     <div className="mt-0.5">{getActivityIcon(log.action)}</div>
                     <div>
                       <p className="text-[13px] font-medium leading-none">{log.action?.replace(/\./g, ' ') || 'System Action'}</p>

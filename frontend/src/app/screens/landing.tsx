@@ -119,8 +119,8 @@ export function LandingPage() {
               </div>
             </div>
 
-            <div className="relative z-[1] flex-1 md:block">
-              <div className="overflow-hidden rounded-lg border border-border bg-card md:ml-12 md:mt-4">
+            <div className="relative z-[1] flex-1 md:block animate-slide-in-right animate-delay-200">
+              <div className="overflow-hidden rounded-lg border border-border bg-card md:ml-12 md:mt-4 shadow-lg transition-shadow duration-300 hover:shadow-xl">
                 <div className="flex items-center gap-2 border-b border-border px-4 py-3">
                   <div className="h-2.5 w-2.5 rounded-full bg-destructive/60" />
                   <div className="h-2.5 w-2.5 rounded-full bg-warning/60" />
@@ -183,10 +183,11 @@ export function LandingPage() {
               ].map((feature, index) => (
                 <div
                   key={feature.title}
-                  className={`p-6 md:p-8 ${index < 2 ? 'md:border-r border-border' : ''} ${index > 0 ? 'border-t md:border-t-0 border-border' : ''}`}
+                  className={`p-6 md:p-8 ${index < 2 ? 'md:border-r border-border' : ''} ${index > 0 ? 'border-t md:border-t-0 border-border' : ''} animate-slide-up`}
+                  style={{ animationDelay: `${index * 100}ms` }}
                 >
-                  <div className="mb-6 flex h-32 items-center justify-center rounded-lg border border-border bg-card/30">
-                    <feature.icon className="h-10 w-10 text-muted-foreground/40" />
+                  <div className="mb-6 flex h-32 items-center justify-center rounded-lg border border-border bg-card/30 transition-colors duration-300 hover:bg-card/60">
+                    <feature.icon className="h-10 w-10 text-muted-foreground/40 animate-float" style={{ animationDelay: `${index * 200}ms` }} />
                   </div>
                   <h3 className="mb-2 text-[15px] font-medium text-foreground">{feature.title}</h3>
                   <p className="text-[13px] leading-[1.6] text-muted-foreground">{feature.desc}</p>

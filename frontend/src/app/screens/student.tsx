@@ -240,9 +240,9 @@ export function StudentDashboardPage() {
                     <TableHead>Status</TableHead>
                   </TableRow>
                 </TableHeader>
-                <TableBody>
+                <TableBody className="stagger-children">
                   {data.payments.slice(0, 5).map((p: any) => (
-                    <TableRow key={p.id}>
+                    <TableRow key={p.id} className="animate-fade-in">
                       <TableCell className="text-[13px]">{formatDate(p.paymentDate || p.submittedAt)}</TableCell>
                       <TableCell className="text-[13px] text-muted-foreground font-mono">{p.receiptNumber || p.externalReference || 'N/A'}</TableCell>
                       <TableCell className="text-[13px] font-medium">{formatCurrency(Number(p.amount))}</TableCell>
@@ -641,7 +641,7 @@ export function PaymentHistoryPage() {
         </div>
       )}
 
-      <div className="space-y-4">
+      <div className="space-y-4 stagger-children">
         {filtered.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center text-[13px] text-muted-foreground">
@@ -651,13 +651,13 @@ export function PaymentHistoryPage() {
             </CardContent>
           </Card>
         ) : (
-          filtered.map((payment: any) => {
+          filtered.map((payment: any, index: number) => {
             const verification = getVerificationState(payment);
             const VerificationIcon = verification.icon;
             const isOpen = selectedPaymentId === payment.id;
 
             return (
-              <Card key={payment.id} className="overflow-hidden">
+              <Card key={payment.id} className="overflow-hidden animate-slide-up" style={{ animationDelay: `${index * 50}ms` }}>
                 <CardContent className="p-0">
                   <button
                     className="w-full p-4 text-left transition-colors hover:bg-muted/30"
