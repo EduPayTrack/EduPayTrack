@@ -22,11 +22,13 @@ export const recalculateStudentBalance = async (studentId: string) => {
     const normalizedProgram = student.program?.trim() || null;
     const normalizedClassLevel = student.classLevel?.trim() || null;
     const normalizedAcademicYear = student.academicYear?.trim() || null;
+    const normalizedSchoolLevel = student.schoolLevel;
 
     console.log(`[Balance Calc] Student ${studentId}:`, {
         program: normalizedProgram,
         classLevel: normalizedClassLevel,
         academicYear: normalizedAcademicYear,
+        schoolLevel: normalizedSchoolLevel,
     });
 
     const applicableFeeStructures = await prisma.feeStructure.findMany({
@@ -53,6 +55,9 @@ export const recalculateStudentBalance = async (studentId: string) => {
                         { academicYear: '' },
                         { academicYear: normalizedAcademicYear },
                     ],
+                },
+                {
+                    schoolLevel: normalizedSchoolLevel,
                 },
             ],
         },
