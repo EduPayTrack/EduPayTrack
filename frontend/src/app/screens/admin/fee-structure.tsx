@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { 
   Plus, 
   Pencil, 
-  Trash2 
+  Trash2,
+  Calendar,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { apiFetch } from '../../lib/api';
 import { Card, CardContent } from '../../../components/ui/card';
+import { Badge } from '../../../components/ui/badge';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Skeleton } from '../../../components/ui/skeleton';
@@ -19,6 +21,7 @@ import {
   TableHead, 
   TableCell 
 } from '../../../components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
 
 import { 
   Dialog, 
@@ -28,7 +31,15 @@ import {
   DialogDescription,
   DialogFooter 
 } from '../../../components/ui/dialog';
-import { formatCurrency } from '../../lib/utils';
+import { formatCurrency, formatDate } from '../../lib/utils';
+
+const FEE_TYPES = [
+  { value: 'tuition', label: 'Tuition' },
+  { value: 'hostel', label: 'Hostel' },
+  { value: 'exam', label: 'Exam' },
+  { value: 'library', label: 'Library' },
+  { value: 'other', label: 'Other' },
+];
 
 export function FeeStructurePage() {
   const [fees, setFees] = useState<any[]>([]);
@@ -43,6 +54,8 @@ export function FeeStructurePage() {
   const [amount, setAmount] = useState('');
   const [program, setProgram] = useState('');
   const [academicYear, setAcademicYear] = useState('');
+  const [dueDate, setDueDate] = useState('');
+  const [feeType, setFeeType] = useState('');
 
   const loadFees = async () => {
     setLoading(true);
@@ -58,12 +71,24 @@ export function FeeStructurePage() {
 
   useEffect(() => { loadFees(); }, []);
 
+  const resetForm = () => {
+    setEditId(null);
+    setTitle('');
+    setAmount('');
+    setProgram('');
+    setAcademicYear('');
+    setDueDate('');
+    setFeeType('');
+  };
+
   const handleEditClick = (fee: any) => {
     setEditId(fee.id);
     setTitle(fee.title || '');
     setAmount(fee.amount?.toString() || '');
     setProgram(fee.program || '');
     setAcademicYear(fee.academicYear || '');
+    setDueDate(fee.dueDate ? new Date(fee.dueDate).toISOString().split('T')[0] : '');
+    setFeeType(fee.feeType || '');
     setShowCreate(true);
   };
 
@@ -74,30 +99,30 @@ export function FeeStructurePage() {
     }
     setCreating(true);
     try {
+      const payload: Record<string, any> = {
+        title,
+        amount: Number(amount),
+        program: program && program !== 'none' ? program : undefined,
+        academicYear: academicYear && academicYear !== 'none' ? academicYear : undefined,
+        dueDate: dueDate || null,
+        feeType: feeType && feeType !== 'none' ? feeType : null,
+      };
+
       if (editId) {
         await apiFetch(`/admin/fee-structures/${editId}`, {
           method: 'PATCH',
-          body: JSON.stringify({
-            title,
-            amount: Number(amount),
-            program: program && program !== 'none' ? program : undefined,
-            academicYear: academicYear && academicYear !== 'none' ? academicYear : undefined,
-          }),
+          body: JSON.stringify(payload),
         });
         toast.success('Fee structure updated');
       } else {
         await apiFetch('/admin/fee-structures', {
           method: 'POST',
-          body: JSON.stringify({
-            title,
-            amount: Number(amount),
-            program: program && program !== 'none' ? program : undefined,
-            academicYear: academicYear && academicYear !== 'none' ? academicYear : undefined,
-          }),
+          body: JSON.stringify(payload),
         });
         toast.success('Fee structure created');
       }
-      setShowCreate(false); setEditId(null); setTitle(''); setAmount(''); setProgram(''); setAcademicYear('');
+      setShowCreate(false);
+      resetForm();
       loadFees();
     } catch (err: any) {
       toast.error(err.message || 'Failed to save');
@@ -122,9 +147,9 @@ export function FeeStructurePage() {
       <div className="flex items-start justify-between">
         <div>
           <h1 className="text-[20px] font-semibold tracking-tight text-foreground">Fee Structure</h1>
-          <p className="text-[13px] text-muted-foreground mt-0.5">Manage tuition and fee schedules</p>
+          <p className="text-[13px] text-muted-foreground mt-0.5">Manage tuition and fee schedules with payment deadlines</p>
         </div>
-        <Button size="sm" className="gap-1.5 h-8" onClick={() => { setEditId(null); setTitle(''); setAmount(''); setProgram(''); setAcademicYear(''); setShowCreate(true); }}>
+        <Button size="sm" className="gap-1.5 h-8" onClick={() => { resetForm(); setShowCreate(true); }}>
           <Plus className="h-3.5 w-3.5" /> Add Fee
         </Button>
       </div>
@@ -137,7 +162,12 @@ export function FeeStructurePage() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Title</TableHead><TableHead>Program</TableHead><TableHead>Year</TableHead><TableHead>Amount</TableHead>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Program</TableHead>
+                  <TableHead>Year</TableHead>
+                  <TableHead>Due Date</TableHead>
+                  <TableHead>Amount</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
@@ -145,8 +175,25 @@ export function FeeStructurePage() {
                 {fees.map((f: any) => (
                   <TableRow key={f.id}>
                     <TableCell className="text-[13px] font-medium">{f.title}</TableCell>
+                    <TableCell className="text-[13px]">
+                      {f.feeType ? (
+                        <Badge variant="outline" className="text-[11px] capitalize">{f.feeType}</Badge>
+                      ) : (
+                        <span className="text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
                     <TableCell className="text-[13px]">{f.program || 'All'}</TableCell>
                     <TableCell className="text-[13px]">{f.academicYear || f.classLevel || '—'}</TableCell>
+                    <TableCell className="text-[13px]">
+                      {f.dueDate ? (
+                        <span className="flex items-center gap-1.5">
+                          <Calendar className="h-3.5 w-3.5 text-primary" />
+                          {formatDate(f.dueDate)}
+                        </span>
+                      ) : (
+                        <span className="text-muted-foreground">No deadline</span>
+                      )}
+                    </TableCell>
                     <TableCell className="text-[13px] font-medium">{formatCurrency(Number(f.amount))}</TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">
@@ -156,7 +203,7 @@ export function FeeStructurePage() {
                     </TableCell>
                   </TableRow>
                 ))}
-                {fees.length === 0 && <TableRow><TableCell colSpan={5} className="text-center py-12 text-muted-foreground">No fee structures defined</TableCell></TableRow>}
+                {fees.length === 0 && <TableRow><TableCell colSpan={7} className="text-center py-12 text-muted-foreground">No fee structures defined</TableCell></TableRow>}
               </TableBody>
             </Table>
           )}
@@ -168,7 +215,7 @@ export function FeeStructurePage() {
           <DialogHeader>
             <DialogTitle>{editId ? 'Edit Fee Structure' : 'Add Fee Structure'}</DialogTitle>
             <DialogDescription>
-              Define the amount and criteria for this fee schedule.
+              Define the amount, criteria, and payment deadline for this fee schedule.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
@@ -177,6 +224,40 @@ export function FeeStructurePage() {
             <div className="grid grid-cols-2 gap-3">
               <div><label className="text-[13px] font-medium">Program</label><Input value={program} onChange={(e: any) => setProgram(e.target.value)} placeholder="All Programs" className="h-10" /></div>
               <div><label className="text-[13px] font-medium">Year</label><Input value={academicYear} onChange={(e: any) => setAcademicYear(e.target.value)} placeholder="All Years" className="h-10" /></div>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[13px] font-medium flex items-center gap-1.5">
+                  <Calendar className="h-3.5 w-3.5 text-primary" />
+                  Payment Deadline
+                </label>
+                <Input 
+                  type="date" 
+                  value={dueDate} 
+                  onChange={(e: any) => setDueDate(e.target.value)} 
+                  className="h-10" 
+                />
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Shows on student payment calendar
+                </p>
+              </div>
+              <div>
+                <label className="text-[13px] font-medium">Fee Type</label>
+                <Select value={feeType || 'none'} onValueChange={(v) => setFeeType(v === 'none' ? '' : v)}>
+                  <SelectTrigger className="h-10">
+                    <SelectValue placeholder="Select type..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">No type</SelectItem>
+                    {FEE_TYPES.map(t => (
+                      <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <p className="text-[11px] text-muted-foreground mt-1">
+                  Categorizes fee on calendar
+                </p>
+              </div>
             </div>
           </div>
           <DialogFooter>

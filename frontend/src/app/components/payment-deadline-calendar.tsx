@@ -75,56 +75,7 @@ function getDeadlineStatus(daysRemaining: number, isPaid: boolean): PaymentDeadl
   return 'upcoming';
 }
 
-// Generate sample deadlines if none provided
-function generateDefaultDeadlines(): PaymentDeadline[] {
-  const today = new Date();
-  const year = today.getFullYear();
-  
-  return [
-    {
-      id: '1',
-      title: 'First Installment - Semester 1',
-      description: 'Initial tuition payment for the semester',
-      dueDate: new Date(year, 0, 31).toISOString().split('T')[0], // Jan 31
-      amount: 225000,
-      type: 'tuition',
-      status: 'upcoming',
-      gracePeriodDays: 7,
-      lateFeeAmount: 10000,
-    },
-    {
-      id: '2',
-      title: 'Hostel Fee',
-      description: 'Accommodation fees for the semester',
-      dueDate: new Date(year, 1, 15).toISOString().split('T')[0], // Feb 15
-      amount: 80000,
-      type: 'hostel',
-      status: 'upcoming',
-      gracePeriodDays: 5,
-    },
-    {
-      id: '3',
-      title: 'Second Installment - Semester 1',
-      description: 'Final tuition payment before exams',
-      dueDate: new Date(year, 3, 15).toISOString().split('T')[0], // Apr 15
-      amount: 225000,
-      type: 'tuition',
-      status: 'upcoming',
-      gracePeriodDays: 7,
-      lateFeeAmount: 10000,
-    },
-    {
-      id: '4',
-      title: 'Exam Card Clearance',
-      description: 'Required for exam registration',
-      dueDate: new Date(year, 4, 1).toISOString().split('T')[0], // May 1
-      amount: 0,
-      type: 'exam',
-      status: 'upcoming',
-      gracePeriodDays: 0,
-    },
-  ];
-}
+
 
 export function PaymentDeadlineCalendar({ 
   deadlines: propDeadlines, 
@@ -134,9 +85,9 @@ export function PaymentDeadlineCalendar({
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  // Use provided deadlines or generate defaults
+  // Use provided deadlines (from API) or empty array
   const deadlines = useMemo(() => {
-    const d = propDeadlines || generateDefaultDeadlines();
+    const d = propDeadlines || [];
     // Calculate status for each deadline
     return d.map(deadline => {
       const daysRemaining = getDaysRemaining(deadline.dueDate);
@@ -406,7 +357,7 @@ export function PaymentDeadlineCalendar({
           <div className="space-y-2">
             {deadlines.length === 0 ? (
               <p className="text-[13px] text-muted-foreground text-center py-4">
-                No payment deadlines scheduled
+                No payment deadlines published by your institution yet
               </p>
             ) : (
               deadlines.slice(0, 5).map(deadline => {

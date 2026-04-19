@@ -15,6 +15,8 @@ const feeStructureSchema = z.object({
     term: z.string().min(1).optional(),
     semester: z.string().min(1).optional(),
     academicYear: z.string().min(1).optional(),
+    dueDate: z.coerce.date().optional().nullable(),
+    feeType: z.enum(['tuition', 'hostel', 'exam', 'library', 'other']).optional().nullable(),
     active: z.boolean().default(true),
 });
 

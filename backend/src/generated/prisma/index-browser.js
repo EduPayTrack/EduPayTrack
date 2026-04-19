@@ -164,6 +164,8 @@ exports.Prisma.FeeStructureScalarFieldEnum = {
   term: 'term',
   semester: 'semester',
   academicYear: 'academicYear',
+  dueDate: 'dueDate',
+  feeType: 'feeType',
   active: 'active',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'

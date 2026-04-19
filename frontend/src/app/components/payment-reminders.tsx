@@ -50,36 +50,48 @@ const methodLabels = {
   both: 'Both email & in-app',
 };
 
-// Sample reminders generator
-export function generateSampleReminders(): PaymentReminder[] {
-  const today = new Date();
-  const year = today.getFullYear();
+// Generate reminders from real deadline data
+export function generateRemindersFromDeadlines(deadlines: Array<{
+  id: string;
+  title: string;
+  description?: string;
+  dueDate: string;
+  amount: number;
+  type: string;
+  status: string;
+}>): PaymentReminder[] {
+  if (!deadlines || deadlines.length === 0) return [];
   
-  return [
-    {
-      id: '1',
-      title: 'First Installment - Semester 1',
-      description: 'Initial tuition payment deadline approaching',
-      deadlineDate: new Date(year, 0, 31).toISOString().split('T')[0],
-      amount: 225000,
-      timing: '3_days_before',
-      isEnabled: true,
-      notificationMethod: 'both',
-      reminderCount: 0,
-    },
-    {
-      id: '2',
-      title: 'Hostel Fee',
-      description: 'Accommodation fees due',
-      deadlineDate: new Date(year, 1, 15).toISOString().split('T')[0],
-      amount: 80000,
-      timing: '1_day_before',
-      isEnabled: true,
-      notificationMethod: 'in_app',
-      reminderCount: 1,
-      lastReminded: new Date(today.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(),
-    },
-  ];
+  return deadlines
+    .filter(d => d.status !== 'paid') // Don't remind for paid deadlines
+    .map((deadline) => {
+      const daysUntil = Math.ceil(
+        (new Date(deadline.dueDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24)
+      );
+
+      // Pick timing based on how far the deadline is
+      let timing: ReminderTiming = '3_days_before';
+      if (daysUntil < 0) timing = '1_day_after';
+      else if (daysUntil <= 1) timing = 'day_of';
+      else if (daysUntil <= 3) timing = '1_day_before';
+
+      return {
+        id: deadline.id,
+        title: deadline.title,
+        description: deadline.description,
+        deadlineDate: deadline.dueDate,
+        amount: deadline.amount,
+        timing,
+        isEnabled: true,
+        notificationMethod: 'in_app' as const,
+        reminderCount: 0,
+      };
+    });
+}
+
+// Keep backward compat — but now returns empty if no deadlines
+export function generateSampleReminders(): PaymentReminder[] {
+  return [];
 }
 
 // Calculate next reminder date based on timing
@@ -231,7 +243,7 @@ export function PaymentReminders({
   onPreferencesChange,
   className,
 }: PaymentRemindersProps) {
-  const [reminders, setReminders] = useState<PaymentReminder[]>(propReminders || generateSampleReminders());
+  const [reminders, setReminders] = useState<PaymentReminder[]>(propReminders || []);
   const [preferences, setPreferences] = useState<ReminderPreferences>(propPreferences || {
     enableAutoReminders: true,
     defaultTiming: '3_days_before',

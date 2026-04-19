@@ -16,7 +16,7 @@ import { formatCurrency, formatDate, cn } from '../../lib/utils';
 import { getFullImageUrl } from '../components/admin/common/payment-helpers';
 import { downloadPaymentReceipt, type ReceiptData } from '../lib/receipt-pdf';
 import { PaymentDeadlineCalendar } from '../components/payment-deadline-calendar';
-import { PaymentReminders, type PaymentReminder, type ReminderPreferences, generateSampleReminders } from '../components/payment-reminders';
+import { PaymentReminders, type PaymentReminder, type ReminderPreferences, generateRemindersFromDeadlines } from '../components/payment-reminders';
 import { useFormAutosave } from '../lib/use-form-autosave';
 import { useAppShortcuts } from '../lib/use-keyboard-shortcuts';
 import { KeyboardShortcutsHelp } from '../components/keyboard-shortcuts-help';
@@ -231,13 +231,13 @@ export function StudentDashboardPage() {
       </div>
 
       {/* Payment Deadline Calendar */}
-      <PaymentDeadlineCalendar currentBalance={remaining} />
+      <PaymentDeadlineCalendar deadlines={data.deadlines} currentBalance={remaining} />
 
       {/* Payment Reminders */}
       <PaymentReminders 
-        reminders={generateSampleReminders()} 
+        reminders={generateRemindersFromDeadlines(data.deadlines || [])} 
         onRemindersChange={(reminders) => {
-          // TODO: Save to backend when API is ready
+          // TODO: Save reminder preferences to backend
           console.log('Reminders updated:', reminders);
         }}
       />

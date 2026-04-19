@@ -4566,6 +4566,8 @@ export namespace Prisma {
     term: string | null
     semester: string | null
     academicYear: string | null
+    dueDate: Date | null
+    feeType: string | null
     active: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4581,6 +4583,8 @@ export namespace Prisma {
     term: string | null
     semester: string | null
     academicYear: string | null
+    dueDate: Date | null
+    feeType: string | null
     active: boolean | null
     createdAt: Date | null
     updatedAt: Date | null
@@ -4596,6 +4600,8 @@ export namespace Prisma {
     term: number
     semester: number
     academicYear: number
+    dueDate: number
+    feeType: number
     active: number
     createdAt: number
     updatedAt: number
@@ -4621,6 +4627,8 @@ export namespace Prisma {
     term?: true
     semester?: true
     academicYear?: true
+    dueDate?: true
+    feeType?: true
     active?: true
     createdAt?: true
     updatedAt?: true
@@ -4636,6 +4644,8 @@ export namespace Prisma {
     term?: true
     semester?: true
     academicYear?: true
+    dueDate?: true
+    feeType?: true
     active?: true
     createdAt?: true
     updatedAt?: true
@@ -4651,6 +4661,8 @@ export namespace Prisma {
     term?: true
     semester?: true
     academicYear?: true
+    dueDate?: true
+    feeType?: true
     active?: true
     createdAt?: true
     updatedAt?: true
@@ -4753,6 +4765,8 @@ export namespace Prisma {
     term: string | null
     semester: string | null
     academicYear: string | null
+    dueDate: Date | null
+    feeType: string | null
     active: boolean
     createdAt: Date
     updatedAt: Date
@@ -4787,6 +4801,8 @@ export namespace Prisma {
     term?: boolean
     semester?: boolean
     academicYear?: boolean
+    dueDate?: boolean
+    feeType?: boolean
     active?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -4802,6 +4818,8 @@ export namespace Prisma {
     term?: boolean
     semester?: boolean
     academicYear?: boolean
+    dueDate?: boolean
+    feeType?: boolean
     active?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -4817,6 +4835,8 @@ export namespace Prisma {
     term?: boolean
     semester?: boolean
     academicYear?: boolean
+    dueDate?: boolean
+    feeType?: boolean
     active?: boolean
     createdAt?: boolean
     updatedAt?: boolean
@@ -4832,12 +4852,14 @@ export namespace Prisma {
     term?: boolean
     semester?: boolean
     academicYear?: boolean
+    dueDate?: boolean
+    feeType?: boolean
     active?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type FeeStructureOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "amount" | "program" | "classLevel" | "term" | "semester" | "academicYear" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["feeStructure"]>
+  export type FeeStructureOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "amount" | "program" | "classLevel" | "term" | "semester" | "academicYear" | "dueDate" | "feeType" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["feeStructure"]>
 
   export type $FeeStructurePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "FeeStructure"
@@ -4852,6 +4874,8 @@ export namespace Prisma {
       term: string | null
       semester: string | null
       academicYear: string | null
+      dueDate: Date | null
+      feeType: string | null
       active: boolean
       createdAt: Date
       updatedAt: Date
@@ -5287,6 +5311,8 @@ export namespace Prisma {
     readonly term: FieldRef<"FeeStructure", 'String'>
     readonly semester: FieldRef<"FeeStructure", 'String'>
     readonly academicYear: FieldRef<"FeeStructure", 'String'>
+    readonly dueDate: FieldRef<"FeeStructure", 'DateTime'>
+    readonly feeType: FieldRef<"FeeStructure", 'String'>
     readonly active: FieldRef<"FeeStructure", 'Boolean'>
     readonly createdAt: FieldRef<"FeeStructure", 'DateTime'>
     readonly updatedAt: FieldRef<"FeeStructure", 'DateTime'>
@@ -14046,6 +14072,8 @@ export namespace Prisma {
     term: 'term',
     semester: 'semester',
     academicYear: 'academicYear',
+    dueDate: 'dueDate',
+    feeType: 'feeType',
     active: 'active',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
@@ -14681,6 +14709,8 @@ export namespace Prisma {
     term?: StringNullableFilter<"FeeStructure"> | string | null
     semester?: StringNullableFilter<"FeeStructure"> | string | null
     academicYear?: StringNullableFilter<"FeeStructure"> | string | null
+    dueDate?: DateTimeNullableFilter<"FeeStructure"> | Date | string | null
+    feeType?: StringNullableFilter<"FeeStructure"> | string | null
     active?: BoolFilter<"FeeStructure"> | boolean
     createdAt?: DateTimeFilter<"FeeStructure"> | Date | string
     updatedAt?: DateTimeFilter<"FeeStructure"> | Date | string
@@ -14696,6 +14726,8 @@ export namespace Prisma {
     term?: SortOrderInput | SortOrder
     semester?: SortOrderInput | SortOrder
     academicYear?: SortOrderInput | SortOrder
+    dueDate?: SortOrderInput | SortOrder
+    feeType?: SortOrderInput | SortOrder
     active?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -14714,6 +14746,8 @@ export namespace Prisma {
     term?: StringNullableFilter<"FeeStructure"> | string | null
     semester?: StringNullableFilter<"FeeStructure"> | string | null
     academicYear?: StringNullableFilter<"FeeStructure"> | string | null
+    dueDate?: DateTimeNullableFilter<"FeeStructure"> | Date | string | null
+    feeType?: StringNullableFilter<"FeeStructure"> | string | null
     active?: BoolFilter<"FeeStructure"> | boolean
     createdAt?: DateTimeFilter<"FeeStructure"> | Date | string
     updatedAt?: DateTimeFilter<"FeeStructure"> | Date | string
@@ -14729,6 +14763,8 @@ export namespace Prisma {
     term?: SortOrderInput | SortOrder
     semester?: SortOrderInput | SortOrder
     academicYear?: SortOrderInput | SortOrder
+    dueDate?: SortOrderInput | SortOrder
+    feeType?: SortOrderInput | SortOrder
     active?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -14752,6 +14788,8 @@ export namespace Prisma {
     term?: StringNullableWithAggregatesFilter<"FeeStructure"> | string | null
     semester?: StringNullableWithAggregatesFilter<"FeeStructure"> | string | null
     academicYear?: StringNullableWithAggregatesFilter<"FeeStructure"> | string | null
+    dueDate?: DateTimeNullableWithAggregatesFilter<"FeeStructure"> | Date | string | null
+    feeType?: StringNullableWithAggregatesFilter<"FeeStructure"> | string | null
     active?: BoolWithAggregatesFilter<"FeeStructure"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"FeeStructure"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"FeeStructure"> | Date | string
@@ -15720,6 +15758,8 @@ export namespace Prisma {
     term?: string | null
     semester?: string | null
     academicYear?: string | null
+    dueDate?: Date | string | null
+    feeType?: string | null
     active?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -15735,6 +15775,8 @@ export namespace Prisma {
     term?: string | null
     semester?: string | null
     academicYear?: string | null
+    dueDate?: Date | string | null
+    feeType?: string | null
     active?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -15750,6 +15792,8 @@ export namespace Prisma {
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    feeType?: NullableStringFieldUpdateOperationsInput | string | null
     active?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15765,6 +15809,8 @@ export namespace Prisma {
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    feeType?: NullableStringFieldUpdateOperationsInput | string | null
     active?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15780,6 +15826,8 @@ export namespace Prisma {
     term?: string | null
     semester?: string | null
     academicYear?: string | null
+    dueDate?: Date | string | null
+    feeType?: string | null
     active?: boolean
     createdAt?: Date | string
     updatedAt?: Date | string
@@ -15795,6 +15843,8 @@ export namespace Prisma {
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    feeType?: NullableStringFieldUpdateOperationsInput | string | null
     active?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15810,6 +15860,8 @@ export namespace Prisma {
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
+    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    feeType?: NullableStringFieldUpdateOperationsInput | string | null
     active?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -16965,6 +17017,8 @@ export namespace Prisma {
     term?: SortOrder
     semester?: SortOrder
     academicYear?: SortOrder
+    dueDate?: SortOrder
+    feeType?: SortOrder
     active?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16984,6 +17038,8 @@ export namespace Prisma {
     term?: SortOrder
     semester?: SortOrder
     academicYear?: SortOrder
+    dueDate?: SortOrder
+    feeType?: SortOrder
     active?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
@@ -16999,6 +17055,8 @@ export namespace Prisma {
     term?: SortOrder
     semester?: SortOrder
     academicYear?: SortOrder
+    dueDate?: SortOrder
+    feeType?: SortOrder
     active?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
