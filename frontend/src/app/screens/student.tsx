@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Upload, TrendingDown, CheckCircle, DollarSign, Loader2, FileImage, X, AlertCircle, Download, Clock3, ShieldCheck, ShieldAlert, BadgeCheck, Keyboard } from 'lucide-react';
+import { Upload, TrendingDown, CheckCircle, DollarSign, Loader2, FileImage, X, AlertCircle, Download, Clock3, ShieldCheck, ShieldAlert, BadgeCheck } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useAuth } from '../state/auth-context';
@@ -16,7 +16,7 @@ import { formatCurrency, formatDate, cn } from '../../lib/utils';
 import { getFullImageUrl } from '../components/admin/common/payment-helpers';
 import { downloadPaymentReceipt, type ReceiptData } from '../lib/receipt-pdf';
 import { PaymentDeadlineCalendar } from '../components/payment-deadline-calendar';
-import { PaymentReminders, type PaymentReminder, type ReminderPreferences, generateRemindersFromDeadlines } from '../components/payment-reminders';
+import { PaymentReminders, generateRemindersFromDeadlines } from '../components/payment-reminders';
 import { useFormAutosave } from '../lib/use-form-autosave';
 import { useAppShortcuts } from '../lib/use-keyboard-shortcuts';
 import { KeyboardShortcutsHelp } from '../components/keyboard-shortcuts-help';

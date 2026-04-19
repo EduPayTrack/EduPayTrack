@@ -17,6 +17,7 @@ const feeStructureSchema = z.object({
     academicYear: z.string().min(1).optional(),
     dueDate: z.coerce.date().optional().nullable(),
     feeType: z.enum(['tuition', 'hostel', 'exam', 'library', 'other']).optional().nullable(),
+    schoolLevel: z.enum(['PRIMARY', 'SECONDARY', 'TERTIARY']).optional(),
     active: z.boolean().default(true),
 });
 
@@ -27,11 +28,12 @@ export const createFeeStructure = async (input: unknown) => {
 
     // DEACTIVATE older fee structures that match this criteria
     // Only deactivate if at least one criterion is specified
-    if (data.program || data.academicYear || data.classLevel) {
+    if (data.program || data.academicYear || data.classLevel || data.schoolLevel) {
         const deactivateWhere: any = { active: true };
         if (data.program !== undefined) deactivateWhere.program = data.program;
         if (data.academicYear !== undefined) deactivateWhere.academicYear = data.academicYear;
         if (data.classLevel !== undefined) deactivateWhere.classLevel = data.classLevel;
+        if (data.schoolLevel !== undefined) deactivateWhere.schoolLevel = data.schoolLevel;
 
         console.log('[FeeService] Deactivating fee structures with criteria:', deactivateWhere);
 
@@ -46,7 +48,7 @@ export const createFeeStructure = async (input: unknown) => {
 
     // Recalculate balances for ALL students since deactivation may have affected anyone
     const allStudents = await prisma.student.findMany({
-        select: { id: true, userId: true, program: true, classLevel: true, academicYear: true },
+        select: { id: true, userId: true, program: true, classLevel: true, academicYear: true, schoolLevel: true },
     });
 
     console.log(`[FeeService] Recalculating balances for ${allStudents.length} students`);
@@ -57,10 +59,11 @@ export const createFeeStructure = async (input: unknown) => {
 
     // Notify students who match this fee structure's criteria
     const matchingStudents = allStudents.filter(s => {
+        const schoolLevelMatch = !data.schoolLevel || s.schoolLevel === data.schoolLevel;
         const programMatch = !data.program || s.program === data.program;
         const classLevelMatch = !data.classLevel || s.classLevel === data.classLevel;
         const academicYearMatch = !data.academicYear || s.academicYear === data.academicYear;
-        return programMatch && classLevelMatch && academicYearMatch;
+        return schoolLevelMatch && programMatch && classLevelMatch && academicYearMatch;
     });
 
     if (matchingStudents.length > 0) {
@@ -81,6 +84,7 @@ export const createFeeStructure = async (input: unknown) => {
         details: {
             title: feeStructure.title,
             amount: Number(feeStructure.amount),
+            schoolLevel: feeStructure.schoolLevel,
             program: feeStructure.program,
             classLevel: feeStructure.classLevel,
             academicYear: feeStructure.academicYear,

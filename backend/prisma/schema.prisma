@@ -26,6 +26,12 @@ enum PaymentMethod {
   MOBILE_CREDIT_CARD
 }
 
+enum SchoolLevel {
+  PRIMARY
+  SECONDARY
+  TERTIARY
+}
+
 enum PaymentStatus {
   PENDING
   APPROVED
@@ -88,6 +94,7 @@ model Student {
   academicYear   String?
   term           String?
   semester       String?
+  schoolLevel    SchoolLevel @default(TERTIARY)
   phone          String?
   currentBalance Decimal   @default(0) @db.Decimal(12, 2)
   createdAt      DateTime  @default(now())
@@ -106,6 +113,7 @@ model FeeStructure {
   term         String?
   semester     String?
   academicYear String?
+  schoolLevel  SchoolLevel @default(TERTIARY)
   dueDate      DateTime?
   feeType      String?   // 'tuition' | 'hostel' | 'exam' | 'library' | 'other'
   active       Boolean   @default(true)

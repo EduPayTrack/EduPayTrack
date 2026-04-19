@@ -95,6 +95,15 @@ export const PaymentMethod: {
 export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod]
 
 
+export const SchoolLevel: {
+  PRIMARY: 'PRIMARY',
+  SECONDARY: 'SECONDARY',
+  TERTIARY: 'TERTIARY'
+};
+
+export type SchoolLevel = (typeof SchoolLevel)[keyof typeof SchoolLevel]
+
+
 export const PaymentStatus: {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
@@ -149,6 +158,10 @@ export const UserStatus: typeof $Enums.UserStatus
 export type PaymentMethod = $Enums.PaymentMethod
 
 export const PaymentMethod: typeof $Enums.PaymentMethod
+
+export type SchoolLevel = $Enums.SchoolLevel
+
+export const SchoolLevel: typeof $Enums.SchoolLevel
 
 export type PaymentStatus = $Enums.PaymentStatus
 
@@ -3328,6 +3341,7 @@ export namespace Prisma {
     academicYear: string | null
     term: string | null
     semester: string | null
+    schoolLevel: $Enums.SchoolLevel | null
     phone: string | null
     currentBalance: Decimal | null
     createdAt: Date | null
@@ -3345,6 +3359,7 @@ export namespace Prisma {
     academicYear: string | null
     term: string | null
     semester: string | null
+    schoolLevel: $Enums.SchoolLevel | null
     phone: string | null
     currentBalance: Decimal | null
     createdAt: Date | null
@@ -3362,6 +3377,7 @@ export namespace Prisma {
     academicYear: number
     term: number
     semester: number
+    schoolLevel: number
     phone: number
     currentBalance: number
     createdAt: number
@@ -3389,6 +3405,7 @@ export namespace Prisma {
     academicYear?: true
     term?: true
     semester?: true
+    schoolLevel?: true
     phone?: true
     currentBalance?: true
     createdAt?: true
@@ -3406,6 +3423,7 @@ export namespace Prisma {
     academicYear?: true
     term?: true
     semester?: true
+    schoolLevel?: true
     phone?: true
     currentBalance?: true
     createdAt?: true
@@ -3423,6 +3441,7 @@ export namespace Prisma {
     academicYear?: true
     term?: true
     semester?: true
+    schoolLevel?: true
     phone?: true
     currentBalance?: true
     createdAt?: true
@@ -3527,6 +3546,7 @@ export namespace Prisma {
     academicYear: string | null
     term: string | null
     semester: string | null
+    schoolLevel: $Enums.SchoolLevel
     phone: string | null
     currentBalance: Decimal
     createdAt: Date
@@ -3563,6 +3583,7 @@ export namespace Prisma {
     academicYear?: boolean
     term?: boolean
     semester?: boolean
+    schoolLevel?: boolean
     phone?: boolean
     currentBalance?: boolean
     createdAt?: boolean
@@ -3583,6 +3604,7 @@ export namespace Prisma {
     academicYear?: boolean
     term?: boolean
     semester?: boolean
+    schoolLevel?: boolean
     phone?: boolean
     currentBalance?: boolean
     createdAt?: boolean
@@ -3601,6 +3623,7 @@ export namespace Prisma {
     academicYear?: boolean
     term?: boolean
     semester?: boolean
+    schoolLevel?: boolean
     phone?: boolean
     currentBalance?: boolean
     createdAt?: boolean
@@ -3619,13 +3642,14 @@ export namespace Prisma {
     academicYear?: boolean
     term?: boolean
     semester?: boolean
+    schoolLevel?: boolean
     phone?: boolean
     currentBalance?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type StudentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "studentCode" | "firstName" | "lastName" | "program" | "classLevel" | "academicYear" | "term" | "semester" | "phone" | "currentBalance" | "createdAt" | "updatedAt", ExtArgs["result"]["student"]>
+  export type StudentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "studentCode" | "firstName" | "lastName" | "program" | "classLevel" | "academicYear" | "term" | "semester" | "schoolLevel" | "phone" | "currentBalance" | "createdAt" | "updatedAt", ExtArgs["result"]["student"]>
   export type StudentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
     payments?: boolean | Student$paymentsArgs<ExtArgs>
@@ -3655,6 +3679,7 @@ export namespace Prisma {
       academicYear: string | null
       term: string | null
       semester: string | null
+      schoolLevel: $Enums.SchoolLevel
       phone: string | null
       currentBalance: Prisma.Decimal
       createdAt: Date
@@ -4094,6 +4119,7 @@ export namespace Prisma {
     readonly academicYear: FieldRef<"Student", 'String'>
     readonly term: FieldRef<"Student", 'String'>
     readonly semester: FieldRef<"Student", 'String'>
+    readonly schoolLevel: FieldRef<"Student", 'SchoolLevel'>
     readonly phone: FieldRef<"Student", 'String'>
     readonly currentBalance: FieldRef<"Student", 'Decimal'>
     readonly createdAt: FieldRef<"Student", 'DateTime'>
@@ -4566,6 +4592,7 @@ export namespace Prisma {
     term: string | null
     semester: string | null
     academicYear: string | null
+    schoolLevel: $Enums.SchoolLevel | null
     dueDate: Date | null
     feeType: string | null
     active: boolean | null
@@ -4583,6 +4610,7 @@ export namespace Prisma {
     term: string | null
     semester: string | null
     academicYear: string | null
+    schoolLevel: $Enums.SchoolLevel | null
     dueDate: Date | null
     feeType: string | null
     active: boolean | null
@@ -4600,6 +4628,7 @@ export namespace Prisma {
     term: number
     semester: number
     academicYear: number
+    schoolLevel: number
     dueDate: number
     feeType: number
     active: number
@@ -4627,6 +4656,7 @@ export namespace Prisma {
     term?: true
     semester?: true
     academicYear?: true
+    schoolLevel?: true
     dueDate?: true
     feeType?: true
     active?: true
@@ -4644,6 +4674,7 @@ export namespace Prisma {
     term?: true
     semester?: true
     academicYear?: true
+    schoolLevel?: true
     dueDate?: true
     feeType?: true
     active?: true
@@ -4661,6 +4692,7 @@ export namespace Prisma {
     term?: true
     semester?: true
     academicYear?: true
+    schoolLevel?: true
     dueDate?: true
     feeType?: true
     active?: true
@@ -4765,6 +4797,7 @@ export namespace Prisma {
     term: string | null
     semester: string | null
     academicYear: string | null
+    schoolLevel: $Enums.SchoolLevel
     dueDate: Date | null
     feeType: string | null
     active: boolean
@@ -4801,6 +4834,7 @@ export namespace Prisma {
     term?: boolean
     semester?: boolean
     academicYear?: boolean
+    schoolLevel?: boolean
     dueDate?: boolean
     feeType?: boolean
     active?: boolean
@@ -4818,6 +4852,7 @@ export namespace Prisma {
     term?: boolean
     semester?: boolean
     academicYear?: boolean
+    schoolLevel?: boolean
     dueDate?: boolean
     feeType?: boolean
     active?: boolean
@@ -4835,6 +4870,7 @@ export namespace Prisma {
     term?: boolean
     semester?: boolean
     academicYear?: boolean
+    schoolLevel?: boolean
     dueDate?: boolean
     feeType?: boolean
     active?: boolean
@@ -4852,6 +4888,7 @@ export namespace Prisma {
     term?: boolean
     semester?: boolean
     academicYear?: boolean
+    schoolLevel?: boolean
     dueDate?: boolean
     feeType?: boolean
     active?: boolean
@@ -4859,7 +4896,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type FeeStructureOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "amount" | "program" | "classLevel" | "term" | "semester" | "academicYear" | "dueDate" | "feeType" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["feeStructure"]>
+  export type FeeStructureOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "amount" | "program" | "classLevel" | "term" | "semester" | "academicYear" | "schoolLevel" | "dueDate" | "feeType" | "active" | "createdAt" | "updatedAt", ExtArgs["result"]["feeStructure"]>
 
   export type $FeeStructurePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "FeeStructure"
@@ -4874,6 +4911,7 @@ export namespace Prisma {
       term: string | null
       semester: string | null
       academicYear: string | null
+      schoolLevel: $Enums.SchoolLevel
       dueDate: Date | null
       feeType: string | null
       active: boolean
@@ -5311,6 +5349,7 @@ export namespace Prisma {
     readonly term: FieldRef<"FeeStructure", 'String'>
     readonly semester: FieldRef<"FeeStructure", 'String'>
     readonly academicYear: FieldRef<"FeeStructure", 'String'>
+    readonly schoolLevel: FieldRef<"FeeStructure", 'SchoolLevel'>
     readonly dueDate: FieldRef<"FeeStructure", 'DateTime'>
     readonly feeType: FieldRef<"FeeStructure", 'String'>
     readonly active: FieldRef<"FeeStructure", 'Boolean'>
@@ -14053,6 +14092,7 @@ export namespace Prisma {
     academicYear: 'academicYear',
     term: 'term',
     semester: 'semester',
+    schoolLevel: 'schoolLevel',
     phone: 'phone',
     currentBalance: 'currentBalance',
     createdAt: 'createdAt',
@@ -14072,6 +14112,7 @@ export namespace Prisma {
     term: 'term',
     semester: 'semester',
     academicYear: 'academicYear',
+    schoolLevel: 'schoolLevel',
     dueDate: 'dueDate',
     feeType: 'feeType',
     active: 'active',
@@ -14322,6 +14363,20 @@ export namespace Prisma {
    * Reference to a field of type 'DateTime[]'
    */
   export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'DateTime[]'>
+    
+
+
+  /**
+   * Reference to a field of type 'SchoolLevel'
+   */
+  export type EnumSchoolLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SchoolLevel'>
+    
+
+
+  /**
+   * Reference to a field of type 'SchoolLevel[]'
+   */
+  export type ListEnumSchoolLevelFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'SchoolLevel[]'>
     
 
 
@@ -14605,6 +14660,7 @@ export namespace Prisma {
     academicYear?: StringNullableFilter<"Student"> | string | null
     term?: StringNullableFilter<"Student"> | string | null
     semester?: StringNullableFilter<"Student"> | string | null
+    schoolLevel?: EnumSchoolLevelFilter<"Student"> | $Enums.SchoolLevel
     phone?: StringNullableFilter<"Student"> | string | null
     currentBalance?: DecimalFilter<"Student"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFilter<"Student"> | Date | string
@@ -14624,6 +14680,7 @@ export namespace Prisma {
     academicYear?: SortOrderInput | SortOrder
     term?: SortOrderInput | SortOrder
     semester?: SortOrderInput | SortOrder
+    schoolLevel?: SortOrder
     phone?: SortOrderInput | SortOrder
     currentBalance?: SortOrder
     createdAt?: SortOrder
@@ -14646,6 +14703,7 @@ export namespace Prisma {
     academicYear?: StringNullableFilter<"Student"> | string | null
     term?: StringNullableFilter<"Student"> | string | null
     semester?: StringNullableFilter<"Student"> | string | null
+    schoolLevel?: EnumSchoolLevelFilter<"Student"> | $Enums.SchoolLevel
     phone?: StringNullableFilter<"Student"> | string | null
     currentBalance?: DecimalFilter<"Student"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFilter<"Student"> | Date | string
@@ -14665,6 +14723,7 @@ export namespace Prisma {
     academicYear?: SortOrderInput | SortOrder
     term?: SortOrderInput | SortOrder
     semester?: SortOrderInput | SortOrder
+    schoolLevel?: SortOrder
     phone?: SortOrderInput | SortOrder
     currentBalance?: SortOrder
     createdAt?: SortOrder
@@ -14690,6 +14749,7 @@ export namespace Prisma {
     academicYear?: StringNullableWithAggregatesFilter<"Student"> | string | null
     term?: StringNullableWithAggregatesFilter<"Student"> | string | null
     semester?: StringNullableWithAggregatesFilter<"Student"> | string | null
+    schoolLevel?: EnumSchoolLevelWithAggregatesFilter<"Student"> | $Enums.SchoolLevel
     phone?: StringNullableWithAggregatesFilter<"Student"> | string | null
     currentBalance?: DecimalWithAggregatesFilter<"Student"> | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeWithAggregatesFilter<"Student"> | Date | string
@@ -14709,6 +14769,7 @@ export namespace Prisma {
     term?: StringNullableFilter<"FeeStructure"> | string | null
     semester?: StringNullableFilter<"FeeStructure"> | string | null
     academicYear?: StringNullableFilter<"FeeStructure"> | string | null
+    schoolLevel?: EnumSchoolLevelFilter<"FeeStructure"> | $Enums.SchoolLevel
     dueDate?: DateTimeNullableFilter<"FeeStructure"> | Date | string | null
     feeType?: StringNullableFilter<"FeeStructure"> | string | null
     active?: BoolFilter<"FeeStructure"> | boolean
@@ -14726,6 +14787,7 @@ export namespace Prisma {
     term?: SortOrderInput | SortOrder
     semester?: SortOrderInput | SortOrder
     academicYear?: SortOrderInput | SortOrder
+    schoolLevel?: SortOrder
     dueDate?: SortOrderInput | SortOrder
     feeType?: SortOrderInput | SortOrder
     active?: SortOrder
@@ -14746,6 +14808,7 @@ export namespace Prisma {
     term?: StringNullableFilter<"FeeStructure"> | string | null
     semester?: StringNullableFilter<"FeeStructure"> | string | null
     academicYear?: StringNullableFilter<"FeeStructure"> | string | null
+    schoolLevel?: EnumSchoolLevelFilter<"FeeStructure"> | $Enums.SchoolLevel
     dueDate?: DateTimeNullableFilter<"FeeStructure"> | Date | string | null
     feeType?: StringNullableFilter<"FeeStructure"> | string | null
     active?: BoolFilter<"FeeStructure"> | boolean
@@ -14763,6 +14826,7 @@ export namespace Prisma {
     term?: SortOrderInput | SortOrder
     semester?: SortOrderInput | SortOrder
     academicYear?: SortOrderInput | SortOrder
+    schoolLevel?: SortOrder
     dueDate?: SortOrderInput | SortOrder
     feeType?: SortOrderInput | SortOrder
     active?: SortOrder
@@ -14788,6 +14852,7 @@ export namespace Prisma {
     term?: StringNullableWithAggregatesFilter<"FeeStructure"> | string | null
     semester?: StringNullableWithAggregatesFilter<"FeeStructure"> | string | null
     academicYear?: StringNullableWithAggregatesFilter<"FeeStructure"> | string | null
+    schoolLevel?: EnumSchoolLevelWithAggregatesFilter<"FeeStructure"> | $Enums.SchoolLevel
     dueDate?: DateTimeNullableWithAggregatesFilter<"FeeStructure"> | Date | string | null
     feeType?: StringNullableWithAggregatesFilter<"FeeStructure"> | string | null
     active?: BoolWithAggregatesFilter<"FeeStructure"> | boolean
@@ -15636,6 +15701,7 @@ export namespace Prisma {
     academicYear?: string | null
     term?: string | null
     semester?: string | null
+    schoolLevel?: $Enums.SchoolLevel
     phone?: string | null
     currentBalance?: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
@@ -15655,6 +15721,7 @@ export namespace Prisma {
     academicYear?: string | null
     term?: string | null
     semester?: string | null
+    schoolLevel?: $Enums.SchoolLevel
     phone?: string | null
     currentBalance?: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
@@ -15672,6 +15739,7 @@ export namespace Prisma {
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolLevel?: EnumSchoolLevelFieldUpdateOperationsInput | $Enums.SchoolLevel
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     currentBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15691,6 +15759,7 @@ export namespace Prisma {
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolLevel?: EnumSchoolLevelFieldUpdateOperationsInput | $Enums.SchoolLevel
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     currentBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15709,6 +15778,7 @@ export namespace Prisma {
     academicYear?: string | null
     term?: string | null
     semester?: string | null
+    schoolLevel?: $Enums.SchoolLevel
     phone?: string | null
     currentBalance?: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
@@ -15725,6 +15795,7 @@ export namespace Prisma {
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolLevel?: EnumSchoolLevelFieldUpdateOperationsInput | $Enums.SchoolLevel
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     currentBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15742,6 +15813,7 @@ export namespace Prisma {
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolLevel?: EnumSchoolLevelFieldUpdateOperationsInput | $Enums.SchoolLevel
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     currentBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -15758,6 +15830,7 @@ export namespace Prisma {
     term?: string | null
     semester?: string | null
     academicYear?: string | null
+    schoolLevel?: $Enums.SchoolLevel
     dueDate?: Date | string | null
     feeType?: string | null
     active?: boolean
@@ -15775,6 +15848,7 @@ export namespace Prisma {
     term?: string | null
     semester?: string | null
     academicYear?: string | null
+    schoolLevel?: $Enums.SchoolLevel
     dueDate?: Date | string | null
     feeType?: string | null
     active?: boolean
@@ -15792,6 +15866,7 @@ export namespace Prisma {
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolLevel?: EnumSchoolLevelFieldUpdateOperationsInput | $Enums.SchoolLevel
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     feeType?: NullableStringFieldUpdateOperationsInput | string | null
     active?: BoolFieldUpdateOperationsInput | boolean
@@ -15809,6 +15884,7 @@ export namespace Prisma {
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolLevel?: EnumSchoolLevelFieldUpdateOperationsInput | $Enums.SchoolLevel
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     feeType?: NullableStringFieldUpdateOperationsInput | string | null
     active?: BoolFieldUpdateOperationsInput | boolean
@@ -15826,6 +15902,7 @@ export namespace Prisma {
     term?: string | null
     semester?: string | null
     academicYear?: string | null
+    schoolLevel?: $Enums.SchoolLevel
     dueDate?: Date | string | null
     feeType?: string | null
     active?: boolean
@@ -15843,6 +15920,7 @@ export namespace Prisma {
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolLevel?: EnumSchoolLevelFieldUpdateOperationsInput | $Enums.SchoolLevel
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     feeType?: NullableStringFieldUpdateOperationsInput | string | null
     active?: BoolFieldUpdateOperationsInput | boolean
@@ -15860,6 +15938,7 @@ export namespace Prisma {
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolLevel?: EnumSchoolLevelFieldUpdateOperationsInput | $Enums.SchoolLevel
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     feeType?: NullableStringFieldUpdateOperationsInput | string | null
     active?: BoolFieldUpdateOperationsInput | boolean
@@ -16911,6 +16990,13 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type EnumSchoolLevelFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolLevel | EnumSchoolLevelFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolLevel[] | ListEnumSchoolLevelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolLevel[] | ListEnumSchoolLevelFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolLevelFilter<$PrismaModel> | $Enums.SchoolLevel
+  }
+
   export type DecimalFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
@@ -16938,6 +17024,7 @@ export namespace Prisma {
     academicYear?: SortOrder
     term?: SortOrder
     semester?: SortOrder
+    schoolLevel?: SortOrder
     phone?: SortOrder
     currentBalance?: SortOrder
     createdAt?: SortOrder
@@ -16959,6 +17046,7 @@ export namespace Prisma {
     academicYear?: SortOrder
     term?: SortOrder
     semester?: SortOrder
+    schoolLevel?: SortOrder
     phone?: SortOrder
     currentBalance?: SortOrder
     createdAt?: SortOrder
@@ -16976,6 +17064,7 @@ export namespace Prisma {
     academicYear?: SortOrder
     term?: SortOrder
     semester?: SortOrder
+    schoolLevel?: SortOrder
     phone?: SortOrder
     currentBalance?: SortOrder
     createdAt?: SortOrder
@@ -16984,6 +17073,16 @@ export namespace Prisma {
 
   export type StudentSumOrderByAggregateInput = {
     currentBalance?: SortOrder
+  }
+
+  export type EnumSchoolLevelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolLevel | EnumSchoolLevelFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolLevel[] | ListEnumSchoolLevelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolLevel[] | ListEnumSchoolLevelFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolLevelWithAggregatesFilter<$PrismaModel> | $Enums.SchoolLevel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSchoolLevelFilter<$PrismaModel>
+    _max?: NestedEnumSchoolLevelFilter<$PrismaModel>
   }
 
   export type DecimalWithAggregatesFilter<$PrismaModel = never> = {
@@ -17017,6 +17116,7 @@ export namespace Prisma {
     term?: SortOrder
     semester?: SortOrder
     academicYear?: SortOrder
+    schoolLevel?: SortOrder
     dueDate?: SortOrder
     feeType?: SortOrder
     active?: SortOrder
@@ -17038,6 +17138,7 @@ export namespace Prisma {
     term?: SortOrder
     semester?: SortOrder
     academicYear?: SortOrder
+    schoolLevel?: SortOrder
     dueDate?: SortOrder
     feeType?: SortOrder
     active?: SortOrder
@@ -17055,6 +17156,7 @@ export namespace Prisma {
     term?: SortOrder
     semester?: SortOrder
     academicYear?: SortOrder
+    schoolLevel?: SortOrder
     dueDate?: SortOrder
     feeType?: SortOrder
     active?: SortOrder
@@ -18127,6 +18229,10 @@ export namespace Prisma {
     connect?: PaymentWhereUniqueInput | PaymentWhereUniqueInput[]
   }
 
+  export type EnumSchoolLevelFieldUpdateOperationsInput = {
+    set?: $Enums.SchoolLevel
+  }
+
   export type DecimalFieldUpdateOperationsInput = {
     set?: Decimal | DecimalJsLike | number | string
     increment?: Decimal | DecimalJsLike | number | string
@@ -18574,6 +18680,13 @@ export namespace Prisma {
     _max?: NestedDateTimeFilter<$PrismaModel>
   }
 
+  export type NestedEnumSchoolLevelFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolLevel | EnumSchoolLevelFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolLevel[] | ListEnumSchoolLevelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolLevel[] | ListEnumSchoolLevelFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolLevelFilter<$PrismaModel> | $Enums.SchoolLevel
+  }
+
   export type NestedDecimalFilter<$PrismaModel = never> = {
     equals?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     in?: Decimal[] | DecimalJsLike[] | number[] | string[] | ListDecimalFieldRefInput<$PrismaModel>
@@ -18583,6 +18696,16 @@ export namespace Prisma {
     gt?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     gte?: Decimal | DecimalJsLike | number | string | DecimalFieldRefInput<$PrismaModel>
     not?: NestedDecimalFilter<$PrismaModel> | Decimal | DecimalJsLike | number | string
+  }
+
+  export type NestedEnumSchoolLevelWithAggregatesFilter<$PrismaModel = never> = {
+    equals?: $Enums.SchoolLevel | EnumSchoolLevelFieldRefInput<$PrismaModel>
+    in?: $Enums.SchoolLevel[] | ListEnumSchoolLevelFieldRefInput<$PrismaModel>
+    notIn?: $Enums.SchoolLevel[] | ListEnumSchoolLevelFieldRefInput<$PrismaModel>
+    not?: NestedEnumSchoolLevelWithAggregatesFilter<$PrismaModel> | $Enums.SchoolLevel
+    _count?: NestedIntFilter<$PrismaModel>
+    _min?: NestedEnumSchoolLevelFilter<$PrismaModel>
+    _max?: NestedEnumSchoolLevelFilter<$PrismaModel>
   }
 
   export type NestedDecimalWithAggregatesFilter<$PrismaModel = never> = {
@@ -18853,6 +18976,7 @@ export namespace Prisma {
     academicYear?: string | null
     term?: string | null
     semester?: string | null
+    schoolLevel?: $Enums.SchoolLevel
     phone?: string | null
     currentBalance?: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
@@ -18870,6 +18994,7 @@ export namespace Prisma {
     academicYear?: string | null
     term?: string | null
     semester?: string | null
+    schoolLevel?: $Enums.SchoolLevel
     phone?: string | null
     currentBalance?: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
@@ -19269,6 +19394,7 @@ export namespace Prisma {
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolLevel?: EnumSchoolLevelFieldUpdateOperationsInput | $Enums.SchoolLevel
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     currentBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19286,6 +19412,7 @@ export namespace Prisma {
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolLevel?: EnumSchoolLevelFieldUpdateOperationsInput | $Enums.SchoolLevel
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     currentBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19716,6 +19843,7 @@ export namespace Prisma {
     academicYear?: string | null
     term?: string | null
     semester?: string | null
+    schoolLevel?: $Enums.SchoolLevel
     phone?: string | null
     currentBalance?: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
@@ -19734,6 +19862,7 @@ export namespace Prisma {
     academicYear?: string | null
     term?: string | null
     semester?: string | null
+    schoolLevel?: $Enums.SchoolLevel
     phone?: string | null
     currentBalance?: Decimal | DecimalJsLike | number | string
     createdAt?: Date | string
@@ -19919,6 +20048,7 @@ export namespace Prisma {
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolLevel?: EnumSchoolLevelFieldUpdateOperationsInput | $Enums.SchoolLevel
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     currentBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
@@ -19937,6 +20067,7 @@ export namespace Prisma {
     academicYear?: NullableStringFieldUpdateOperationsInput | string | null
     term?: NullableStringFieldUpdateOperationsInput | string | null
     semester?: NullableStringFieldUpdateOperationsInput | string | null
+    schoolLevel?: EnumSchoolLevelFieldUpdateOperationsInput | $Enums.SchoolLevel
     phone?: NullableStringFieldUpdateOperationsInput | string | null
     currentBalance?: DecimalFieldUpdateOperationsInput | Decimal | DecimalJsLike | number | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string

@@ -148,6 +148,7 @@ exports.Prisma.StudentScalarFieldEnum = {
   academicYear: 'academicYear',
   term: 'term',
   semester: 'semester',
+  schoolLevel: 'schoolLevel',
   phone: 'phone',
   currentBalance: 'currentBalance',
   createdAt: 'createdAt',
@@ -164,6 +165,7 @@ exports.Prisma.FeeStructureScalarFieldEnum = {
   term: 'term',
   semester: 'semester',
   academicYear: 'academicYear',
+  schoolLevel: 'schoolLevel',
   dueDate: 'dueDate',
   feeType: 'feeType',
   active: 'active',
@@ -323,6 +325,12 @@ exports.UserStatus = exports.$Enums.UserStatus = {
   ACTIVE: 'ACTIVE',
   SUSPENDED: 'SUSPENDED',
   DEACTIVATED: 'DEACTIVATED'
+};
+
+exports.SchoolLevel = exports.$Enums.SchoolLevel = {
+  PRIMARY: 'PRIMARY',
+  SECONDARY: 'SECONDARY',
+  TERTIARY: 'TERTIARY'
 };
 
 exports.PaymentMethod = exports.$Enums.PaymentMethod = {

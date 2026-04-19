@@ -24,8 +24,10 @@ const registerSchema = z.object({
   studentCode: z.string().min(3, 'Student ID is required (min 3 chars)'),
   fullName: z.string().min(3, 'Full name is required'),
   email: z.string().email('Enter a valid email address'),
-  program: z.string().min(2, 'Select or enter your program'),
-  year: z.string().min(2, 'Select your academic year'),
+  schoolLevel: z.enum(['PRIMARY', 'SECONDARY', 'TERTIARY']).default('TERTIARY'),
+  program: z.string().optional(),
+  classLevel: z.string().optional(),
+  year: z.string().optional(),
   password: z
     .string()
     .min(8, 'Password must be at least 8 characters')
@@ -224,22 +226,26 @@ export function RegisterPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
-  const form = useForm<z.infer<typeof registerSchema>>({
-    resolver: zodResolver(registerSchema),
+  type RegisterFormValues = z.infer<typeof registerSchema>;
+
+  const form = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema) as any,
     defaultValues: {
       studentCode: '',
       fullName: '',
       email: '',
+      schoolLevel: 'TERTIARY',
       program: '',
+      classLevel: '',
       year: '',
       password: '',
       confirmPassword: '',
-    },
+    } as RegisterFormValues,
   });
 
   const isSubmitting = form.formState.isSubmitting;
 
-  const handleSubmit = async (values: z.infer<typeof registerSchema>) => {
+  const handleSubmit = async (values: RegisterFormValues) => {
     setApiError(null);
     try {
       await register(values);
@@ -272,7 +278,7 @@ export function RegisterPage() {
       </CardHeader>
       <CardContent>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <form onSubmit={form.handleSubmit(handleSubmit as any)} className="space-y-4">
             {apiError && (
               <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2.5 text-[13px] text-destructive">
                 {apiError}
@@ -326,29 +332,91 @@ export function RegisterPage() {
               </FormItem>
             )} />
 
+            <FormField name="schoolLevel" render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-[13px] font-medium">School Level</FormLabel>
+                <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                  <FormControl>
+                    <SelectTrigger className="h-10">
+                      <SelectValue placeholder="Select level..." />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="PRIMARY">Primary School</SelectItem>
+                    <SelectItem value="SECONDARY">Secondary School</SelectItem>
+                    <SelectItem value="TERTIARY">Tertiary / University</SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage className="text-[12px]" />
+              </FormItem>
+            )} />
+
             <div className="grid grid-cols-2 gap-3">
-              <FormField name="program" render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-[13px] font-medium">Program</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
-                    <FormControl>
-                      <SelectTrigger className="h-10">
-                        <SelectValue placeholder="Select..." />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="Computer Science">Computer Science</SelectItem>
-                      <SelectItem value="Business Administration">Business Admin</SelectItem>
-                      <SelectItem value="Education">Education</SelectItem>
-                      <SelectItem value="Engineering">Engineering</SelectItem>
-                      <SelectItem value="Medicine">Medicine</SelectItem>
-                      <SelectItem value="Law">Law</SelectItem>
-                      <SelectItem value="Other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <FormMessage className="text-[12px]" />
-                </FormItem>
-              )} />
+              {form.watch('schoolLevel') === 'TERTIARY' && (
+                <FormField name="program" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-[13px] font-medium">Program</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                      <FormControl>
+                        <SelectTrigger className="h-10">
+                          <SelectValue placeholder="Select..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="Computer Science">Computer Science</SelectItem>
+                        <SelectItem value="Business Administration">Business Admin</SelectItem>
+                        <SelectItem value="Education">Education</SelectItem>
+                        <SelectItem value="Engineering">Engineering</SelectItem>
+                        <SelectItem value="Medicine">Medicine</SelectItem>
+                        <SelectItem value="Law">Law</SelectItem>
+                        <SelectItem value="Other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-[12px]" />
+                  </FormItem>
+                )} />
+              )}
+              {form.watch('schoolLevel') === 'PRIMARY' && (
+                <FormField name="classLevel" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-[13px] font-medium">Standard</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                      <FormControl>
+                        <SelectTrigger className="h-10">
+                          <SelectValue placeholder="Select..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {[1,2,3,4,5,6,7,8].map(n => (
+                           <SelectItem key={n} value={`Standard ${n}`}>Standard {n}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-[12px]" />
+                  </FormItem>
+                )} />
+              )}
+              {form.watch('schoolLevel') === 'SECONDARY' && (
+                <FormField name="classLevel" render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-[13px] font-medium">Form</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value} disabled={isSubmitting}>
+                      <FormControl>
+                        <SelectTrigger className="h-10">
+                          <SelectValue placeholder="Select..." />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {[1,2,3,4].map(n => (
+                           <SelectItem key={n} value={`Form ${n}`}>Form {n}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage className="text-[12px]" />
+                  </FormItem>
+                )} />
+              )}
+
               <FormField name="year" render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-[13px] font-medium">Academic Year</FormLabel>
@@ -359,11 +427,13 @@ export function RegisterPage() {
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
+                      <SelectItem value="2024">2024</SelectItem>
+                      <SelectItem value="2025">2025</SelectItem>
+                      <SelectItem value="2026">2026</SelectItem>
                       <SelectItem value="Year 1">Year 1</SelectItem>
                       <SelectItem value="Year 2">Year 2</SelectItem>
                       <SelectItem value="Year 3">Year 3</SelectItem>
                       <SelectItem value="Year 4">Year 4</SelectItem>
-                      <SelectItem value="Year 5">Year 5</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage className="text-[12px]" />

@@ -30,8 +30,10 @@ type RegisterValues = {
   studentCode: string;
   fullName: string;
   email: string;
-  program: string;
-  year: string;
+  schoolLevel: string;
+  program?: string;
+  classLevel?: string;
+  year?: string;
   password: string;
 };
 
@@ -169,7 +171,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
         studentCode: values.studentCode,
         firstName: firstName || '',
         lastName: lastNameParts.join(' ') || '',
+        schoolLevel: values.schoolLevel,
         program: values.program,
+        classLevel: values.classLevel,
         academicYear: values.year,
       }),
     });

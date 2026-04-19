@@ -56,6 +56,7 @@ export function FeeStructurePage() {
   const [academicYear, setAcademicYear] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [feeType, setFeeType] = useState('');
+  const [schoolLevel, setSchoolLevel] = useState('TERTIARY');
 
   const loadFees = async () => {
     setLoading(true);
@@ -79,6 +80,7 @@ export function FeeStructurePage() {
     setAcademicYear('');
     setDueDate('');
     setFeeType('');
+    setSchoolLevel('TERTIARY');
   };
 
   const handleEditClick = (fee: any) => {
@@ -89,6 +91,7 @@ export function FeeStructurePage() {
     setAcademicYear(fee.academicYear || '');
     setDueDate(fee.dueDate ? new Date(fee.dueDate).toISOString().split('T')[0] : '');
     setFeeType(fee.feeType || '');
+    setSchoolLevel(fee.schoolLevel || 'TERTIARY');
     setShowCreate(true);
   };
 
@@ -106,6 +109,7 @@ export function FeeStructurePage() {
         academicYear: academicYear && academicYear !== 'none' ? academicYear : undefined,
         dueDate: dueDate || null,
         feeType: feeType && feeType !== 'none' ? feeType : null,
+        schoolLevel,
       };
 
       if (editId) {
@@ -163,6 +167,7 @@ export function FeeStructurePage() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Title</TableHead>
+                  <TableHead>Level</TableHead>
                   <TableHead>Type</TableHead>
                   <TableHead>Program</TableHead>
                   <TableHead>Year</TableHead>
@@ -175,6 +180,7 @@ export function FeeStructurePage() {
                 {fees.map((f: any) => (
                   <TableRow key={f.id}>
                     <TableCell className="text-[13px] font-medium">{f.title}</TableCell>
+                    <TableCell className="text-[13px]"><Badge variant="secondary" className="text-[10px]">{f.schoolLevel}</Badge></TableCell>
                     <TableCell className="text-[13px]">
                       {f.feeType ? (
                         <Badge variant="outline" className="text-[11px] capitalize">{f.feeType}</Badge>
@@ -219,7 +225,22 @@ export function FeeStructurePage() {
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
-            <div><label className="text-[13px] font-medium">Title *</label><Input value={title} onChange={(e: any) => setTitle(e.target.value)} placeholder="Semester 1 Tuition" className="h-10" /></div>
+            <div className="grid grid-cols-2 gap-3">
+              <div><label className="text-[13px] font-medium">Title *</label><Input value={title} onChange={(e: any) => setTitle(e.target.value)} placeholder="Semester 1 Tuition" className="h-10" /></div>
+              <div>
+                <label className="text-[13px] font-medium">School Level</label>
+                <Select value={schoolLevel} onValueChange={setSchoolLevel}>
+                  <SelectTrigger className="h-10">
+                    <SelectValue placeholder="Select level..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="PRIMARY">Primary</SelectItem>
+                    <SelectItem value="SECONDARY">Secondary</SelectItem>
+                    <SelectItem value="TERTIARY">Tertiary</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
             <div><label className="text-[13px] font-medium">Amount (MWK) *</label><Input type="number" value={amount} onChange={(e: any) => setAmount(e.target.value)} placeholder="0" className="h-10" /></div>
             <div className="grid grid-cols-2 gap-3">
               <div><label className="text-[13px] font-medium">Program</label><Input value={program} onChange={(e: any) => setProgram(e.target.value)} placeholder="All Programs" className="h-10" /></div>
