@@ -172,9 +172,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
         firstName: firstName || '',
         lastName: lastNameParts.join(' ') || '',
         schoolLevel: values.schoolLevel,
-        program: values.program,
-        classLevel: values.classLevel,
-        academicYear: values.year,
+        program: values.program || undefined,
+        classLevel: values.classLevel || undefined,
+        academicYear: values.year || undefined,
       }),
     });
     setToken(payload.token);
