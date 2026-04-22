@@ -33,10 +33,14 @@ const amountKeyMatchers = [/^total$/i, /amount/i, /grand.?total/i];
 const referenceKeyMatchers = [
     /reference/i,
     /receipt.?number/i,
-    /transaction/i,
+    /transaction.?id/i,
+    /transaction.?ref/i,
+    /txn.?id/i,
+    /txn.?ref/i,
+    /trx.?id/i,
+    /trx.?ref/i,
     /trace/i,
-    /invoice/i,
-    /document.?number/i,
+    /rrn/i,
 ];
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -64,8 +68,14 @@ const parseReferenceCandidate = (value: unknown): string | null => {
         return null;
     }
 
-    const normalized = value.trim();
-    if (!normalized || normalized.length < 5) {
+    const normalized = value.trim().replace(/^[^A-Za-z0-9]+|[^A-Za-z0-9-]+$/g, '');
+    if (!normalized || normalized.length < 5 || normalized.length > 40) {
+        return null;
+    }
+
+    const hasLetter = /[A-Za-z]/.test(normalized);
+    const hasNumber = /\d/.test(normalized);
+    if (!hasLetter || !hasNumber) {
         return null;
     }
 
