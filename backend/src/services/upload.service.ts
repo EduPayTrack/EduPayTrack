@@ -259,6 +259,32 @@ const parseTabScannerResponse = async (response: Response): Promise<TabScannerRe
     }
 };
 
+const mergeScanResults = (
+    primary: ReceiptScanResult,
+    secondary: ReceiptScanResult
+): ReceiptScanResult => ({
+    ...primary,
+    amount: primary.amount ?? secondary.amount,
+    reference: primary.reference ?? secondary.reference,
+    paymentDate: primary.paymentDate ?? secondary.paymentDate,
+    registrationNumber: primary.registrationNumber ?? secondary.registrationNumber,
+    codeNumber: primary.codeNumber ?? secondary.codeNumber,
+    depositorName: primary.depositorName ?? secondary.depositorName,
+    rawText: [primary.rawText, secondary.rawText].filter(Boolean).join('\n'),
+    confidence: Math.max(primary.confidence ?? 0, secondary.confidence ?? 0),
+    message:
+        primary.reference || primary.amount
+            ? 'OCR successful via TabScanner with Python enrichment'
+            : secondary.message,
+    debug: {
+        textSource: primary.debug?.textSource ?? secondary.debug?.textSource ?? 'TABSCANNER_FLATTENED',
+        textPreview: [primary.debug?.textPreview, secondary.debug?.textPreview]
+            .filter(Boolean)
+            .join('\n---\n')
+            .slice(0, 1000),
+    },
+});
+
 const scanReceiptWithTabScanner = async (filePath: string): Promise<ReceiptScanResult> => {
     if (!env.TABSCANNER_API_KEY) {
         throw new AppError('TabScanner API key is not configured', 503, 'OCR_UNAVAILABLE');
@@ -398,9 +424,13 @@ export const scanReceiptWithPython = (filePath: string): Promise<string> => {
 
 export const scanUploadedReceipt = async (filePath: string): Promise<ReceiptScanResult> => {
     let tabScannerFailure: unknown = null;
+    let tabScannerResult: ReceiptScanResult | null = null;
 
     try {
-        return await scanReceiptWithTabScanner(filePath);
+        tabScannerResult = await scanReceiptWithTabScanner(filePath);
+        if (tabScannerResult.reference && tabScannerResult.amount !== null) {
+            return tabScannerResult;
+        }
     } catch (tabScannerError) {
         tabScannerFailure = tabScannerError;
     }
@@ -408,8 +438,7 @@ export const scanUploadedReceipt = async (filePath: string): Promise<ReceiptScan
     try {
         const rawText = await scanReceiptWithPython(filePath);
         const parsed = parseReceiptText(rawText);
-
-        return {
+        const pythonResult: ReceiptScanResult = {
             ...parsed,
             message: 'OCR successful via Python fallback',
             provider: 'PYTHON',
@@ -418,7 +447,19 @@ export const scanUploadedReceipt = async (filePath: string): Promise<ReceiptScan
                 textPreview: rawText.slice(0, 500),
             },
         };
+
+        if (tabScannerResult) {
+            return mergeScanResults(tabScannerResult, pythonResult);
+        }
+
+        return {
+            ...pythonResult,
+        };
     } catch (pythonError) {
+        if (tabScannerResult) {
+            return tabScannerResult;
+        }
+
         const tabScannerMessage =
             tabScannerFailure instanceof Error ? tabScannerFailure.message : 'Unknown TabScanner error';
         const pythonMessage = pythonError instanceof Error ? pythonError.message : 'Unknown Python OCR error';
