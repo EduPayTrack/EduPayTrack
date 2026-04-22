@@ -12,6 +12,10 @@ type StoredFile = Express.Multer.File;
 type ReceiptScanResult = ReturnType<typeof parseReceiptText> & {
     message: string;
     provider: 'TABSCANNER' | 'PYTHON';
+    debug?: {
+        textSource: 'TABSCANNER_FLATTENED' | 'PYTHON_RAW';
+        textPreview: string;
+    };
 };
 
 type TabScannerResponse = {
@@ -44,6 +48,53 @@ const referenceKeyMatchers = [
 ];
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+const flattenTabScannerPayload = (value: unknown, depth = 0): string[] => {
+    if (value === null || value === undefined || depth > 8) {
+        return [];
+    }
+
+    if (typeof value === 'string') {
+        const normalized = value.replace(/\s+/g, ' ').trim();
+        return normalized ? [normalized] : [];
+    }
+
+    if (typeof value === 'number') {
+        return [String(value)];
+    }
+
+    if (typeof value === 'boolean') {
+        return value ? ['true'] : ['false'];
+    }
+
+    if (Array.isArray(value)) {
+        return value.flatMap((item) => flattenTabScannerPayload(item, depth + 1));
+    }
+
+    if (typeof value === 'object') {
+        const objectValue = value as Record<string, unknown>;
+        const lines: string[] = [];
+
+        for (const [key, nestedValue] of Object.entries(objectValue)) {
+            if (typeof nestedValue === 'string' || typeof nestedValue === 'number') {
+                const normalizedValue = String(nestedValue).replace(/\s+/g, ' ').trim();
+                if (normalizedValue) {
+                    lines.push(`${key}: ${normalizedValue}`);
+                }
+                continue;
+            }
+
+            const nestedLines = flattenTabScannerPayload(nestedValue, depth + 1);
+            if (nestedLines.length > 0) {
+                lines.push(...nestedLines.map((line) => `${key}: ${line}`));
+            }
+        }
+
+        return lines;
+    }
+
+    return [];
+};
 
 const parseAmountCandidate = (value: unknown): number | null => {
     if (typeof value === 'number' && Number.isFinite(value) && value > 0) {
@@ -268,7 +319,8 @@ const scanReceiptWithTabScanner = async (filePath: string): Promise<ReceiptScanR
     }
 
     const resultObject = resultPayload.result;
-    const resultAsText = JSON.stringify(resultObject);
+    const flattenedTextLines = flattenTabScannerPayload(resultObject);
+    const resultAsText = flattenedTextLines.join('\n');
     const parserFallback = parseReceiptText(resultAsText);
     const amountFromResult = pickAmountFromTabScannerPayload(resultObject);
     const referenceFromResult = pickReferenceFromTabScannerPayload(resultObject);
@@ -285,6 +337,10 @@ const scanReceiptWithTabScanner = async (filePath: string): Promise<ReceiptScanR
         confidence,
         message: 'OCR successful via TabScanner',
         provider: 'TABSCANNER',
+        debug: {
+            textSource: 'TABSCANNER_FLATTENED',
+            textPreview: resultAsText.slice(0, 500),
+        },
     };
 };
 
@@ -345,6 +401,10 @@ export const scanUploadedReceipt = async (filePath: string): Promise<ReceiptScan
             ...parsed,
             message: 'OCR successful via Python fallback',
             provider: 'PYTHON',
+            debug: {
+                textSource: 'PYTHON_RAW',
+                textPreview: rawText.slice(0, 500),
+            },
         };
     } catch (pythonError) {
         const tabScannerMessage =
