@@ -7,7 +7,6 @@ const envSchema = z.object({
     PORT: z.coerce.number().int().positive().default(5000),
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     CORS_ORIGINS: z.string().optional(),
-    TABSCANNER_API_KEY: z.string().min(1).optional(),
     GROQ_API_KEY: z.string().min(1).optional(),
 });
 

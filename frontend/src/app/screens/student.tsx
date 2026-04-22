@@ -330,13 +330,13 @@ function getScanIssue(error: unknown): ReceiptScanIssue {
     }
 
     return {
-      summary: error.message || 'Receipt scan failed.',
+      summary: error.message || 'Receipt extraction failed.',
       details: details.length > 0 ? details : undefined,
     };
   }
 
   return {
-    summary: error instanceof Error ? error.message : 'Receipt scan failed.',
+    summary: error instanceof Error ? error.message : 'Receipt extraction failed.',
   };
 }
 
@@ -475,11 +475,11 @@ export function UploadPaymentPage() {
         if (scanResult.amount !== null || scanResult.reference) {
           toast.success('Amount and reference were auto-filled. You can edit them before submit.');
         } else {
-          toast.message('Receipt scanned, but no amount or reference was detected. Please enter manually.');
+          toast.message('Groq extraction finished, but no amount or reference was detected. Please enter them manually.');
         }
       } catch (scanErr: any) {
         const issue = getScanIssue(scanErr);
-        console.error('Receipt OCR scan failed', scanErr);
+        console.error('Receipt extraction failed', scanErr);
         setScanIssue(issue);
         toast.error(issue.summary);
       } finally {
@@ -686,7 +686,7 @@ export function UploadPaymentPage() {
                     )}
                     {ocrResult && (
                       <p className="mt-2 text-[11px] text-muted-foreground">
-                        OCR source: {ocrResult.provider || 'Unknown'} | Confidence: {Math.round((ocrResult.confidence || 0) * 100)}%
+                        Extraction source: {ocrResult.provider || 'Unknown'} | Confidence: {Math.round((ocrResult.confidence || 0) * 100)}%
                       </p>
                     )}
                   </div>
@@ -700,7 +700,7 @@ export function UploadPaymentPage() {
           <Card className={scanIssue ? 'border-warning/30 bg-warning/5' : 'border-success/30 bg-success/5'}>
             <CardContent className="space-y-2 p-4">
               <p className="text-[13px] font-medium">
-                {scanIssue ? 'OCR needs attention' : 'OCR scan summary'}
+                {scanIssue ? 'Extraction needs attention' : 'Groq extraction summary'}
               </p>
               {ocrResult && (
                 <div className="grid grid-cols-1 gap-2 text-[12px] text-muted-foreground md:grid-cols-3">
@@ -726,7 +726,7 @@ export function UploadPaymentPage() {
               {ocrResult?.debug?.textPreview && (
                 <div className="space-y-1">
                   <p className="text-[12px] font-medium text-foreground">
-                    OCR text preview
+                    Model text preview
                   </p>
                   <pre className="max-h-40 overflow-auto rounded-md bg-background p-3 text-[11px] text-muted-foreground whitespace-pre-wrap">
                     {ocrResult.debug.textPreview}

@@ -49,8 +49,6 @@ const groqSupportedMimeTypes = new Map<string, string>([
     ['.webp', 'image/webp'],
 ]);
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
 const parseGroqResponse = async (response: Response): Promise<GroqChatResponse> => {
     const text = await response.text();
 
