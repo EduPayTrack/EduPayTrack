@@ -4,7 +4,7 @@ import { Upload, TrendingDown, CheckCircle, DollarSign, Loader2, FileImage, X, A
 import { toast } from 'sonner';
 
 import { useAuth } from '../state/auth-context';
-import { apiFetch, downloadApiFile } from '../lib/api';
+import { ApiError, apiFetch, downloadApiFile } from '../lib/api';
 import { Card, CardContent } from '../../components/ui/card';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
@@ -305,6 +305,37 @@ interface ReceiptOcrResult {
   message?: string;
 }
 
+type ReceiptScanIssue = {
+  summary: string;
+  details?: string[];
+};
+
+function getScanIssue(error: unknown): ReceiptScanIssue {
+  if (error instanceof ApiError) {
+    const backendDetails = error.data?.details;
+    const details: string[] = [];
+
+    if (backendDetails?.tabScanner) {
+      details.push(`TabScanner: ${backendDetails.tabScanner}`);
+    }
+    if (backendDetails?.python) {
+      details.push(`Python OCR: ${backendDetails.python}`);
+    }
+    if (backendDetails?.hint) {
+      details.push(`Hint: ${backendDetails.hint}`);
+    }
+
+    return {
+      summary: error.message || 'Receipt scan failed.',
+      details: details.length > 0 ? details : undefined,
+    };
+  }
+
+  return {
+    summary: error instanceof Error ? error.message : 'Receipt scan failed.',
+  };
+}
+
 export function UploadPaymentPage() {
   const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
@@ -315,6 +346,7 @@ export function UploadPaymentPage() {
 
   const [proofUrl, setProofUrl] = useState<string | null>(null);
   const [ocrResult, setOcrResult] = useState<ReceiptOcrResult | null>(null);
+  const [scanIssue, setScanIssue] = useState<ReceiptScanIssue | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -365,6 +397,7 @@ export function UploadPaymentPage() {
   const handleFileSelect = useCallback((selectedFile: File) => {
     setFile(selectedFile);
     setOcrResult(null);
+    setScanIssue(null);
     // Create preview for images
     if (selectedFile.type.startsWith('image/')) {
       const url = URL.createObjectURL(selectedFile);
@@ -404,6 +437,7 @@ export function UploadPaymentPage() {
     if (!file) return;
     setIsUploading(true);
     setOcrResult(null);
+    setScanIssue(null);
     try {
       const formData = new FormData();
       formData.append('receipt', file);
@@ -440,7 +474,10 @@ export function UploadPaymentPage() {
           toast.message('Receipt scanned, but no amount or reference was detected. Please enter manually.');
         }
       } catch (scanErr: any) {
-        toast.message(scanErr.message || 'Receipt uploaded, but OCR auto-fill failed. Please complete the fields manually.');
+        const issue = getScanIssue(scanErr);
+        console.error('Receipt OCR scan failed', scanErr);
+        setScanIssue(issue);
+        toast.error(issue.summary);
       } finally {
         setIsScanning(false);
       }
@@ -486,6 +523,7 @@ export function UploadPaymentPage() {
 
       setProofUrl(null);
       setOcrResult(null);
+      setScanIssue(null);
       setAmount('');
       setMethod('');
       setReference('');
@@ -545,7 +583,7 @@ export function UploadPaymentPage() {
         {/* File upload zone */}
         <Card>
           <CardContent className="p-5">
-            <label className="text-[13px] font-medium mb-2 block">Receipt Image / PDF</label>
+            <label htmlFor="receipt-file" className="text-[13px] font-medium mb-2 block">Receipt Image / PDF</label>
             {!file ? (
               <div
                 className={cn(
@@ -582,6 +620,8 @@ export function UploadPaymentPage() {
                 )}
                 <input
                   ref={fileInputRef}
+                  id="receipt-file"
+                  name="receipt"
                   type="file"
                   className="hidden"
                   accept=".jpg,.jpeg,.png,.pdf"
@@ -603,6 +643,7 @@ export function UploadPaymentPage() {
                     setPreviewUrl(null);
                     setProofUrl(null);
                     setOcrResult(null);
+                    setScanIssue(null);
                   }}
                 >
                   <X className="h-3 w-3" />
@@ -651,6 +692,37 @@ export function UploadPaymentPage() {
           </CardContent>
         </Card>
 
+        {(ocrResult || scanIssue) && (
+          <Card className={scanIssue ? 'border-warning/30 bg-warning/5' : 'border-success/30 bg-success/5'}>
+            <CardContent className="space-y-2 p-4">
+              <p className="text-[13px] font-medium">
+                {scanIssue ? 'OCR needs attention' : 'OCR scan summary'}
+              </p>
+              {ocrResult && (
+                <div className="grid grid-cols-1 gap-2 text-[12px] text-muted-foreground md:grid-cols-3">
+                  <div>
+                    <span className="font-medium text-foreground">Provider:</span> {ocrResult.provider || 'Unknown'}
+                  </div>
+                  <div>
+                    <span className="font-medium text-foreground">Detected amount:</span> {ocrResult.amount !== null ? formatCurrency(ocrResult.amount) : 'Not found'}
+                  </div>
+                  <div>
+                    <span className="font-medium text-foreground">Detected reference:</span> {ocrResult.reference || 'Not found'}
+                  </div>
+                </div>
+              )}
+              {scanIssue && (
+                <div className="space-y-1 text-[12px] text-muted-foreground">
+                  <p>{scanIssue.summary}</p>
+                  {scanIssue.details?.map((detail) => (
+                    <p key={detail}>{detail}</p>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        )}
+
         {/* Payment details */}
         <Card>
           <CardContent className="p-5 space-y-4">
@@ -658,20 +730,23 @@ export function UploadPaymentPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label className="text-[12px] text-muted-foreground font-medium">Amount (MWK) *</label>
+                <label htmlFor="payment-amount" className="text-[12px] text-muted-foreground font-medium">Amount (MWK) *</label>
                 <Input
+                  id="payment-amount"
+                  name="amount"
                   type="number"
                   placeholder="450000"
                   value={amount}
                   onChange={(e) => setAmount(e.target.value)}
+                  autoComplete="transaction-amount"
                   className="h-10"
                   required
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[12px] text-muted-foreground font-medium">Payment Method *</label>
+                <label htmlFor="payment-method" className="text-[12px] text-muted-foreground font-medium">Payment Method *</label>
                 <Select value={method} onValueChange={setMethod}>
-                  <SelectTrigger className="h-10">
+                  <SelectTrigger id="payment-method" name="paymentMethod" className="h-10" aria-label="Payment Method">
                     <SelectValue placeholder="Select..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -685,20 +760,26 @@ export function UploadPaymentPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label className="text-[12px] text-muted-foreground font-medium">Reference Number</label>
+                <label htmlFor="payment-reference" className="text-[12px] text-muted-foreground font-medium">Reference Number</label>
                 <Input
+                  id="payment-reference"
+                  name="referenceNumber"
                   placeholder="NBM-782331"
                   value={reference}
                   onChange={(e) => setReference(e.target.value)}
+                  autoComplete="off"
                   className="h-10"
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-[12px] text-muted-foreground font-medium">Payment Date *</label>
+                <label htmlFor="payment-date" className="text-[12px] text-muted-foreground font-medium">Payment Date *</label>
                 <Input
+                  id="payment-date"
+                  name="paymentDate"
                   type="date"
                   value={paymentDate}
                   onChange={(e) => setPaymentDate(e.target.value)}
+                  autoComplete="transaction-date"
                   className="h-10"
                   required
                 />
@@ -706,21 +787,27 @@ export function UploadPaymentPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[12px] text-muted-foreground font-medium">Payer Name</label>
+              <label htmlFor="payer-name" className="text-[12px] text-muted-foreground font-medium">Payer Name</label>
               <Input
+                id="payer-name"
+                name="payerName"
                 placeholder="Name on the transaction"
                 value={payerName}
                 onChange={(e) => setPayerName(e.target.value)}
+                autoComplete="name"
                 className="h-10"
               />
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-[12px] text-muted-foreground font-medium">Notes</label>
+              <label htmlFor="payment-notes" className="text-[12px] text-muted-foreground font-medium">Notes</label>
               <Input
+                id="payment-notes"
+                name="notes"
                 placeholder="Any additional notes..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
+                autoComplete="off"
                 className="h-10"
               />
             </div>
