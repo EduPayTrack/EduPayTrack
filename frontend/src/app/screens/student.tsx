@@ -296,14 +296,25 @@ export function StudentDashboardPage() {
 
 /* ===== UPLOAD PAYMENT ===== */
 
+interface ReceiptOcrResult {
+  amount: number | null;
+  reference: string | null;
+  rawText?: string;
+  provider?: 'TABSCANNER' | 'PYTHON';
+  confidence?: number;
+  message?: string;
+}
+
 export function UploadPaymentPage() {
   const navigate = useNavigate();
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isScanning, setIsScanning] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [proofUrl, setProofUrl] = useState<string | null>(null);
+  const [ocrResult, setOcrResult] = useState<ReceiptOcrResult | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -353,6 +364,7 @@ export function UploadPaymentPage() {
 
   const handleFileSelect = useCallback((selectedFile: File) => {
     setFile(selectedFile);
+    setOcrResult(null);
     // Create preview for images
     if (selectedFile.type.startsWith('image/')) {
       const url = URL.createObjectURL(selectedFile);
@@ -391,16 +403,47 @@ export function UploadPaymentPage() {
   const uploadFile = async () => {
     if (!file) return;
     setIsUploading(true);
+    setOcrResult(null);
     try {
       const formData = new FormData();
       formData.append('receipt', file);
-      const result = await apiFetch<any>('/payments/upload', {
+      const uploadResult = await apiFetch<any>('/payments/upload', {
         method: 'POST',
         body: formData,
       });
 
-      setProofUrl(result.proofUrl);
+      setProofUrl(uploadResult.proofUrl);
       toast.success('Receipt uploaded successfully');
+
+      if (!uploadResult.fileName) {
+        return;
+      }
+
+      try {
+        setIsScanning(true);
+        const scanResult = await apiFetch<ReceiptOcrResult>('/payments/scan', {
+          method: 'POST',
+          body: JSON.stringify({ fileName: uploadResult.fileName }),
+        });
+
+        setOcrResult(scanResult);
+        if (scanResult.amount !== null) {
+          setAmount(String(scanResult.amount));
+        }
+        if (scanResult.reference) {
+          setReference(scanResult.reference);
+        }
+
+        if (scanResult.amount !== null || scanResult.reference) {
+          toast.success('Amount and reference were auto-filled. You can edit them before submit.');
+        } else {
+          toast.message('Receipt scanned, but no amount or reference was detected. Please enter manually.');
+        }
+      } catch (scanErr: any) {
+        toast.message(scanErr.message || 'Receipt uploaded, but OCR auto-fill failed. Please complete the fields manually.');
+      } finally {
+        setIsScanning(false);
+      }
     } catch (err: any) {
       toast.error(err.message || 'Upload failed');
     } finally {
@@ -431,6 +474,9 @@ export function UploadPaymentPage() {
           proofUrl,
           payerName,
           notes,
+          ocrText: ocrResult?.rawText || '',
+          ocrAmount: ocrResult?.amount ?? undefined,
+          ocrReference: ocrResult?.reference || '',
         }),
       });
       toast.success('Payment submitted for review!');
@@ -439,6 +485,7 @@ export function UploadPaymentPage() {
       setPreviewUrl(null);
 
       setProofUrl(null);
+      setOcrResult(null);
       setAmount('');
       setMethod('');
       setReference('');
@@ -555,6 +602,7 @@ export function UploadPaymentPage() {
                     setFile(null);
                     setPreviewUrl(null);
                     setProofUrl(null);
+                    setOcrResult(null);
                   }}
                 >
                   <X className="h-3 w-3" />
@@ -579,15 +627,22 @@ export function UploadPaymentPage() {
                         type="button"
                         size="sm"
                         className="mt-2 h-7 text-[12px]"
-                        disabled={isUploading}
+                        disabled={isUploading || isScanning}
                         onClick={uploadFile}
                       >
                         {isUploading ? (
                           <><Loader2 className="h-3 w-3 animate-spin mr-1" />Uploading...</>
+                        ) : isScanning ? (
+                          <><Loader2 className="h-3 w-3 animate-spin mr-1" />Scanning...</>
                         ) : (
                           'Upload receipt'
                         )}
                       </Button>
+                    )}
+                    {ocrResult && (
+                      <p className="mt-2 text-[11px] text-muted-foreground">
+                        OCR source: {ocrResult.provider || 'Unknown'} | Confidence: {Math.round((ocrResult.confidence || 0) * 100)}%
+                      </p>
                     )}
                   </div>
                 </div>
@@ -675,7 +730,7 @@ export function UploadPaymentPage() {
         <Button
           type="submit"
           className="w-full h-10 font-medium"
-          disabled={isSubmitting || !proofUrl}
+          disabled={isSubmitting || isScanning || !proofUrl}
         >
           {isSubmitting ? (
             <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Submitting...</>

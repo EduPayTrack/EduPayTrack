@@ -8,10 +8,10 @@ import { listStudentPayments, submitPayment } from '../services/payment.service'
 import {
     buildUploadedReceiptResponse,
     previewReceiptOcr,
-    scanReceiptWithPython,
+    scanUploadedReceipt,
 } from '../services/upload.service';
-import { parseReceiptText } from '../utils/receipt-parser';
 import path from 'path';
+import fs from 'fs';
 
 export const paymentRouter = Router();
 
@@ -41,19 +41,20 @@ paymentRouter.post(
     requireRole(UserRole.STUDENT, UserRole.ADMIN, UserRole.ACCOUNTS),
     asyncHandler(async (req, res) => {
         const { fileName } = req.body;
-        if (!fileName) return res.status(400).json({ message: 'File name is required' });
-        
-        // Construct full path to file inside project's uploads folder
+        if (typeof fileName !== 'string' || !fileName.trim()) {
+            return res.status(400).json({ message: 'File name is required' });
+        }
+
+        const sanitizedFileName = path.basename(fileName.trim());
         const uploadsDir = path.join(process.cwd(), 'uploads');
-        const filePath = path.join(uploadsDir, fileName);
-        
-        const rawText = await scanReceiptWithPython(filePath);
-        const parsed = parseReceiptText(rawText);
-        
-        res.status(200).json({
-            message: 'OCR successful via Python Engine',
-            ...parsed,
-        });
+        const filePath = path.join(uploadsDir, sanitizedFileName);
+
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).json({ message: 'Uploaded receipt was not found' });
+        }
+
+        const scanResult = await scanUploadedReceipt(filePath);
+        res.status(200).json(scanResult);
     })
 );
 
