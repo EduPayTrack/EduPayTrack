@@ -72,19 +72,24 @@ const parseReferenceCandidate = (value: unknown): string | null => {
     if (!normalizedText) return null;
 
     const explicitPattern =
-        /(?:reference(?:\s*(?:number|no|#))?|ref(?:erence)?(?:\s*(?:number|no|#))?|transaction(?:\s*(?:id|reference|ref|no|number))?|txn(?:\s*(?:id|reference|ref|no|number))?|trx(?:\s*(?:id|reference|ref|no|number))?|trace(?:\s*no)?|rrn)\s*[:#\-]?\s*([A-Za-z0-9-]{5,40})/i;
+        /(?:reference(?:\s*(?:number|no|#))?|ref(?:erence)?(?:\s*(?:number|no|#))?|transaction(?:\s*(?:id|reference|ref|no|number))?|txn(?:\s*(?:id|reference|ref|no|number))?|trx(?:\s*(?:id|reference|ref|no|number))?|trace(?:\s*no)?|rrn|my\s*reference|their\s*reference)\s*[:#\-]?\s*([A-Za-z0-9][A-Za-z0-9/-]{4,39})/i;
     const explicitMatch = normalizedText.match(explicitPattern);
     if (explicitMatch?.[1]) {
         return explicitMatch[1];
     }
 
-    const tokenPattern = /\b([A-Za-z0-9-]{5,40})\b/g;
+    const allowNumeric = /transaction\s*id|txn\s*id|trx\s*id/i.test(normalizedText);
+    const tokenPattern = /\b([A-Za-z0-9][A-Za-z0-9/-]{4,39})\b/g;
     let tokenMatch: RegExpExecArray | null = tokenPattern.exec(normalizedText);
     while (tokenMatch) {
         const token = tokenMatch[1];
+        if (/^(?:19|20)\d{2}[-/.]\d{1,2}[-/.]\d{1,2}$/.test(token) || /^\d{1,2}[-/.]\d{1,2}[-/.](?:19|20)\d{2}$/.test(token)) {
+            tokenMatch = tokenPattern.exec(normalizedText);
+            continue;
+        }
         const hasLetter = /[A-Za-z]/.test(token);
         const hasNumber = /\d/.test(token);
-        if (hasLetter && hasNumber) {
+        if ((hasLetter && hasNumber) || (allowNumeric && /^\d{6,14}$/.test(token))) {
             return token;
         }
         tokenMatch = tokenPattern.exec(normalizedText);
@@ -175,7 +180,7 @@ const pickReferenceFromTabScannerPayload = (payload: Record<string, unknown>): s
         }
     }
 
-    return parseReferenceFromUnknown(payload);
+    return null;
 };
 
 const parseTabScannerResponse = async (response: Response): Promise<TabScannerResponse> => {
