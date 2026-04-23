@@ -288,7 +288,6 @@ export const adminNav: NavItem[] = [
   { label: 'Users', href: '/admin/users', icon: UserCog },
   { label: 'Reports', href: '/admin/reports', icon: FileBarChart2 },
   { label: 'Audit Logs', href: '/admin/audit-logs', icon: Shield },
-  { label: 'Messages', href: '/messages', icon: MessageSquare },
   { label: 'Notifications', href: '/admin/notifications', icon: Bell },
   { label: 'Settings', href: '/settings', icon: Settings },
 ];
