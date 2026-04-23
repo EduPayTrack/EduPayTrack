@@ -477,16 +477,20 @@ export function MessagesPage() {
                                                         )}
                                                         
                                                         {/* File attachment */}
-                                                        {msg.attachment && (
+                                                        {(msg.attachmentUrl || msg.attachment?.url) && (
                                                             <div className={`mb-2 p-2.5 rounded-lg flex items-center gap-3 ${isMe ? 'bg-primary/20' : 'bg-slate-100 dark:bg-slate-800'}`}>
                                                                 <div className="h-10 w-10 rounded-lg bg-primary/30 flex items-center justify-center">
                                                                     <FileText className="h-5 w-5 text-primary" />
                                                                 </div>
                                                                 <div className="flex-1 min-w-0">
-                                                                    <p className="text-sm font-medium truncate">{msg.attachment.name}</p>
-                                                                    <p className="text-xs opacity-60">{msg.attachment.size}</p>
+                                                                    <p className="text-sm font-medium truncate">{msg.attachmentName || msg.attachment?.name}</p>
+                                                                    <p className="text-xs opacity-60">{msg.attachmentSize || msg.attachment?.size}</p>
                                                                 </div>
-                                                                <a href={msg.attachment.url} download className="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10">
+                                                                <a 
+                                                                    href={`${import.meta.env.VITE_API_URL || ''}${msg.attachmentUrl || msg.attachment?.url}`} 
+                                                                    download 
+                                                                    className="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10"
+                                                                >
                                                                     <Download className="h-4 w-4" />
                                                                 </a>
                                                             </div>
