@@ -4,7 +4,7 @@ import { apiFetch } from '../lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
-import { Loader2, Send, MessageSquare, ChevronLeft, Check, CheckCheck } from 'lucide-react';
+import { Loader2, Send, MessageSquare, ChevronLeft, CheckCheck } from 'lucide-react';
 
 export function MessagesPage() {
     const { user } = useAuth();
@@ -170,7 +170,7 @@ export function MessagesPage() {
                         <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 relative">
                             <div className="space-y-1">
                                 {messages.map((msg, idx) => {
-                                    const isMe = msg.senderId === user?.userId;
+                                    const isMe = msg.senderId === user?.id;
                                     const msgDate = new Date(msg.createdAt);
                                     const timeStr = msgDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                                     return (
