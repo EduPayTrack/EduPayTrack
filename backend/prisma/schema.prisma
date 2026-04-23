@@ -271,10 +271,22 @@ model Message {
   read       Boolean  @default(false)
   createdAt  DateTime @default(now())
   
+  // Reply/Quote functionality
+  replyToId  String?
+  replyTo    Message?  @relation("ReplyTo", fields: [replyToId], references: [id], onDelete: SetNull)
+  replies    Message[] @relation("ReplyTo")
+  
+  // File attachment
+  attachmentUrl  String?
+  attachmentName String?
+  attachmentSize String?
+  attachmentType String?
+  
   sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
   receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
 
   @@index([senderId])
   @@index([receiverId])
   @@index([senderId, receiverId])
+  @@index([replyToId])
 }
