@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../state/auth-context';
 import { apiFetch } from '../lib/api';
-import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Card, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
-import { Loader2, Send, MessageSquare, ChevronLeft, Check, CheckCheck, MoreHorizontal, Paperclip, Search, X, Smile, Reply, FileText, Download } from 'lucide-react';
+import { Loader2, Send, MessageSquare, ChevronLeft, Check, CheckCheck, Paperclip, Search, X, Reply, FileText, Download } from 'lucide-react';
 
 export function MessagesPage() {
     const { user } = useAuth();
@@ -23,7 +23,7 @@ export function MessagesPage() {
     const [uploading, setUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
-    const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+    const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const isStudent = user?.role === 'student';
 
@@ -87,12 +87,12 @@ export function MessagesPage() {
     const loadInitialData = async () => {
         try {
             setLoading(true);
-            const convs = await apiFetch('/messages/conversations');
-            setConversations(convs);
+            const convs = await apiFetch<any[]>('/messages/conversations');
+            setConversations(convs || []);
 
-            if (isStudent && convs.length === 0) {
-                const accUsers = await apiFetch('/messages/accounts-users');
-                setAccountsUsers(accUsers);
+            if (isStudent && convs && convs.length === 0) {
+                const accUsers = await apiFetch<any[]>('/messages/accounts-users');
+                setAccountsUsers(accUsers || []);
             }
         } catch (error) {
             console.error('Error loading conversations:', error);
@@ -103,8 +103,8 @@ export function MessagesPage() {
 
     const loadMessages = async (otherUserId: string) => {
         try {
-            const msgs = await apiFetch(`/messages/${otherUserId}`);
-            setMessages(msgs);
+            const msgs = await apiFetch<any[]>(`/messages/${otherUserId}`);
+            setMessages(msgs || []);
             // mark read
             await apiFetch(`/messages/${otherUserId}/read`, { method: 'PATCH' });
             
@@ -138,7 +138,7 @@ export function MessagesPage() {
             
             // Add reply preview to local message if replying
             const messageWithReply = replyingTo ? {
-                ...newMsg,
+                ...(newMsg as object),
                 replyTo: replyingTo
             } : newMsg;
             

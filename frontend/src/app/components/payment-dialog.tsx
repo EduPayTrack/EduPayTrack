@@ -5,8 +5,6 @@ import { Card, CardContent } from '../../components/ui/card';
 import { formatCurrency, formatDate } from '../../lib/utils';
 import { FileImage, ExternalLink, Download, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import { getFullImageUrl } from './admin/common/payment-helpers';
-import { downloadPaymentReceipt, type ReceiptData } from '../lib/receipt-pdf';
-import { toast } from 'sonner';
 
 export interface Payment {
   id: string;

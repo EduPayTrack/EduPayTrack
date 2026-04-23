@@ -171,7 +171,7 @@ const drawStatementTable = (doc: PDFKit.PDFDocument, payload: StudentDocumentPay
         let x = startX;
         columns.forEach((column) => {
             doc.rect(x, currentY, column.width, 24).fillAndStroke('#1E40AF', '#1E40AF');
-            doc.fillColor('#FFFFFF').fontSize(8).font('Helvetica-Bold').text(column.label, x + 5, currentY + 8, { width: column.width - 10, align: column.align || 'left' });
+            doc.fillColor('#FFFFFF').fontSize(8).font('Helvetica-Bold').text(column.label, x + 5, currentY + 8, { width: column.width - 10, align: (column.align || 'left') as 'left' | 'center' | 'right' });
             x += column.width;
         });
         currentY += 24;
@@ -240,7 +240,7 @@ const drawStatementTable = (doc: PDFKit.PDFDocument, payload: StudentDocumentPay
             }
             
             doc
-                .text(value, x + 5, currentY + 9, { width: columns[valueIndex].width - 10, align: columns[valueIndex].align || 'left', ellipsis: true });
+                .text(value, x + 5, currentY + 9, { width: columns[valueIndex].width - 10, align: (columns[valueIndex].align || 'left') as 'left' | 'center' | 'right', ellipsis: true });
 
             x += columns[valueIndex].width;
         });
