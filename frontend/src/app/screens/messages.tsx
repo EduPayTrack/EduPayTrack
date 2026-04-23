@@ -167,7 +167,7 @@ export function MessagesPage() {
                                 <span>{activeUser.firstName} {activeUser.lastName} {isStudent ? '(Accounts)' : ''}</span>
                             </CardTitle>
                         </CardHeader>
-                        <div className="flex-1 overflow-y-auto p-4 bg-[#e5ddd5] dark:bg-[#0b141a] relative">
+                        <div className="flex-1 overflow-y-auto p-4 bg-gradient-to-b from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-950 relative">
                             <div className="space-y-1">
                                 {messages.map((msg, idx) => {
                                     const isMe = msg.senderId === user?.userId;
@@ -176,16 +176,16 @@ export function MessagesPage() {
                                     return (
                                         <div key={msg.id || idx} className={`flex ${isMe ? 'justify-end' : 'justify-start'} py-0.5`}>
                                             <div className={`relative max-w-[75%] px-3 py-2 shadow-sm text-sm leading-relaxed ${isMe 
-                                                ? 'bg-[#dcf8c6] dark:bg-[#005c4b] text-foreground dark:text-white rounded-2xl rounded-tr-sm' 
-                                                : 'bg-white dark:bg-[#1f2c34] text-foreground border border-border/50 dark:border-gray-700 rounded-2xl rounded-tl-sm'
+                                                ? 'bg-primary text-primary-foreground rounded-2xl rounded-tr-sm' 
+                                                : 'bg-card text-foreground border border-border shadow-sm rounded-2xl rounded-tl-sm'
                                             }`}>
                                                 <p className="pr-14">{msg.content}</p>
                                                 <div className={`flex items-center justify-end gap-1 mt-0.5 absolute bottom-1 right-2`}>
-                                                    <span className={`text-[10px] ${isMe ? 'text-gray-600 dark:text-gray-400' : 'text-gray-500'}`}>
+                                                    <span className={`text-[10px] ${isMe ? 'text-primary-foreground/80' : 'text-muted-foreground'}`}>
                                                         {timeStr}
                                                     </span>
                                                     {isMe && (
-                                                        <span className="text-gray-500">
+                                                        <span className="text-primary-foreground/70">
                                                             <CheckCheck className="h-3 w-3" />
                                                         </span>
                                                     )}
