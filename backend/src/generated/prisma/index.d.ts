@@ -2051,6 +2051,37 @@ export namespace Prisma {
 
 
   /**
+   * Count Type MessageCountOutputType
+   */
+
+  export type MessageCountOutputType = {
+    replies: number
+  }
+
+  export type MessageCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    replies?: boolean | MessageCountOutputTypeCountRepliesArgs
+  }
+
+  // Custom InputTypes
+  /**
+   * MessageCountOutputType without action
+   */
+  export type MessageCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the MessageCountOutputType
+     */
+    select?: MessageCountOutputTypeSelect<ExtArgs> | null
+  }
+
+  /**
+   * MessageCountOutputType without action
+   */
+  export type MessageCountOutputTypeCountRepliesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: MessageWhereInput
+  }
+
+
+  /**
    * Models
    */
 
@@ -14230,6 +14261,11 @@ export namespace Prisma {
     content: string | null
     read: boolean | null
     createdAt: Date | null
+    replyToId: string | null
+    attachmentUrl: string | null
+    attachmentName: string | null
+    attachmentSize: string | null
+    attachmentType: string | null
   }
 
   export type MessageMaxAggregateOutputType = {
@@ -14239,6 +14275,11 @@ export namespace Prisma {
     content: string | null
     read: boolean | null
     createdAt: Date | null
+    replyToId: string | null
+    attachmentUrl: string | null
+    attachmentName: string | null
+    attachmentSize: string | null
+    attachmentType: string | null
   }
 
   export type MessageCountAggregateOutputType = {
@@ -14248,6 +14289,11 @@ export namespace Prisma {
     content: number
     read: number
     createdAt: number
+    replyToId: number
+    attachmentUrl: number
+    attachmentName: number
+    attachmentSize: number
+    attachmentType: number
     _all: number
   }
 
@@ -14259,6 +14305,11 @@ export namespace Prisma {
     content?: true
     read?: true
     createdAt?: true
+    replyToId?: true
+    attachmentUrl?: true
+    attachmentName?: true
+    attachmentSize?: true
+    attachmentType?: true
   }
 
   export type MessageMaxAggregateInputType = {
@@ -14268,6 +14319,11 @@ export namespace Prisma {
     content?: true
     read?: true
     createdAt?: true
+    replyToId?: true
+    attachmentUrl?: true
+    attachmentName?: true
+    attachmentSize?: true
+    attachmentType?: true
   }
 
   export type MessageCountAggregateInputType = {
@@ -14277,6 +14333,11 @@ export namespace Prisma {
     content?: true
     read?: true
     createdAt?: true
+    replyToId?: true
+    attachmentUrl?: true
+    attachmentName?: true
+    attachmentSize?: true
+    attachmentType?: true
     _all?: true
   }
 
@@ -14359,6 +14420,11 @@ export namespace Prisma {
     content: string
     read: boolean
     createdAt: Date
+    replyToId: string | null
+    attachmentUrl: string | null
+    attachmentName: string | null
+    attachmentSize: string | null
+    attachmentType: string | null
     _count: MessageCountAggregateOutputType | null
     _min: MessageMinAggregateOutputType | null
     _max: MessageMaxAggregateOutputType | null
@@ -14385,8 +14451,16 @@ export namespace Prisma {
     content?: boolean
     read?: boolean
     createdAt?: boolean
+    replyToId?: boolean
+    attachmentUrl?: boolean
+    attachmentName?: boolean
+    attachmentSize?: boolean
+    attachmentType?: boolean
+    replyTo?: boolean | Message$replyToArgs<ExtArgs>
+    replies?: boolean | Message$repliesArgs<ExtArgs>
     sender?: boolean | UserDefaultArgs<ExtArgs>
     receiver?: boolean | UserDefaultArgs<ExtArgs>
+    _count?: boolean | MessageCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
 
   export type MessageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
@@ -14396,6 +14470,12 @@ export namespace Prisma {
     content?: boolean
     read?: boolean
     createdAt?: boolean
+    replyToId?: boolean
+    attachmentUrl?: boolean
+    attachmentName?: boolean
+    attachmentSize?: boolean
+    attachmentType?: boolean
+    replyTo?: boolean | Message$replyToArgs<ExtArgs>
     sender?: boolean | UserDefaultArgs<ExtArgs>
     receiver?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
@@ -14407,6 +14487,12 @@ export namespace Prisma {
     content?: boolean
     read?: boolean
     createdAt?: boolean
+    replyToId?: boolean
+    attachmentUrl?: boolean
+    attachmentName?: boolean
+    attachmentSize?: boolean
+    attachmentType?: boolean
+    replyTo?: boolean | Message$replyToArgs<ExtArgs>
     sender?: boolean | UserDefaultArgs<ExtArgs>
     receiver?: boolean | UserDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["message"]>
@@ -14418,18 +14504,28 @@ export namespace Prisma {
     content?: boolean
     read?: boolean
     createdAt?: boolean
+    replyToId?: boolean
+    attachmentUrl?: boolean
+    attachmentName?: boolean
+    attachmentSize?: boolean
+    attachmentType?: boolean
   }
 
-  export type MessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "senderId" | "receiverId" | "content" | "read" | "createdAt", ExtArgs["result"]["message"]>
+  export type MessageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "senderId" | "receiverId" | "content" | "read" | "createdAt" | "replyToId" | "attachmentUrl" | "attachmentName" | "attachmentSize" | "attachmentType", ExtArgs["result"]["message"]>
   export type MessageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    replyTo?: boolean | Message$replyToArgs<ExtArgs>
+    replies?: boolean | Message$repliesArgs<ExtArgs>
     sender?: boolean | UserDefaultArgs<ExtArgs>
     receiver?: boolean | UserDefaultArgs<ExtArgs>
+    _count?: boolean | MessageCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type MessageIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    replyTo?: boolean | Message$replyToArgs<ExtArgs>
     sender?: boolean | UserDefaultArgs<ExtArgs>
     receiver?: boolean | UserDefaultArgs<ExtArgs>
   }
   export type MessageIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    replyTo?: boolean | Message$replyToArgs<ExtArgs>
     sender?: boolean | UserDefaultArgs<ExtArgs>
     receiver?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -14437,6 +14533,8 @@ export namespace Prisma {
   export type $MessagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     name: "Message"
     objects: {
+      replyTo: Prisma.$MessagePayload<ExtArgs> | null
+      replies: Prisma.$MessagePayload<ExtArgs>[]
       sender: Prisma.$UserPayload<ExtArgs>
       receiver: Prisma.$UserPayload<ExtArgs>
     }
@@ -14447,6 +14545,11 @@ export namespace Prisma {
       content: string
       read: boolean
       createdAt: Date
+      replyToId: string | null
+      attachmentUrl: string | null
+      attachmentName: string | null
+      attachmentSize: string | null
+      attachmentType: string | null
     }, ExtArgs["result"]["message"]>
     composites: {}
   }
@@ -14841,6 +14944,8 @@ export namespace Prisma {
    */
   export interface Prisma__MessageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
     readonly [Symbol.toStringTag]: "PrismaPromise"
+    replyTo<T extends Message$replyToArgs<ExtArgs> = {}>(args?: Subset<T, Message$replyToArgs<ExtArgs>>): Prisma__MessageClient<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+    replies<T extends Message$repliesArgs<ExtArgs> = {}>(args?: Subset<T, Message$repliesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$MessagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     sender<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     receiver<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
     /**
@@ -14878,6 +14983,11 @@ export namespace Prisma {
     readonly content: FieldRef<"Message", 'String'>
     readonly read: FieldRef<"Message", 'Boolean'>
     readonly createdAt: FieldRef<"Message", 'DateTime'>
+    readonly replyToId: FieldRef<"Message", 'String'>
+    readonly attachmentUrl: FieldRef<"Message", 'String'>
+    readonly attachmentName: FieldRef<"Message", 'String'>
+    readonly attachmentSize: FieldRef<"Message", 'String'>
+    readonly attachmentType: FieldRef<"Message", 'String'>
   }
     
 
@@ -15274,6 +15384,49 @@ export namespace Prisma {
   }
 
   /**
+   * Message.replyTo
+   */
+  export type Message$replyToArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Message
+     */
+    select?: MessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Message
+     */
+    omit?: MessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageInclude<ExtArgs> | null
+    where?: MessageWhereInput
+  }
+
+  /**
+   * Message.replies
+   */
+  export type Message$repliesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the Message
+     */
+    select?: MessageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the Message
+     */
+    omit?: MessageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: MessageInclude<ExtArgs> | null
+    where?: MessageWhereInput
+    orderBy?: MessageOrderByWithRelationInput | MessageOrderByWithRelationInput[]
+    cursor?: MessageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: MessageScalarFieldEnum | MessageScalarFieldEnum[]
+  }
+
+  /**
    * Message without action
    */
   export type MessageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -15507,7 +15660,12 @@ export namespace Prisma {
     receiverId: 'receiverId',
     content: 'content',
     read: 'read',
-    createdAt: 'createdAt'
+    createdAt: 'createdAt',
+    replyToId: 'replyToId',
+    attachmentUrl: 'attachmentUrl',
+    attachmentName: 'attachmentName',
+    attachmentSize: 'attachmentSize',
+    attachmentType: 'attachmentType'
   };
 
   export type MessageScalarFieldEnum = (typeof MessageScalarFieldEnum)[keyof typeof MessageScalarFieldEnum]
@@ -16819,6 +16977,13 @@ export namespace Prisma {
     content?: StringFilter<"Message"> | string
     read?: BoolFilter<"Message"> | boolean
     createdAt?: DateTimeFilter<"Message"> | Date | string
+    replyToId?: StringNullableFilter<"Message"> | string | null
+    attachmentUrl?: StringNullableFilter<"Message"> | string | null
+    attachmentName?: StringNullableFilter<"Message"> | string | null
+    attachmentSize?: StringNullableFilter<"Message"> | string | null
+    attachmentType?: StringNullableFilter<"Message"> | string | null
+    replyTo?: XOR<MessageNullableScalarRelationFilter, MessageWhereInput> | null
+    replies?: MessageListRelationFilter
     sender?: XOR<UserScalarRelationFilter, UserWhereInput>
     receiver?: XOR<UserScalarRelationFilter, UserWhereInput>
   }
@@ -16830,6 +16995,13 @@ export namespace Prisma {
     content?: SortOrder
     read?: SortOrder
     createdAt?: SortOrder
+    replyToId?: SortOrderInput | SortOrder
+    attachmentUrl?: SortOrderInput | SortOrder
+    attachmentName?: SortOrderInput | SortOrder
+    attachmentSize?: SortOrderInput | SortOrder
+    attachmentType?: SortOrderInput | SortOrder
+    replyTo?: MessageOrderByWithRelationInput
+    replies?: MessageOrderByRelationAggregateInput
     sender?: UserOrderByWithRelationInput
     receiver?: UserOrderByWithRelationInput
   }
@@ -16844,6 +17016,13 @@ export namespace Prisma {
     content?: StringFilter<"Message"> | string
     read?: BoolFilter<"Message"> | boolean
     createdAt?: DateTimeFilter<"Message"> | Date | string
+    replyToId?: StringNullableFilter<"Message"> | string | null
+    attachmentUrl?: StringNullableFilter<"Message"> | string | null
+    attachmentName?: StringNullableFilter<"Message"> | string | null
+    attachmentSize?: StringNullableFilter<"Message"> | string | null
+    attachmentType?: StringNullableFilter<"Message"> | string | null
+    replyTo?: XOR<MessageNullableScalarRelationFilter, MessageWhereInput> | null
+    replies?: MessageListRelationFilter
     sender?: XOR<UserScalarRelationFilter, UserWhereInput>
     receiver?: XOR<UserScalarRelationFilter, UserWhereInput>
   }, "id">
@@ -16855,6 +17034,11 @@ export namespace Prisma {
     content?: SortOrder
     read?: SortOrder
     createdAt?: SortOrder
+    replyToId?: SortOrderInput | SortOrder
+    attachmentUrl?: SortOrderInput | SortOrder
+    attachmentName?: SortOrderInput | SortOrder
+    attachmentSize?: SortOrderInput | SortOrder
+    attachmentType?: SortOrderInput | SortOrder
     _count?: MessageCountOrderByAggregateInput
     _max?: MessageMaxOrderByAggregateInput
     _min?: MessageMinOrderByAggregateInput
@@ -16870,6 +17054,11 @@ export namespace Prisma {
     content?: StringWithAggregatesFilter<"Message"> | string
     read?: BoolWithAggregatesFilter<"Message"> | boolean
     createdAt?: DateTimeWithAggregatesFilter<"Message"> | Date | string
+    replyToId?: StringNullableWithAggregatesFilter<"Message"> | string | null
+    attachmentUrl?: StringNullableWithAggregatesFilter<"Message"> | string | null
+    attachmentName?: StringNullableWithAggregatesFilter<"Message"> | string | null
+    attachmentSize?: StringNullableWithAggregatesFilter<"Message"> | string | null
+    attachmentType?: StringNullableWithAggregatesFilter<"Message"> | string | null
   }
 
   export type UserCreateInput = {
@@ -18070,6 +18259,12 @@ export namespace Prisma {
     content: string
     read?: boolean
     createdAt?: Date | string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
+    attachmentSize?: string | null
+    attachmentType?: string | null
+    replyTo?: MessageCreateNestedOneWithoutRepliesInput
+    replies?: MessageCreateNestedManyWithoutReplyToInput
     sender: UserCreateNestedOneWithoutSentMessagesInput
     receiver: UserCreateNestedOneWithoutReceivedMessagesInput
   }
@@ -18081,6 +18276,12 @@ export namespace Prisma {
     content: string
     read?: boolean
     createdAt?: Date | string
+    replyToId?: string | null
+    attachmentUrl?: string | null
+    attachmentName?: string | null
+    attachmentSize?: string | null
+    attachmentType?: string | null
+    replies?: MessageUncheckedCreateNestedManyWithoutReplyToInput
   }
 
   export type MessageUpdateInput = {
@@ -18088,6 +18289,12 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     read?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: MessageUpdateOneWithoutRepliesNestedInput
+    replies?: MessageUpdateManyWithoutReplyToNestedInput
     sender?: UserUpdateOneRequiredWithoutSentMessagesNestedInput
     receiver?: UserUpdateOneRequiredWithoutReceivedMessagesNestedInput
   }
@@ -18099,6 +18306,12 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     read?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replyToId?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
+    replies?: MessageUncheckedUpdateManyWithoutReplyToNestedInput
   }
 
   export type MessageCreateManyInput = {
@@ -18108,6 +18321,11 @@ export namespace Prisma {
     content: string
     read?: boolean
     createdAt?: Date | string
+    replyToId?: string | null
+    attachmentUrl?: string | null
+    attachmentName?: string | null
+    attachmentSize?: string | null
+    attachmentType?: string | null
   }
 
   export type MessageUpdateManyMutationInput = {
@@ -18115,6 +18333,10 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     read?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MessageUncheckedUpdateManyInput = {
@@ -18124,6 +18346,11 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     read?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replyToId?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -19263,6 +19490,11 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
+  export type MessageNullableScalarRelationFilter = {
+    is?: MessageWhereInput | null
+    isNot?: MessageWhereInput | null
+  }
+
   export type MessageCountOrderByAggregateInput = {
     id?: SortOrder
     senderId?: SortOrder
@@ -19270,6 +19502,11 @@ export namespace Prisma {
     content?: SortOrder
     read?: SortOrder
     createdAt?: SortOrder
+    replyToId?: SortOrder
+    attachmentUrl?: SortOrder
+    attachmentName?: SortOrder
+    attachmentSize?: SortOrder
+    attachmentType?: SortOrder
   }
 
   export type MessageMaxOrderByAggregateInput = {
@@ -19279,6 +19516,11 @@ export namespace Prisma {
     content?: SortOrder
     read?: SortOrder
     createdAt?: SortOrder
+    replyToId?: SortOrder
+    attachmentUrl?: SortOrder
+    attachmentName?: SortOrder
+    attachmentSize?: SortOrder
+    attachmentType?: SortOrder
   }
 
   export type MessageMinOrderByAggregateInput = {
@@ -19288,6 +19530,11 @@ export namespace Prisma {
     content?: SortOrder
     read?: SortOrder
     createdAt?: SortOrder
+    replyToId?: SortOrder
+    attachmentUrl?: SortOrder
+    attachmentName?: SortOrder
+    attachmentSize?: SortOrder
+    attachmentType?: SortOrder
   }
 
   export type StudentCreateNestedOneWithoutUserInput = {
@@ -20027,6 +20274,19 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutNotificationsInput, UserUpdateWithoutNotificationsInput>, UserUncheckedUpdateWithoutNotificationsInput>
   }
 
+  export type MessageCreateNestedOneWithoutRepliesInput = {
+    create?: XOR<MessageCreateWithoutRepliesInput, MessageUncheckedCreateWithoutRepliesInput>
+    connectOrCreate?: MessageCreateOrConnectWithoutRepliesInput
+    connect?: MessageWhereUniqueInput
+  }
+
+  export type MessageCreateNestedManyWithoutReplyToInput = {
+    create?: XOR<MessageCreateWithoutReplyToInput, MessageUncheckedCreateWithoutReplyToInput> | MessageCreateWithoutReplyToInput[] | MessageUncheckedCreateWithoutReplyToInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutReplyToInput | MessageCreateOrConnectWithoutReplyToInput[]
+    createMany?: MessageCreateManyReplyToInputEnvelope
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+  }
+
   export type UserCreateNestedOneWithoutSentMessagesInput = {
     create?: XOR<UserCreateWithoutSentMessagesInput, UserUncheckedCreateWithoutSentMessagesInput>
     connectOrCreate?: UserCreateOrConnectWithoutSentMessagesInput
@@ -20037,6 +20297,37 @@ export namespace Prisma {
     create?: XOR<UserCreateWithoutReceivedMessagesInput, UserUncheckedCreateWithoutReceivedMessagesInput>
     connectOrCreate?: UserCreateOrConnectWithoutReceivedMessagesInput
     connect?: UserWhereUniqueInput
+  }
+
+  export type MessageUncheckedCreateNestedManyWithoutReplyToInput = {
+    create?: XOR<MessageCreateWithoutReplyToInput, MessageUncheckedCreateWithoutReplyToInput> | MessageCreateWithoutReplyToInput[] | MessageUncheckedCreateWithoutReplyToInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutReplyToInput | MessageCreateOrConnectWithoutReplyToInput[]
+    createMany?: MessageCreateManyReplyToInputEnvelope
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+  }
+
+  export type MessageUpdateOneWithoutRepliesNestedInput = {
+    create?: XOR<MessageCreateWithoutRepliesInput, MessageUncheckedCreateWithoutRepliesInput>
+    connectOrCreate?: MessageCreateOrConnectWithoutRepliesInput
+    upsert?: MessageUpsertWithoutRepliesInput
+    disconnect?: MessageWhereInput | boolean
+    delete?: MessageWhereInput | boolean
+    connect?: MessageWhereUniqueInput
+    update?: XOR<XOR<MessageUpdateToOneWithWhereWithoutRepliesInput, MessageUpdateWithoutRepliesInput>, MessageUncheckedUpdateWithoutRepliesInput>
+  }
+
+  export type MessageUpdateManyWithoutReplyToNestedInput = {
+    create?: XOR<MessageCreateWithoutReplyToInput, MessageUncheckedCreateWithoutReplyToInput> | MessageCreateWithoutReplyToInput[] | MessageUncheckedCreateWithoutReplyToInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutReplyToInput | MessageCreateOrConnectWithoutReplyToInput[]
+    upsert?: MessageUpsertWithWhereUniqueWithoutReplyToInput | MessageUpsertWithWhereUniqueWithoutReplyToInput[]
+    createMany?: MessageCreateManyReplyToInputEnvelope
+    set?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    disconnect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    delete?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    update?: MessageUpdateWithWhereUniqueWithoutReplyToInput | MessageUpdateWithWhereUniqueWithoutReplyToInput[]
+    updateMany?: MessageUpdateManyWithWhereWithoutReplyToInput | MessageUpdateManyWithWhereWithoutReplyToInput[]
+    deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
   }
 
   export type UserUpdateOneRequiredWithoutSentMessagesNestedInput = {
@@ -20053,6 +20344,20 @@ export namespace Prisma {
     upsert?: UserUpsertWithoutReceivedMessagesInput
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutReceivedMessagesInput, UserUpdateWithoutReceivedMessagesInput>, UserUncheckedUpdateWithoutReceivedMessagesInput>
+  }
+
+  export type MessageUncheckedUpdateManyWithoutReplyToNestedInput = {
+    create?: XOR<MessageCreateWithoutReplyToInput, MessageUncheckedCreateWithoutReplyToInput> | MessageCreateWithoutReplyToInput[] | MessageUncheckedCreateWithoutReplyToInput[]
+    connectOrCreate?: MessageCreateOrConnectWithoutReplyToInput | MessageCreateOrConnectWithoutReplyToInput[]
+    upsert?: MessageUpsertWithWhereUniqueWithoutReplyToInput | MessageUpsertWithWhereUniqueWithoutReplyToInput[]
+    createMany?: MessageCreateManyReplyToInputEnvelope
+    set?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    disconnect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    delete?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    connect?: MessageWhereUniqueInput | MessageWhereUniqueInput[]
+    update?: MessageUpdateWithWhereUniqueWithoutReplyToInput | MessageUpdateWithWhereUniqueWithoutReplyToInput[]
+    updateMany?: MessageUpdateManyWithWhereWithoutReplyToInput | MessageUpdateManyWithWhereWithoutReplyToInput[]
+    deleteMany?: MessageScalarWhereInput | MessageScalarWhereInput[]
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -20921,6 +21226,12 @@ export namespace Prisma {
     content: string
     read?: boolean
     createdAt?: Date | string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
+    attachmentSize?: string | null
+    attachmentType?: string | null
+    replyTo?: MessageCreateNestedOneWithoutRepliesInput
+    replies?: MessageCreateNestedManyWithoutReplyToInput
     receiver: UserCreateNestedOneWithoutReceivedMessagesInput
   }
 
@@ -20930,6 +21241,12 @@ export namespace Prisma {
     content: string
     read?: boolean
     createdAt?: Date | string
+    replyToId?: string | null
+    attachmentUrl?: string | null
+    attachmentName?: string | null
+    attachmentSize?: string | null
+    attachmentType?: string | null
+    replies?: MessageUncheckedCreateNestedManyWithoutReplyToInput
   }
 
   export type MessageCreateOrConnectWithoutSenderInput = {
@@ -20947,6 +21264,12 @@ export namespace Prisma {
     content: string
     read?: boolean
     createdAt?: Date | string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
+    attachmentSize?: string | null
+    attachmentType?: string | null
+    replyTo?: MessageCreateNestedOneWithoutRepliesInput
+    replies?: MessageCreateNestedManyWithoutReplyToInput
     sender: UserCreateNestedOneWithoutSentMessagesInput
   }
 
@@ -20956,6 +21279,12 @@ export namespace Prisma {
     content: string
     read?: boolean
     createdAt?: Date | string
+    replyToId?: string | null
+    attachmentUrl?: string | null
+    attachmentName?: string | null
+    attachmentSize?: string | null
+    attachmentType?: string | null
+    replies?: MessageUncheckedCreateNestedManyWithoutReplyToInput
   }
 
   export type MessageCreateOrConnectWithoutReceiverInput = {
@@ -21254,6 +21583,11 @@ export namespace Prisma {
     content?: StringFilter<"Message"> | string
     read?: BoolFilter<"Message"> | boolean
     createdAt?: DateTimeFilter<"Message"> | Date | string
+    replyToId?: StringNullableFilter<"Message"> | string | null
+    attachmentUrl?: StringNullableFilter<"Message"> | string | null
+    attachmentName?: StringNullableFilter<"Message"> | string | null
+    attachmentSize?: StringNullableFilter<"Message"> | string | null
+    attachmentType?: StringNullableFilter<"Message"> | string | null
   }
 
   export type MessageUpsertWithWhereUniqueWithoutReceiverInput = {
@@ -22522,6 +22856,77 @@ export namespace Prisma {
     receivedMessages?: MessageUncheckedUpdateManyWithoutReceiverNestedInput
   }
 
+  export type MessageCreateWithoutRepliesInput = {
+    id?: string
+    content: string
+    read?: boolean
+    createdAt?: Date | string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
+    attachmentSize?: string | null
+    attachmentType?: string | null
+    replyTo?: MessageCreateNestedOneWithoutRepliesInput
+    sender: UserCreateNestedOneWithoutSentMessagesInput
+    receiver: UserCreateNestedOneWithoutReceivedMessagesInput
+  }
+
+  export type MessageUncheckedCreateWithoutRepliesInput = {
+    id?: string
+    senderId: string
+    receiverId: string
+    content: string
+    read?: boolean
+    createdAt?: Date | string
+    replyToId?: string | null
+    attachmentUrl?: string | null
+    attachmentName?: string | null
+    attachmentSize?: string | null
+    attachmentType?: string | null
+  }
+
+  export type MessageCreateOrConnectWithoutRepliesInput = {
+    where: MessageWhereUniqueInput
+    create: XOR<MessageCreateWithoutRepliesInput, MessageUncheckedCreateWithoutRepliesInput>
+  }
+
+  export type MessageCreateWithoutReplyToInput = {
+    id?: string
+    content: string
+    read?: boolean
+    createdAt?: Date | string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
+    attachmentSize?: string | null
+    attachmentType?: string | null
+    replies?: MessageCreateNestedManyWithoutReplyToInput
+    sender: UserCreateNestedOneWithoutSentMessagesInput
+    receiver: UserCreateNestedOneWithoutReceivedMessagesInput
+  }
+
+  export type MessageUncheckedCreateWithoutReplyToInput = {
+    id?: string
+    senderId: string
+    receiverId: string
+    content: string
+    read?: boolean
+    createdAt?: Date | string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
+    attachmentSize?: string | null
+    attachmentType?: string | null
+    replies?: MessageUncheckedCreateNestedManyWithoutReplyToInput
+  }
+
+  export type MessageCreateOrConnectWithoutReplyToInput = {
+    where: MessageWhereUniqueInput
+    create: XOR<MessageCreateWithoutReplyToInput, MessageUncheckedCreateWithoutReplyToInput>
+  }
+
+  export type MessageCreateManyReplyToInputEnvelope = {
+    data: MessageCreateManyReplyToInput | MessageCreateManyReplyToInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserCreateWithoutSentMessagesInput = {
     id?: string
     email: string
@@ -22630,6 +23035,61 @@ export namespace Prisma {
   export type UserCreateOrConnectWithoutReceivedMessagesInput = {
     where: UserWhereUniqueInput
     create: XOR<UserCreateWithoutReceivedMessagesInput, UserUncheckedCreateWithoutReceivedMessagesInput>
+  }
+
+  export type MessageUpsertWithoutRepliesInput = {
+    update: XOR<MessageUpdateWithoutRepliesInput, MessageUncheckedUpdateWithoutRepliesInput>
+    create: XOR<MessageCreateWithoutRepliesInput, MessageUncheckedCreateWithoutRepliesInput>
+    where?: MessageWhereInput
+  }
+
+  export type MessageUpdateToOneWithWhereWithoutRepliesInput = {
+    where?: MessageWhereInput
+    data: XOR<MessageUpdateWithoutRepliesInput, MessageUncheckedUpdateWithoutRepliesInput>
+  }
+
+  export type MessageUpdateWithoutRepliesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    read?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: MessageUpdateOneWithoutRepliesNestedInput
+    sender?: UserUpdateOneRequiredWithoutSentMessagesNestedInput
+    receiver?: UserUpdateOneRequiredWithoutReceivedMessagesNestedInput
+  }
+
+  export type MessageUncheckedUpdateWithoutRepliesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    read?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replyToId?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
+  }
+
+  export type MessageUpsertWithWhereUniqueWithoutReplyToInput = {
+    where: MessageWhereUniqueInput
+    update: XOR<MessageUpdateWithoutReplyToInput, MessageUncheckedUpdateWithoutReplyToInput>
+    create: XOR<MessageCreateWithoutReplyToInput, MessageUncheckedCreateWithoutReplyToInput>
+  }
+
+  export type MessageUpdateWithWhereUniqueWithoutReplyToInput = {
+    where: MessageWhereUniqueInput
+    data: XOR<MessageUpdateWithoutReplyToInput, MessageUncheckedUpdateWithoutReplyToInput>
+  }
+
+  export type MessageUpdateManyWithWhereWithoutReplyToInput = {
+    where: MessageScalarWhereInput
+    data: XOR<MessageUpdateManyMutationInput, MessageUncheckedUpdateManyWithoutReplyToInput>
   }
 
   export type UserUpsertWithoutSentMessagesInput = {
@@ -22907,6 +23367,11 @@ export namespace Prisma {
     content: string
     read?: boolean
     createdAt?: Date | string
+    replyToId?: string | null
+    attachmentUrl?: string | null
+    attachmentName?: string | null
+    attachmentSize?: string | null
+    attachmentType?: string | null
   }
 
   export type MessageCreateManyReceiverInput = {
@@ -22915,6 +23380,11 @@ export namespace Prisma {
     content: string
     read?: boolean
     createdAt?: Date | string
+    replyToId?: string | null
+    attachmentUrl?: string | null
+    attachmentName?: string | null
+    attachmentSize?: string | null
+    attachmentType?: string | null
   }
 
   export type PaymentUpdateWithoutVerifierInput = {
@@ -23365,6 +23835,12 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     read?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: MessageUpdateOneWithoutRepliesNestedInput
+    replies?: MessageUpdateManyWithoutReplyToNestedInput
     receiver?: UserUpdateOneRequiredWithoutReceivedMessagesNestedInput
   }
 
@@ -23374,6 +23850,12 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     read?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replyToId?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
+    replies?: MessageUncheckedUpdateManyWithoutReplyToNestedInput
   }
 
   export type MessageUncheckedUpdateManyWithoutSenderInput = {
@@ -23382,6 +23864,11 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     read?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replyToId?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type MessageUpdateWithoutReceiverInput = {
@@ -23389,6 +23876,12 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     read?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
+    replyTo?: MessageUpdateOneWithoutRepliesNestedInput
+    replies?: MessageUpdateManyWithoutReplyToNestedInput
     sender?: UserUpdateOneRequiredWithoutSentMessagesNestedInput
   }
 
@@ -23398,6 +23891,12 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     read?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replyToId?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
+    replies?: MessageUncheckedUpdateManyWithoutReplyToNestedInput
   }
 
   export type MessageUncheckedUpdateManyWithoutReceiverInput = {
@@ -23406,6 +23905,11 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     read?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    replyToId?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
   export type PaymentCreateManyStudentInput = {
@@ -23602,6 +24106,60 @@ export namespace Prisma {
     resolvedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     autoApprovedPaymentId?: NullableStringFieldUpdateOperationsInput | string | null
     reconciledAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  }
+
+  export type MessageCreateManyReplyToInput = {
+    id?: string
+    senderId: string
+    receiverId: string
+    content: string
+    read?: boolean
+    createdAt?: Date | string
+    attachmentUrl?: string | null
+    attachmentName?: string | null
+    attachmentSize?: string | null
+    attachmentType?: string | null
+  }
+
+  export type MessageUpdateWithoutReplyToInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    read?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
+    replies?: MessageUpdateManyWithoutReplyToNestedInput
+    sender?: UserUpdateOneRequiredWithoutSentMessagesNestedInput
+    receiver?: UserUpdateOneRequiredWithoutReceivedMessagesNestedInput
+  }
+
+  export type MessageUncheckedUpdateWithoutReplyToInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    read?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
+    replies?: MessageUncheckedUpdateManyWithoutReplyToNestedInput
+  }
+
+  export type MessageUncheckedUpdateManyWithoutReplyToInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    senderId?: StringFieldUpdateOperationsInput | string
+    receiverId?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    read?: BoolFieldUpdateOperationsInput | boolean
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    attachmentUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentName?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentSize?: NullableStringFieldUpdateOperationsInput | string | null
+    attachmentType?: NullableStringFieldUpdateOperationsInput | string | null
   }
 
 

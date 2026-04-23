@@ -292,7 +292,12 @@ exports.Prisma.MessageScalarFieldEnum = {
   receiverId: 'receiverId',
   content: 'content',
   read: 'read',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  replyToId: 'replyToId',
+  attachmentUrl: 'attachmentUrl',
+  attachmentName: 'attachmentName',
+  attachmentSize: 'attachmentSize',
+  attachmentType: 'attachmentType'
 };
 
 exports.Prisma.SortOrder = {
