@@ -14,6 +14,7 @@ import {
   FeeStructurePage,
   LandingPage,
   LoginPage,
+  MessagesPage,
   PaymentHistoryPage,
   RegisterPage,
   ReportsPage,
@@ -147,6 +148,10 @@ export function AppRouter() {
         <Route
           path="/student/notifications"
           element={<RequireRoles allowedRoles={['student']}><StudentNotificationsPage /></RequireRoles>}
+        />
+        <Route
+          path="/messages"
+          element={<RequireRoles allowedRoles={['student', 'admin', 'accounts']}><MessagesPage /></RequireRoles>}
         />
         <Route path="/settings" element={<SettingsPage />} />
       </Route>

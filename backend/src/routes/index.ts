@@ -7,6 +7,7 @@ import { reportRouter } from './report.routes';
 import { studentRouter } from './student.routes';
 import { registryRouter } from './registry.routes';
 import { notificationRouter } from './notification.routes';
+import { messageRouter } from './message.routes';
 
 export const apiRouter = Router();
 
@@ -24,3 +25,4 @@ apiRouter.use('/payments', paymentRouter);
 apiRouter.use('/admin', adminRouter);
 apiRouter.use('/reports', reportRouter);
 apiRouter.use('/notifications', notificationRouter);
+apiRouter.use('/messages', messageRouter);

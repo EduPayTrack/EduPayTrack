@@ -286,6 +286,15 @@ exports.Prisma.SystemRegistryScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.MessageScalarFieldEnum = {
+  id: 'id',
+  senderId: 'senderId',
+  receiverId: 'receiverId',
+  content: 'content',
+  read: 'read',
+  createdAt: 'createdAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -376,7 +385,8 @@ exports.Prisma.ModelName = {
   ReminderCampaign: 'ReminderCampaign',
   GeneratedReport: 'GeneratedReport',
   Notification: 'Notification',
-  SystemRegistry: 'SystemRegistry'
+  SystemRegistry: 'SystemRegistry',
+  Message: 'Message'
 };
 
 /**
