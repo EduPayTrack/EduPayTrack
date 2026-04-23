@@ -1014,13 +1014,15 @@ export function PaymentHistoryPage() {
           program: dashboard?.student?.program || '',
           academicYear: dashboard?.student?.academicYear || '',
           email: user?.email || '',
+          phone: dashboard?.student?.phone || '',
         },
         summary: {
           totalPaid: dashboard?.summary?.totalPaid || 0,
           currentBalance: dashboard?.summary?.currentBalance || 0,
-          installmentCount: approvedCount,
-          pendingVerifications: pendingCount,
-          rejectedSubmissions: rejectedCount,
+          totalFees: dashboard?.summary?.totalFees || (dashboard?.summary?.totalPaid || 0) + (dashboard?.summary?.currentBalance || 0),
+          approvedCount: approvedCount,
+          pendingCount: pendingCount,
+          rejectedCount: rejectedCount,
         },
         payments: payments.map((p: any) => ({
           id: p.id,
@@ -1031,7 +1033,9 @@ export function PaymentHistoryPage() {
           status: p.status,
           receiptNumber: p.receiptNumber,
           externalReference: p.externalReference,
+          notes: p.notes,
         })),
+        generatedAt: new Date().toISOString(),
       });
       
       toast.success('Statement downloaded');
