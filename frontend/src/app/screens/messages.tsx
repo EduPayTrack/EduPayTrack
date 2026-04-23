@@ -119,16 +119,25 @@ export function MessagesPage() {
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!content.trim() || !activeUser) return;
+        if ((!content.trim() && !replyingTo) || !activeUser) return;
 
         try {
             setSending(true);
+            const payload: any = { 
+                receiverId: activeUser.id, 
+                content: content.trim() 
+            };
+            if (replyingTo) {
+                payload.replyToId = replyingTo.id;
+            }
+            
             const newMsg = await apiFetch('/messages', {
                 method: 'POST',
-                body: JSON.stringify({ receiverId: activeUser.id, content: content.trim() })
+                body: JSON.stringify(payload)
             });
             setMessages([...messages, newMsg]);
             setContent('');
+            setReplyingTo(null);
             
             // update conversation list
             const convIdx = conversations.findIndex(c => c.user.id === activeUser.id);
@@ -428,26 +437,94 @@ export function MessagesPage() {
                                                 </div>
                                             )}
                                             
-                                            <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} ${isGroupedWithPrev ? 'mt-0.5' : 'mt-3'}`}>
-                                                <div className={`relative max-w-[80%] md:max-w-[65%] px-4 py-2.5 text-[14px] leading-snug transition-all duration-200 ${isMe 
-                                                    ? `bg-[#d9fdd3] dark:bg-[#005c4b] text-[#111b21] dark:text-white shadow-sm ${getBubbleRadius()}` 
-                                                    : `bg-white dark:bg-[#1f2c34] text-[#111b21] dark:text-white shadow-sm border border-slate-100 dark:border-slate-800 ${getBubbleRadius()}`
-                                                }`}>
-                                                    <p className="pr-16">{msg.content}</p>
-                                                    <div className={`flex items-center gap-1 mt-1 absolute bottom-1.5 right-2`}>
-                                                        <span className={`text-[10px] tabular-nums ${isMe ? 'text-[#667781] dark:text-slate-400' : 'text-slate-400 dark:text-slate-500'}`}>
-                                                            {timeStr}
-                                                        </span>
-                                                        {isMe && (
-                                                            <span className={msg.read || msg.readAt ? "text-[#53bdeb]" : "text-[#8696a0] dark:text-slate-500"}>
-                                                                {msg.read || msg.readAt ? (
-                                                                    <CheckCheck className="h-3.5 w-3.5" />
-                                                                ) : (
-                                                                    <Check className="h-3.5 w-3.5" />
-                                                                )}
-                                                            </span>
+                                            <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} ${isGroupedWithPrev ? 'mt-0.5' : 'mt-3'} group`}>
+                                                <div className="flex items-end gap-2">
+                                                    {/* Reply button (hover) */}
+                                                    <button
+                                                        onClick={() => handleReply(msg)}
+                                                        className={`opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 ${isMe ? 'order-first' : ''}`}
+                                                    >
+                                                        <Reply className="h-4 w-4 text-muted-foreground" />
+                                                    </button>
+                                                    
+                                                    <div className={`relative max-w-[80%] md:max-w-[65%] px-4 py-2.5 text-[14px] leading-snug transition-all duration-200 ${isMe 
+                                                        ? `bg-[#d9fdd3] dark:bg-[#005c4b] text-[#111b21] dark:text-white shadow-sm ${getBubbleRadius()}` 
+                                                        : `bg-white dark:bg-[#1f2c34] text-[#111b21] dark:text-white shadow-sm border border-slate-100 dark:border-slate-800 ${getBubbleRadius()}`
+                                                    } ${searchQuery && msg.content?.toLowerCase().includes(searchQuery.toLowerCase()) ? 'ring-2 ring-primary/50' : ''}`}>
+                                                        {/* Reply preview */}
+                                                        {msg.replyTo && (
+                                                            <div className={`mb-2 pl-3 py-1.5 text-xs border-l-2 ${isMe ? 'border-primary/30 bg-primary/10' : 'border-slate-300 dark:border-slate-600 bg-slate-100/50 dark:bg-slate-800/50'} rounded-r-md`}>
+                                                                <p className="font-medium opacity-70 mb-0.5">
+                                                                    {msg.replyTo.senderId === user?.id ? 'You' : activeUser?.firstName}
+                                                                </p>
+                                                                <p className="truncate opacity-60">{msg.replyTo.content}</p>
+                                                            </div>
                                                         )}
+                                                        
+                                                        {/* File attachment */}
+                                                        {msg.attachment && (
+                                                            <div className={`mb-2 p-2.5 rounded-lg flex items-center gap-3 ${isMe ? 'bg-primary/20' : 'bg-slate-100 dark:bg-slate-800'}`}>
+                                                                <div className="h-10 w-10 rounded-lg bg-primary/30 flex items-center justify-center">
+                                                                    <FileText className="h-5 w-5 text-primary" />
+                                                                </div>
+                                                                <div className="flex-1 min-w-0">
+                                                                    <p className="text-sm font-medium truncate">{msg.attachment.name}</p>
+                                                                    <p className="text-xs opacity-60">{msg.attachment.size}</p>
+                                                                </div>
+                                                                <a href={msg.attachment.url} download className="p-1.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10">
+                                                                    <Download className="h-4 w-4" />
+                                                                </a>
+                                                            </div>
+                                                        )}
+                                                        
+                                                        <p className="pr-16">{msg.content}</p>
+                                                        <div className={`flex items-center gap-1 mt-1 absolute bottom-1.5 right-2`}>
+                                                            <span className={`text-[10px] tabular-nums ${isMe ? 'text-[#667781] dark:text-slate-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                                                                {timeStr}
+                                                            </span>
+                                                            {isMe && (
+                                                                <span className={msg.read || msg.readAt ? "text-[#53bdeb]" : "text-[#8696a0] dark:text-slate-500"}>
+                                                                    {msg.read || msg.readAt ? (
+                                                                        <CheckCheck className="h-3.5 w-3.5" />
+                                                                    ) : (
+                                                                        <Check className="h-3.5 w-3.5" />
+                                                                    )}
+                                                                </span>
+                                                            )}
+                                                        </div>
                                                     </div>
+                                                </div>
+                                            </div>
+                                            
+                                            {/* Reactions */}
+                                            {msg.reactions && msg.reactions.length > 0 && (
+                                                <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} mt-1`}>
+                                                    <div className="flex gap-1 flex-wrap max-w-[80%]">
+                                                        {msg.reactions.map((reaction: any, ridx: number) => (
+                                                            <button
+                                                                key={ridx}
+                                                                onClick={() => handleReaction(msg.id, reaction.emoji)}
+                                                                className={`text-xs px-1.5 py-0.5 rounded-full border shadow-sm transition-all hover:scale-105 ${reaction.userId === user?.id ? 'bg-primary/20 border-primary/30' : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}
+                                                            >
+                                                                {reaction.emoji} {reaction.count > 1 && <span className="text-[10px] ml-0.5">{reaction.count}</span>}
+                                                            </button>
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                            
+                                            {/* Quick reaction bar (on hover) */}
+                                            <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} mt-1 opacity-0 group-hover:opacity-100 transition-opacity`}>
+                                                <div className="flex gap-1">
+                                                    {['👍', '❤️', '😂', '👀', '✅'].map((emoji) => (
+                                                        <button
+                                                            key={emoji}
+                                                            onClick={() => handleReaction(msg.id, emoji)}
+                                                            className="text-sm hover:scale-125 transition-transform p-0.5"
+                                                        >
+                                                            {emoji}
+                                                        </button>
+                                                    ))}
                                                 </div>
                                             </div>
                                         </div>
@@ -474,7 +551,41 @@ export function MessagesPage() {
                             </div>
                         </div>
                         <div className="p-4 md:p-5 bg-[#f0f2f5] dark:bg-[#0a1014] border-t border-slate-200 dark:border-slate-800">
+                            {/* Reply Preview */}
+                            {replyingTo && (
+                                <div className="mb-3 px-4 py-2 bg-white dark:bg-[#1f2c34] rounded-xl border border-slate-200 dark:border-slate-700 flex items-center gap-3">
+                                    <div className="flex-1 min-w-0">
+                                        <p className="text-xs text-muted-foreground mb-0.5">
+                                            Replying to {replyingTo.senderId === user?.id ? 'yourself' : activeUser?.firstName}
+                                        </p>
+                                        <p className="text-sm truncate">{replyingTo.content}</p>
+                                    </div>
+                                    <button onClick={cancelReply} className="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
+                                        <X className="h-4 w-4" />
+                                    </button>
+                                </div>
+                            )}
+                            
                             <form onSubmit={handleSendMessage} className="flex gap-3 items-end">
+                                <input
+                                    type="file"
+                                    ref={fileInputRef}
+                                    onChange={handleFileUpload}
+                                    className="hidden"
+                                    accept="image/*,.pdf,.doc,.docx,.xls,.xlsx"
+                                />
+                                
+                                <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => fileInputRef.current?.click()}
+                                    disabled={uploading}
+                                    className="h-11 w-11 rounded-full shrink-0 hover:bg-slate-200 dark:hover:bg-slate-800"
+                                >
+                                    {uploading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Paperclip className="h-5 w-5" />}
+                                </Button>
+                                
                                 <div className="flex-1 bg-white dark:bg-[#1f2c34] rounded-full border border-slate-200 dark:border-slate-700 shadow-sm focus-within:shadow-md focus-within:border-primary/30 transition-all duration-200">
                                     <Input
                                         value={content}
@@ -482,14 +593,14 @@ export function MessagesPage() {
                                             setContent(e.target.value);
                                             handleTyping();
                                         }}
-                                        placeholder="Type a message..."
+                                        placeholder={replyingTo ? 'Reply to message...' : "Type a message..."}
                                         className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 px-4 py-3 text-[15px] placeholder:text-slate-400"
                                         disabled={sending}
                                     />
                                 </div>
                                 <Button 
                                     type="submit" 
-                                    disabled={!content.trim() || sending}
+                                    disabled={(!content.trim() && !replyingTo) || sending}
                                     className="h-11 w-11 rounded-full p-0 flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 disabled:opacity-50 disabled:shadow-none"
                                 >
                                     {sending ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
