@@ -4,7 +4,7 @@ import { apiFetch } from '../lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
-import { Loader2, Send, MessageSquare } from 'lucide-react';
+import { Loader2, Send, MessageSquare, ChevronLeft } from 'lucide-react';
 
 export function MessagesPage() {
     const { user } = useAuth();
@@ -102,9 +102,9 @@ export function MessagesPage() {
     }
 
     return (
-        <div className="flex h-[calc(100vh-120px)] gap-4 p-4 md:p-6 animate-fade-in max-w-6xl mx-auto">
+        <div className="flex h-[calc(100vh-120px)] gap-4 p-0 md:p-6 animate-fade-in max-w-6xl mx-auto">
             {/* Sidebar */}
-            <Card className="w-1/3 flex flex-col hidden md:flex border-r">
+            <Card className={`flex flex-col border-r md:border rounded-none md:rounded-xl shadow-none md:shadow-sm ${activeUser ? 'hidden md:flex md:w-1/3' : 'w-full md:w-1/3'}`}>
                 <CardHeader className="py-4 border-b">
                     <CardTitle className="text-lg">Conversations</CardTitle>
                 </CardHeader>
@@ -153,12 +153,15 @@ export function MessagesPage() {
             </Card>
 
             {/* Main Chat Area */}
-            <Card className="flex-1 flex flex-col border">
+            <Card className={`flex-1 flex flex-col border rounded-none md:rounded-xl shadow-none md:shadow-sm ${activeUser ? 'flex' : 'hidden md:flex'}`}>
                 {activeUser ? (
                     <>
-                        <CardHeader className="py-4 border-b bg-card">
-                            <CardTitle className="text-lg flex items-center gap-3">
-                                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm">
+                        <CardHeader className="py-3 md:py-4 border-b bg-card px-3 md:px-6">
+                            <CardTitle className="text-base md:text-lg flex items-center gap-2 md:gap-3">
+                                <Button variant="ghost" size="icon" className="md:hidden h-8 w-8 -ml-1 mr-1" onClick={() => setActiveUser(null)}>
+                                    <ChevronLeft className="h-5 w-5" />
+                                </Button>
+                                <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm shrink-0">
                                     {activeUser.firstName?.[0] || activeUser.email?.[0] || '?'}
                                 </div>
                                 <span>{activeUser.firstName} {activeUser.lastName} {isStudent ? '(Accounts)' : ''}</span>
