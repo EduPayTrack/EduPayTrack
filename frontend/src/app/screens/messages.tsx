@@ -4,7 +4,7 @@ import { apiFetch } from '../lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
-import { Loader2, Send, MessageSquare, ChevronLeft, CheckCheck } from 'lucide-react';
+import { Loader2, Send, MessageSquare, ChevronLeft, Check, CheckCheck } from 'lucide-react';
 
 export function MessagesPage() {
     const { user } = useAuth();
@@ -185,8 +185,12 @@ export function MessagesPage() {
                                                         {timeStr}
                                                     </span>
                                                     {isMe && (
-                                                        <span className="text-primary-foreground/70">
-                                                            <CheckCheck className="h-3 w-3" />
+                                                        <span className={msg.read || msg.readAt ? "text-blue-400" : "text-primary-foreground/70"}>
+                                                            {msg.read || msg.readAt ? (
+                                                                <CheckCheck className="h-3 w-3" />
+                                                            ) : (
+                                                                <Check className="h-3 w-3" />
+                                                            )}
                                                         </span>
                                                     )}
                                                 </div>
