@@ -208,10 +208,13 @@ export function MessagesPage() {
         return currentMsg.senderId === prevMsg.senderId;
     };
 
-    // File upload handler
+    // File upload handler - requires backend support for file storage
     const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file || !activeUser) return;
+
+        // TODO: Backend needs to implement multipart/form-data support for file uploads
+        console.warn('File attachment requires backend implementation for file storage');
 
         const formData = new FormData();
         formData.append('file', file);
@@ -234,6 +237,7 @@ export function MessagesPage() {
             }
         } catch (error) {
             console.error('Error uploading file:', error);
+            alert('File upload failed - backend may not support file attachments yet');
         } finally {
             setUploading(false);
             if (fileInputRef.current) {
