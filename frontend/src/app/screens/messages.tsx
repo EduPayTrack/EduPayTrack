@@ -4,7 +4,7 @@ import { apiFetch } from '../lib/api';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
-import { Loader2, Send, MessageSquare, ChevronLeft } from 'lucide-react';
+import { Loader2, Send, MessageSquare, ChevronLeft, Check, CheckCheck } from 'lucide-react';
 
 export function MessagesPage() {
     const { user } = useAuth();
@@ -167,14 +167,29 @@ export function MessagesPage() {
                                 <span>{activeUser.firstName} {activeUser.lastName} {isStudent ? '(Accounts)' : ''}</span>
                             </CardTitle>
                         </CardHeader>
-                        <div className="flex-1 overflow-y-auto p-4 bg-muted/20">
-                            <div className="space-y-4">
+                        <div className="flex-1 overflow-y-auto p-4 bg-[#e5ddd5] dark:bg-[#0b141a] relative">
+                            <div className="space-y-1">
                                 {messages.map((msg, idx) => {
                                     const isMe = msg.senderId === user?.userId;
+                                    const msgDate = new Date(msg.createdAt);
+                                    const timeStr = msgDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                                     return (
-                                        <div key={msg.id || idx} className={`flex ${isMe ? 'justify-end' : 'justify-start'}`}>
-                                            <div className={`max-w-[70%] p-3 rounded-xl shadow-sm text-sm ${isMe ? 'bg-primary text-primary-foreground rounded-br-sm' : 'bg-background border rounded-bl-sm'}`}>
-                                                {msg.content}
+                                        <div key={msg.id || idx} className={`flex ${isMe ? 'justify-end' : 'justify-start'} py-0.5`}>
+                                            <div className={`relative max-w-[75%] px-3 py-2 shadow-sm text-sm leading-relaxed ${isMe 
+                                                ? 'bg-[#dcf8c6] dark:bg-[#005c4b] text-foreground dark:text-white rounded-2xl rounded-tr-sm' 
+                                                : 'bg-white dark:bg-[#1f2c34] text-foreground border border-border/50 dark:border-gray-700 rounded-2xl rounded-tl-sm'
+                                            }`}>
+                                                <p className="pr-14">{msg.content}</p>
+                                                <div className={`flex items-center justify-end gap-1 mt-0.5 absolute bottom-1 right-2`}>
+                                                    <span className={`text-[10px] ${isMe ? 'text-gray-600 dark:text-gray-400' : 'text-gray-500'}`}>
+                                                        {timeStr}
+                                                    </span>
+                                                    {isMe && (
+                                                        <span className="text-gray-500">
+                                                            <CheckCheck className="h-3 w-3" />
+                                                        </span>
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                     );
