@@ -77,76 +77,60 @@ const drawDocumentHeader = (
     title: string,
     subtitle: string
 ) => {
-    doc.fillColor('#111827').fontSize(20).font('Helvetica-Bold').text(payload.registry.institutionName || 'EduPayTrack');
-    doc.moveDown(0.2);
-    doc.fillColor('#6B7280').fontSize(10).font('Helvetica').text(payload.registry.institutionType || 'Institution');
+    // Header Background matching receipt
+    doc.rect(0, 0, doc.page.width, 100).fill('#F9FAFB');
 
-    if (payload.registry.address) {
-        doc.text(payload.registry.address);
-    }
+    doc.fillColor('#2962FF').fontSize(24).font('Helvetica-Bold').text(payload.registry.institutionName || 'EduPayTrack', 50, 30);
+    
+    doc.fillColor('#1F2937').fontSize(28).font('Helvetica-Bold').text(title.toUpperCase(), 50, 55);
 
-    if (payload.registry.contactEmail) {
-        doc.text(payload.registry.contactEmail);
-    }
+    doc.fillColor('#9CA3AF').fontSize(11).font('Helvetica').text(`Date: ${formatDate(new Date())}`, 50, 68);
+    doc.text(`Student ID: ${payload.student.studentCode}`, 50, 78);
 
-    doc.moveDown(1);
-    doc.fillColor('#0F172A').fontSize(18).font('Helvetica-Bold').text(title);
-    doc.moveDown(0.2);
-    doc.fillColor('#475569').fontSize(11).font('Helvetica').text(subtitle);
-    doc.moveDown(1);
+    // Status Badge
+    const isFullyPaid = payload.summary.currentBalance <= 0;
+    const statusColor = isFullyPaid ? '#22C55E' : '#EAB308';
+    const statusText = isFullyPaid ? 'FULLY PAID' : 'BALANCE DUE';
+    const statusX = doc.page.width - 50 - 80;
+    
+    doc.roundedRect(statusX, 48, 80, 22, 4).fill(statusColor);
+    doc.fillColor('#FFFFFF').fontSize(10).font('Helvetica-Bold').text(statusText, statusX, 55, { width: 80, align: 'center' });
+
+    // Horizontal Line
+    doc.moveTo(50, 100).lineTo(doc.page.width - 50, 100).stroke('#E5E7EB');
+    
+    doc.y = 120;
 };
 
 const drawMetaGrid = (doc: PDFKit.PDFDocument, rows: Array<[string, string]>) => {
-    const startX = doc.x;
+    doc.fillColor('#9CA3AF').fontSize(12).font('Helvetica').text('Current Balance', 50, doc.y);
+    doc.fillColor('#1F2937').fontSize(32).font('Helvetica-Bold').text(formatCurrency(rows.find(r => r[0] === 'Current Balance')?.[1] as any || 0).replace('MWK', 'MWK '), 50, doc.y + 5);
+    
+    doc.moveDown(1.5);
     const startY = doc.y;
-    const columnWidth = 240;
-    const rowHeight = 40;
+
+    doc.rect(50, startY, doc.page.width - 100, 24).fill('#F9FAFB');
+    doc.fillColor('#1F2937').fontSize(10).font('Helvetica-Bold').text('Description', 60, startY + 8);
+    doc.text('Details', 250, startY + 8);
+
+    let currentY = startY + 24;
 
     rows.forEach(([label, value], index) => {
-        const column = index % 2;
-        const row = Math.floor(index / 2);
-        const x = startX + column * (columnWidth + 12);
-        const y = startY + row * rowHeight;
-
-        doc
-            .roundedRect(x, y, columnWidth, 32, 6)
-            .fillAndStroke('#F8FAFC', '#E2E8F0');
-
-        doc
-            .fillColor('#64748B')
-            .fontSize(8)
-            .font('Helvetica-Bold')
-            .text(label.toUpperCase(), x + 10, y + 7, { width: columnWidth - 20 });
-
-        doc
-            .fillColor('#0F172A')
-            .fontSize(10)
-            .font('Helvetica')
-            .text(value, x + 10, y + 17, { width: columnWidth - 20 });
+        if (label === 'Current Balance') return; // Skip it as we showed it big
+        
+        const bgColor = index % 2 === 0 ? '#FFFFFF' : '#F9FAFB';
+        doc.rect(50, currentY, doc.page.width - 100, 24).fill(bgColor);
+        
+        doc.fillColor('#1F2937').fontSize(10).font('Helvetica-Bold').text(label, 60, currentY + 8);
+        doc.fillColor('#4B5563').font('Helvetica').text(value, 250, currentY + 8);
+        currentY += 24;
     });
 
-    doc.moveDown(Math.ceil(rows.length / 2) * 1.9);
+    doc.y = currentY + 30;
 };
 
 const drawSummaryCards = (doc: PDFKit.PDFDocument, payload: StudentDocumentPayload) => {
-    const cards = [
-        ['Total Paid', formatCurrency(payload.summary.totalPaid)],
-        ['Current Balance', formatCurrency(payload.summary.currentBalance)],
-        ['Approved Payments', String(payload.summary.installmentCount)],
-        ['Pending Reviews', String(payload.summary.pendingVerifications)],
-    ];
-    const startX = doc.x;
-    const startY = doc.y;
-    const cardWidth = 115;
-
-    cards.forEach(([label, value], index) => {
-        const x = startX + index * (cardWidth + 10);
-        doc.roundedRect(x, startY, cardWidth, 52, 8).fillAndStroke('#F8FAFC', '#E2E8F0');
-        doc.fillColor('#64748B').fontSize(8).font('Helvetica-Bold').text(label.toUpperCase(), x + 10, startY + 10, { width: cardWidth - 20 });
-        doc.fillColor('#0F172A').fontSize(12).font('Helvetica-Bold').text(value, x + 10, startY + 25, { width: cardWidth - 20 });
-    });
-
-    doc.moveDown(3.2);
+    // We integrated summary into meta grid, so this is just a no-op
 };
 
 const drawStatementTable = (doc: PDFKit.PDFDocument, payload: StudentDocumentPayload) => {
@@ -170,8 +154,8 @@ const drawStatementTable = (doc: PDFKit.PDFDocument, payload: StudentDocumentPay
     const drawHeader = () => {
         let x = startX;
         columns.forEach((column) => {
-            doc.rect(x, currentY, column.width, 24).fillAndStroke('#1E40AF', '#1E40AF');
-            doc.fillColor('#FFFFFF').fontSize(8).font('Helvetica-Bold').text(column.label, x + 5, currentY + 8, { width: column.width - 10, align: (column.align || 'left') as 'left' | 'center' | 'right' });
+            doc.rect(x, currentY, column.width, 24).fillAndStroke('#F9FAFB', '#E5E7EB');
+            doc.fillColor('#1F2937').fontSize(8).font('Helvetica-Bold').text(column.label, x + 5, currentY + 8, { width: column.width - 10, align: (column.align || 'left') as 'left' | 'center' | 'right' });
             x += column.width;
         });
         currentY += 24;
