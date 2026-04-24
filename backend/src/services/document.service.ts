@@ -78,28 +78,29 @@ const drawDocumentHeader = (
     subtitle: string
 ) => {
     // Header Background matching receipt
-    doc.rect(0, 0, doc.page.width, 100).fill('#F9FAFB');
+    doc.rect(0, 0, doc.page.width, 130).fill('#F9FAFB');
 
-    doc.fillColor('#2962FF').fontSize(24).font('Helvetica-Bold').text(payload.registry.institutionName || 'EduPayTrack', 50, 30);
+    doc.fillColor('#2962FF').fontSize(20).font('Helvetica-Bold').text(payload.registry.institutionName || 'EduPayTrack', 50, 30);
     
-    doc.fillColor('#1F2937').fontSize(28).font('Helvetica-Bold').text(title.toUpperCase(), 50, 55);
+    doc.fillColor('#1F2937').fontSize(22).font('Helvetica-Bold').text(title.toUpperCase(), 50, 60);
 
-    doc.fillColor('#9CA3AF').fontSize(11).font('Helvetica').text(`Date: ${formatDate(new Date())}`, 50, 68);
-    doc.text(`Student ID: ${payload.student.studentCode}`, 50, 78);
+    doc.fillColor('#9CA3AF').fontSize(11).font('Helvetica').text(`Date: ${formatDate(new Date())}`, 50, 85);
+    doc.text(`Student ID: ${payload.student.studentCode}`, 50, 100);
 
     // Status Badge
     const isFullyPaid = payload.summary.currentBalance <= 0;
     const statusColor = isFullyPaid ? '#22C55E' : '#EAB308';
     const statusText = isFullyPaid ? 'FULLY PAID' : 'BALANCE DUE';
-    const statusX = doc.page.width - 50 - 80;
+    const statusX = doc.page.width - 50 - 90;
     
-    doc.roundedRect(statusX, 48, 80, 22, 4).fill(statusColor);
-    doc.fillColor('#FFFFFF').fontSize(10).font('Helvetica-Bold').text(statusText, statusX, 55, { width: 80, align: 'center' });
+    doc.roundedRect(statusX, 82, 90, 24, 4).fill(statusColor);
+    doc.fillColor('#FFFFFF').fontSize(10).font('Helvetica-Bold').text(statusText, statusX, 89, { width: 90, align: 'center' });
 
     // Horizontal Line
-    doc.moveTo(50, 100).lineTo(doc.page.width - 50, 100).stroke('#E5E7EB');
+    doc.moveTo(50, 130).lineTo(doc.page.width - 50, 130).stroke('#E5E7EB');
     
-    doc.y = 120;
+    doc.x = 50;
+    doc.y = 150;
 };
 
 const drawMetaGrid = (doc: PDFKit.PDFDocument, rows: Array<[string, string]>) => {
@@ -126,6 +127,7 @@ const drawMetaGrid = (doc: PDFKit.PDFDocument, rows: Array<[string, string]>) =>
         currentY += 24;
     });
 
+    doc.x = 50;
     doc.y = currentY + 30;
 };
 
@@ -134,9 +136,10 @@ const drawSummaryCards = (doc: PDFKit.PDFDocument, payload: StudentDocumentPaylo
 };
 
 const drawStatementTable = (doc: PDFKit.PDFDocument, payload: StudentDocumentPayload) => {
-    doc.fillColor('#0F172A').fontSize(14).font('Helvetica-Bold').text('Payment History & Running Balance');
+    doc.x = 50;
+    doc.fillColor('#0F172A').fontSize(14).font('Helvetica-Bold').text('Payment History & Running Balance', 50, doc.y);
     doc.moveDown(0.3);
-    doc.fillColor('#64748B').fontSize(9).font('Helvetica').text('All amounts in MWK (Malawian Kwacha)');
+    doc.fillColor('#64748B').fontSize(9).font('Helvetica').text('All amounts in MWK (Malawian Kwacha)', 50, doc.y);
     doc.moveDown(0.5);
 
     const columns = [
@@ -148,7 +151,7 @@ const drawStatementTable = (doc: PDFKit.PDFDocument, payload: StudentDocumentPay
         { label: 'Balance (MWK)', width: 85, align: 'right' },
     ];
 
-    const startX = doc.x;
+    const startX = 50;
     let currentY = doc.y;
 
     const drawHeader = () => {
@@ -165,7 +168,6 @@ const drawStatementTable = (doc: PDFKit.PDFDocument, payload: StudentDocumentPay
 
     // Calculate running balance
     let runningBalance = payload.summary.totalPaid;
-    const approvedPayments = payload.payments.filter(p => p.status === 'APPROVED');
     
     // Sort payments by date ascending for running balance
     const sortedPayments = [...payload.payments].sort((a, b) => {
@@ -177,7 +179,7 @@ const drawStatementTable = (doc: PDFKit.PDFDocument, payload: StudentDocumentPay
     sortedPayments.forEach((payment, index) => {
         if (currentY > 680) {
             doc.addPage();
-            currentY = 60;
+            currentY = 50;
             doc.fillColor('#1E40AF').fontSize(10).font('Helvetica-Bold').text('Payment History (continued)', 50, currentY);
             currentY += 20;
             drawHeader();
@@ -237,11 +239,16 @@ const drawStatementTable = (doc: PDFKit.PDFDocument, payload: StudentDocumentPay
             .roundedRect(startX, currentY, 545, 50, 8)
             .fillAndStroke('#FEF3C7', '#F59E0B');
         doc.fillColor('#92400E').fontSize(10).font('Helvetica').text('No payment activity recorded yet.', startX + 15, currentY + 20);
+        currentY += 60;
     }
 
     // Summary footer
-    doc.moveDown(1);
-    currentY = doc.y;
+    if (currentY > 650) {
+        doc.addPage();
+        currentY = 50;
+    } else {
+        currentY += 20;
+    }
     
     doc.roundedRect(startX, currentY, 545, 70, 8).fillAndStroke('#EFF6FF', '#3B82F6');
     
@@ -259,6 +266,9 @@ const drawStatementTable = (doc: PDFKit.PDFDocument, payload: StudentDocumentPay
         doc.fillColor('#0F172A').fontSize(9).font('Helvetica-Bold').text(value, startX + 200, summaryY);
         summaryY += 14;
     });
+
+    doc.x = 50;
+    doc.y = currentY + 80;
 };
 
 export const getStudentDocumentPayloadByStudentId = async (studentId: string): Promise<StudentDocumentPayload> => {
@@ -389,16 +399,22 @@ const drawOfficialFooter = (doc: PDFKit.PDFDocument, currentPage: number, totalP
 };
 
 const drawTermsSection = (doc: PDFKit.PDFDocument) => {
-    doc.moveDown(2);
-    doc.fillColor('#1E40AF').fontSize(10).font('Helvetica-Bold').text('Terms & Conditions');
+    if (doc.y > 650) {
+        doc.addPage();
+    } else {
+        doc.moveDown(2);
+    }
+    
+    doc.fillColor('#1F2937').fontSize(10).font('Helvetica-Bold').text('Terms & Conditions', 50, doc.y);
     doc.moveDown(0.3);
-    doc.fillColor('#475569').fontSize(8).font('Helvetica');
+    doc.fillColor('#4B5563').fontSize(8).font('Helvetica');
     doc.text(
         '1. This statement reflects payments received and processed by the Accounts Office.\n' +
         '2. All amounts are in Malawian Kwacha (MWK).\n' +
         '3. Pending payments are subject to verification.\n' +
         '4. Please retain your original receipts for reference.\n' +
         '5. For discrepancies, contact accounts@institution.mw within 30 days.',
+        50, doc.y,
         { lineGap: 2 }
     );
 };
@@ -413,8 +429,6 @@ export const generateStudentStatementPdf = async (studentId: string) => {
             'Student Fee Statement',
             `Generated on ${formatDate(new Date())} for ${payload.student.firstName} ${payload.student.lastName}.`
         );
-
-        drawQrCode(doc, studentId);
 
         drawMetaGrid(doc, [
             ['Student Name', `${payload.student.firstName} ${payload.student.lastName}`],
