@@ -1,6 +1,6 @@
 import { prisma } from '../lib/prisma';
 import { UserRole } from '../generated/prisma';
-import { broadcastNewMessage, broadcastReaction, broadcastMessageEdit, broadcastMessageDelete } from './websocket.service';
+import { broadcastNewMessage, broadcastReaction, broadcastMessageEdit, broadcastMessageDelete, broadcastMessageDelivered } from './websocket.service';
 
 interface AttachmentData {
     url: string;
@@ -312,4 +312,41 @@ export async function deleteMessage(userId: string, messageId: string) {
     });
 
     return deletedMessage;
+}
+
+// Mark messages as delivered when receiver opens conversation
+export async function markMessagesAsDelivered(receiverId: string, senderId: string) {
+    const updatedMessages = await prisma.message.updateMany({
+        where: {
+            senderId,
+            receiverId,
+            delivered: false,
+        },
+        data: {
+            delivered: true,
+            deliveredAt: new Date(),
+        },
+    });
+
+    if (updatedMessages.count > 0) {
+        // Get updated messages to broadcast
+        const messages = await prisma.message.findMany({
+            where: {
+                senderId,
+                receiverId,
+                delivered: true,
+            },
+            select: { id: true },
+        });
+
+        // Broadcast delivery status to sender
+        broadcastMessageDelivered({
+            senderId,
+            receiverId,
+            messageIds: messages.map(m => m.id),
+            deliveredAt: new Date(),
+        });
+    }
+
+    return updatedMessages;
 }

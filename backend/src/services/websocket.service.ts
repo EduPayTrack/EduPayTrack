@@ -317,6 +317,21 @@ export function broadcastMessageDelete(deleteData: {
 }
 
 /**
+ * Broadcast message delivery status to sender
+ */
+export function broadcastMessageDelivered(deliveryData: {
+    senderId: string;
+    receiverId: string;
+    messageIds: string[];
+    deliveredAt: Date;
+}): void {
+    const { senderId } = deliveryData;
+    
+    // Only notify the sender that their messages were delivered
+    emitToUser(senderId, 'messages_delivered', deliveryData);
+}
+
+/**
  * Broadcast user online/offline status
  */
 function broadcastUserStatus(userId: string, isOnline: boolean): void {
