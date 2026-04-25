@@ -495,7 +495,7 @@ export function MessagesPage() {
                                                             </div>
                                                         )}
                                                         
-                                                        <p className="pr-16">{msg.content}</p>
+                                                        <p className="pr-14 pb-1 break-words whitespace-pre-wrap text-[14px] md:text-[15px]">{msg.content}</p>
                                                         <div className={`flex items-center gap-1 mt-1 absolute bottom-1.5 right-2`}>
                                                             <span className={`text-[10px] tabular-nums ${isMe ? 'text-[#667781] dark:text-slate-400' : 'text-slate-400 dark:text-slate-500'}`}>
                                                                 {timeStr}
