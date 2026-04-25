@@ -449,6 +449,73 @@ export function MessagesPage() {
         }
     };
 
+    // Start editing a message
+    const handleStartEdit = (msg: any) => {
+        setEditingMessage(msg);
+        setEditContent(msg.content);
+    };
+
+    // Cancel editing
+    const handleCancelEdit = () => {
+        setEditingMessage(null);
+        setEditContent('');
+    };
+
+    // Save edited message
+    const handleSaveEdit = async () => {
+        if (!editingMessage || !editContent.trim()) return;
+
+        const originalContent = editingMessage.content;
+        const msgId = editingMessage.id;
+
+        // Optimistic update
+        setMessages(messages.map(m =>
+            m.id === msgId ? { ...m, content: editContent.trim(), edited: true, editedAt: new Date().toISOString() } : m
+        ));
+        setEditingMessage(null);
+        setEditContent('');
+
+        try {
+            await apiFetch(`/messages/${msgId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ content: editContent.trim() }),
+            });
+            // WebSocket will sync with other users
+        } catch (error) {
+            console.error('Error editing message:', error);
+            // Revert on error
+            setMessages(messages.map(m =>
+                m.id === msgId ? { ...m, content: originalContent, edited: false, editedAt: null } : m
+            ));
+        }
+    };
+
+    // Delete a message
+    const handleDeleteMessage = async (msgId: string) => {
+        if (!confirm('Delete this message?')) return;
+
+        const originalMsg = messages.find(m => m.id === msgId);
+        if (!originalMsg) return;
+
+        // Optimistic update (soft delete)
+        setMessages(messages.map(m =>
+            m.id === msgId ? { ...m, content: '[deleted]', deleted: true, deletedAt: new Date().toISOString() } : m
+        ));
+
+        try {
+            await apiFetch(`/messages/${msgId}`, {
+                method: 'DELETE',
+            });
+            // WebSocket will sync with other users
+        } catch (error) {
+            console.error('Error deleting message:', error);
+            // Revert on error
+            setMessages(messages.map(m =>
+                m.id === msgId ? originalMsg : m
+            ));
+        }
+    };
+
     if (loading) {
         return <div className="flex h-full items-center justify-center p-8"><Loader2 className="h-8 w-8 animate-spin text-primary" /></div>;
     }
