@@ -890,7 +890,7 @@ export function MessagesPage() {
                                                     </div>
                                                 </div>
                                             </div>
-                                            
+
                                             {/* Reactions - grouped by emoji with counts */}
                                             {msg.reactions && msg.reactions.length > 0 && (
                                                 <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} mt-1`}>
@@ -1061,4 +1061,5 @@ export function MessagesPage() {
             )}
         </div>
     );
+    
 }
