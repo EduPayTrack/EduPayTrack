@@ -482,7 +482,7 @@ export function MessagesPage() {
                                                             const attName = msg.attachmentName || msg.attachment?.name;
                                                             const attSize = msg.attachmentSize || msg.attachment?.size;
                                                             const attType = msg.attachment?.type;
-                                                            const fullAttUrl = `${import.meta.env.VITE_API_URL || ''}${attUrl}`;
+                                                            const fullAttUrl = `${API_ORIGIN}${attUrl.startsWith('/') ? '' : '/'}${attUrl}`;
                                                             const isImg = (() => {
                                                                 if (attType && attType.startsWith('image/')) return true;
                                                                 if (attUrl) {
