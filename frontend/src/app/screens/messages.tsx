@@ -23,6 +23,7 @@ export function MessagesPage() {
         onMessageReaction,
         onMessageEdited,
         onMessageDeleted,
+        onMessagesDelivered,
         isUserOnline,
         isUserTyping 
     } = useWebSocket();
