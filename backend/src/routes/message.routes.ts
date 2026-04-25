@@ -9,7 +9,8 @@ import {
     getConversation,
     getConversations,
     markConversationAsRead,
-    getAccountsUsers
+    getAccountsUsers,
+    toggleReaction
 } from '../services/message.service';
 
 // Ensure uploads directory exists
@@ -156,5 +157,27 @@ messageRouter.patch(
         const { otherUserId } = req.params;
         await markConversationAsRead(req.user!.userId, otherUserId);
         res.status(200).json({ success: true });
+    })
+);
+
+// Add/remove reaction to a message
+messageRouter.post(
+    '/:messageId/reaction',
+    asyncHandler(async (req, res) => {
+        const { messageId } = req.params;
+        const { emoji } = req.body;
+        
+        if (!emoji) {
+            res.status(400).json({ message: 'emoji is required' });
+            return;
+        }
+
+        const result = await toggleReaction(req.user!.userId, messageId, emoji);
+        res.status(200).json({
+            success: true,
+            message: result.isAdded ? 'Reaction added' : 'Reaction removed',
+            isAdded: result.isAdded,
+            reactions: result.message.reactions,
+        });
     })
 );

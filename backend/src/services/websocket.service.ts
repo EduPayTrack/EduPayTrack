@@ -254,6 +254,28 @@ export function broadcastTypingStatus(
 }
 
 /**
+ * Broadcast reaction update to conversation participants
+ */
+export function broadcastReaction(reactionData: {
+    messageId: string;
+    emoji: string;
+    userId: string;
+    isAdded: boolean;
+    senderId: string;
+    receiverId: string;
+    reactions: any[];
+}): void {
+    const { senderId, receiverId, messageId } = reactionData;
+    
+    // Emit to both users' rooms
+    emitToUser(senderId, 'message_reaction', reactionData);
+    emitToUser(receiverId, 'message_reaction', reactionData);
+    
+    // Emit to the conversation room
+    emitToConversation(senderId, receiverId, 'message_reaction', reactionData);
+}
+
+/**
  * Broadcast user online/offline status
  */
 function broadcastUserStatus(userId: string, isOnline: boolean): void {

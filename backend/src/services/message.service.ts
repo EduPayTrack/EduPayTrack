@@ -77,6 +77,11 @@ export async function getConversation(userId: string, otherUserId: string) {
                         select: { id: true, firstName: true, lastName: true, role: true, profilePictureUrl: true }
                     }
                 }
+            },
+            reactions: {
+                include: {
+                    user: { select: { id: true, firstName: true, lastName: true } }
+                }
             }
         }
     });
@@ -133,5 +138,85 @@ export async function getAccountsUsers() {
     return prisma.user.findMany({
         where: { role: 'ACCOUNTS' },
         select: { id: true, firstName: true, lastName: true, role: true, profilePictureUrl: true }
+    });
+}
+
+// Add or remove a reaction to a message
+export async function toggleReaction(userId: string, messageId: string, emoji: string) {
+    // Check if reaction already exists
+    const existingReaction = await prisma.reaction.findFirst({
+        where: {
+            messageId,
+            userId,
+            emoji,
+        },
+    });
+
+    let reactionResult;
+    let isAdded: boolean;
+
+    if (existingReaction) {
+        // Remove reaction (toggle off)
+        await prisma.reaction.delete({
+            where: { id: existingReaction.id },
+        });
+        isAdded = false;
+    } else {
+        // Add reaction
+        reactionResult = await prisma.reaction.create({
+            data: {
+                messageId,
+                userId,
+                emoji,
+            },
+            include: {
+                user: {
+                    select: { id: true, firstName: true, lastName: true },
+                },
+            },
+        });
+        isAdded = true;
+    }
+
+    // Get updated message with all reactions
+    const message = await prisma.message.findUnique({
+        where: { id: messageId },
+        include: {
+            sender: { select: { id: true, firstName: true, lastName: true, role: true, profilePictureUrl: true } },
+            receiver: { select: { id: true, firstName: true, lastName: true, role: true, profilePictureUrl: true } },
+            reactions: {
+                include: {
+                    user: { select: { id: true, firstName: true, lastName: true } },
+                },
+            },
+        },
+    });
+
+    if (!message) {
+        throw new Error('Message not found');
+    }
+
+    // Broadcast reaction update via WebSocket
+    broadcastReaction({
+        messageId,
+        emoji,
+        userId,
+        isAdded,
+        senderId: message.senderId,
+        receiverId: message.receiverId,
+        reactions: message.reactions,
+    });
+
+    return { message, isAdded, reaction: reactionResult };
+}
+
+// Get reactions for a message (for initial load)
+export async function getMessageReactions(messageId: string) {
+    return prisma.reaction.findMany({
+        where: { messageId },
+        include: {
+            user: { select: { id: true, firstName: true, lastName: true } },
+        },
+        orderBy: { createdAt: 'asc' },
     });
 }
