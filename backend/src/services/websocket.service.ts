@@ -276,6 +276,47 @@ export function broadcastReaction(reactionData: {
 }
 
 /**
+ * Broadcast message edit to conversation participants
+ */
+export function broadcastMessageEdit(editData: {
+    messageId: string;
+    content: string;
+    edited: boolean;
+    editedAt: Date | null;
+    senderId: string;
+    receiverId: string;
+}): void {
+    const { senderId, receiverId } = editData;
+    
+    // Emit to both users' rooms
+    emitToUser(senderId, 'message_edited', editData);
+    emitToUser(receiverId, 'message_edited', editData);
+    
+    // Emit to the conversation room
+    emitToConversation(senderId, receiverId, 'message_edited', editData);
+}
+
+/**
+ * Broadcast message deletion to conversation participants
+ */
+export function broadcastMessageDelete(deleteData: {
+    messageId: string;
+    deleted: boolean;
+    deletedAt: Date | null;
+    senderId: string;
+    receiverId: string;
+}): void {
+    const { senderId, receiverId } = deleteData;
+    
+    // Emit to both users' rooms
+    emitToUser(senderId, 'message_deleted', deleteData);
+    emitToUser(receiverId, 'message_deleted', deleteData);
+    
+    // Emit to the conversation room
+    emitToConversation(senderId, receiverId, 'message_deleted', deleteData);
+}
+
+/**
  * Broadcast user online/offline status
  */
 function broadcastUserStatus(userId: string, isOnline: boolean): void {

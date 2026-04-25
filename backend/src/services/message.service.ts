@@ -220,3 +220,96 @@ export async function getMessageReactions(messageId: string) {
         orderBy: { createdAt: 'asc' },
     });
 }
+
+// Edit a message
+export async function editMessage(userId: string, messageId: string, newContent: string) {
+    // Verify the message belongs to the user and is not deleted
+    const message = await prisma.message.findFirst({
+        where: {
+            id: messageId,
+            senderId: userId,
+            deleted: false,
+        },
+        include: {
+            sender: { select: { id: true, firstName: true, lastName: true, role: true, profilePictureUrl: true } },
+            receiver: { select: { id: true, firstName: true, lastName: true, role: true, profilePictureUrl: true } },
+            reactions: {
+                include: {
+                    user: { select: { id: true, firstName: true, lastName: true } },
+                },
+            },
+        },
+    });
+
+    if (!message) {
+        throw new Error('Message not found or not authorized to edit');
+    }
+
+    // Update the message
+    const updatedMessage = await prisma.message.update({
+        where: { id: messageId },
+        data: {
+            content: newContent,
+            edited: true,
+            editedAt: new Date(),
+        },
+        include: {
+            sender: { select: { id: true, firstName: true, lastName: true, role: true, profilePictureUrl: true } },
+            receiver: { select: { id: true, firstName: true, lastName: true, role: true, profilePictureUrl: true } },
+            reactions: {
+                include: {
+                    user: { select: { id: true, firstName: true, lastName: true } },
+                },
+            },
+        },
+    });
+
+    // Broadcast the edit via WebSocket
+    broadcastMessageEdit({
+        messageId,
+        content: newContent,
+        edited: true,
+        editedAt: updatedMessage.editedAt,
+        senderId: message.senderId,
+        receiverId: message.receiverId,
+    });
+
+    return updatedMessage;
+}
+
+// Soft delete a message
+export async function deleteMessage(userId: string, messageId: string) {
+    // Verify the message belongs to the user
+    const message = await prisma.message.findFirst({
+        where: {
+            id: messageId,
+            senderId: userId,
+            deleted: false,
+        },
+    });
+
+    if (!message) {
+        throw new Error('Message not found or not authorized to delete');
+    }
+
+    // Soft delete the message
+    const deletedMessage = await prisma.message.update({
+        where: { id: messageId },
+        data: {
+            deleted: true,
+            deletedAt: new Date(),
+            content: '[deleted]',
+        },
+    });
+
+    // Broadcast the deletion via WebSocket
+    broadcastMessageDelete({
+        messageId,
+        deleted: true,
+        deletedAt: deletedMessage.deletedAt,
+        senderId: message.senderId,
+        receiverId: message.receiverId,
+    });
+
+    return deletedMessage;
+}
