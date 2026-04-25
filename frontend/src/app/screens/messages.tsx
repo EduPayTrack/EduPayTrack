@@ -458,12 +458,24 @@ export function MessagesPage() {
                                 <Button variant="ghost" size="icon" className="md:hidden h-9 w-9 -ml-2 rounded-full" onClick={() => setActiveUser(null)}>
                                     <ChevronLeft className="h-5 w-5" />
                                 </Button>
-                                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center text-primary font-semibold text-sm shrink-0 ring-2 ring-background shadow-sm">
-                                    {activeUser.firstName?.[0] || activeUser.email?.[0] || '?'}
+                                <div className="relative">
+                                    <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center text-primary font-semibold text-sm shrink-0 ring-2 ring-background shadow-sm">
+                                        {activeUser.firstName?.[0] || activeUser.email?.[0] || '?'}
+                                    </div>
+                                    {/* Online status indicator */}
+                                    <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full border-2 border-background ${isUserOnline(activeUser.id) ? 'bg-green-500' : 'bg-slate-400'}`}></span>
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="font-semibold truncate">{activeUser.firstName} {activeUser.lastName}</p>
-                                    <p className="text-xs text-muted-foreground font-normal">{isStudent ? 'Accounts Office' : 'Student'}</p>
+                                    <p className="text-xs text-muted-foreground font-normal flex items-center gap-1">
+                                        {isStudent ? 'Accounts Office' : 'Student'}
+                                        {isConnected && (
+                                            <span className={`inline-flex items-center gap-1 ${isUserOnline(activeUser.id) ? 'text-green-600' : 'text-slate-400'}`}>
+                                                <span className={`w-1.5 h-1.5 rounded-full ${isUserOnline(activeUser.id) ? 'bg-green-500 animate-pulse' : 'bg-slate-400'}`}></span>
+                                                {isUserOnline(activeUser.id) ? 'Online' : 'Offline'}
+                                            </span>
+                                        )}
+                                    </p>
                                 </div>
                                 <div className="flex items-center gap-1">
                                     {isSearching ? (
