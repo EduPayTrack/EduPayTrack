@@ -83,6 +83,7 @@ model User {
   notifications    Notification[]
   sentMessages     Message[] @relation("SentMessages")
   receivedMessages Message[] @relation("ReceivedMessages")
+  reactions        Reaction[]
 }
 
 model Student {

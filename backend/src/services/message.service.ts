@@ -1,6 +1,6 @@
 import { prisma } from '../lib/prisma';
 import { UserRole } from '../generated/prisma';
-import { broadcastNewMessage } from './websocket.service';
+import { broadcastNewMessage, broadcastReaction } from './websocket.service';
 
 interface AttachmentData {
     url: string;
