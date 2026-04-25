@@ -495,20 +495,22 @@ export function MessagesPage() {
                                                             </div>
                                                         )}
                                                         
-                                                        <p className="pr-14 pb-1 break-words whitespace-pre-wrap text-[14px] md:text-[15px]">{msg.content}</p>
-                                                        <div className={`flex items-center gap-1 mt-1 absolute bottom-1.5 right-2`}>
-                                                            <span className={`text-[10px] tabular-nums ${isMe ? 'text-[#667781] dark:text-slate-400' : 'text-slate-400 dark:text-slate-500'}`}>
-                                                                {timeStr}
-                                                            </span>
-                                                            {isMe && (
-                                                                <span className={msg.read || msg.readAt ? "text-[#53bdeb]" : "text-[#8696a0] dark:text-slate-500"}>
-                                                                    {msg.read || msg.readAt ? (
-                                                                        <CheckCheck className="h-3.5 w-3.5" />
-                                                                    ) : (
-                                                                        <Check className="h-3.5 w-3.5" />
-                                                                    )}
+                                                        <div className="flex flex-col min-w-[60px]">
+                                                            <span className="whitespace-pre-wrap [word-break:break-word] text-[14px] md:text-[15px] pb-0.5">{msg.content}</span>
+                                                            <div className={`flex items-center justify-end gap-1 mt-0.5 -mr-1 -mb-0.5`}>
+                                                                <span className={`text-[9px] font-medium tabular-nums ${isMe ? 'text-[#667781] dark:text-slate-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                                                                    {timeStr}
                                                                 </span>
-                                                            )}
+                                                                {isMe && (
+                                                                    <span className={msg.read || msg.readAt ? "text-[#53bdeb]" : "text-[#8696a0] dark:text-slate-500"}>
+                                                                        {msg.read || msg.readAt ? (
+                                                                            <CheckCheck className="h-3.5 w-3.5" />
+                                                                        ) : (
+                                                                            <Check className="h-3.5 w-3.5" />
+                                                                        )}
+                                                                    </span>
+                                                                )}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
