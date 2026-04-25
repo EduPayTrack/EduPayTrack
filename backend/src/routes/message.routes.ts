@@ -10,7 +10,9 @@ import {
     getConversations,
     markConversationAsRead,
     getAccountsUsers,
-    toggleReaction
+    toggleReaction,
+    editMessage,
+    deleteMessage
 } from '../services/message.service';
 
 // Ensure uploads directory exists
@@ -178,6 +180,41 @@ messageRouter.post(
             message: result.isAdded ? 'Reaction added' : 'Reaction removed',
             isAdded: result.isAdded,
             reactions: result.message.reactions,
+        });
+    })
+);
+
+// Edit a message
+messageRouter.patch(
+    '/:messageId',
+    asyncHandler(async (req, res) => {
+        const { messageId } = req.params;
+        const { content } = req.body;
+        
+        if (!content || content.trim() === '') {
+            res.status(400).json({ message: 'content is required' });
+            return;
+        }
+
+        const updatedMessage = await editMessage(req.user!.userId, messageId, content.trim());
+        res.status(200).json({
+            success: true,
+            message: 'Message edited successfully',
+            data: updatedMessage,
+        });
+    })
+);
+
+// Delete a message (soft delete)
+messageRouter.delete(
+    '/:messageId',
+    asyncHandler(async (req, res) => {
+        const { messageId } = req.params;
+
+        await deleteMessage(req.user!.userId, messageId);
+        res.status(200).json({
+            success: true,
+            message: 'Message deleted successfully',
         });
     })
 );
