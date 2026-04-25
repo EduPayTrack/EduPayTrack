@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../state/auth-context';
-import { apiFetch } from '../lib/api';
+import { apiFetch, API_ORIGIN } from '../lib/api';
 import { Card, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
