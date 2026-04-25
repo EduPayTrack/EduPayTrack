@@ -634,11 +634,16 @@ export function MessagesPage() {
                                 </div>
                                 <div className="flex-1 min-w-0">
                                     <p className="font-semibold truncate">{activeUser.firstName} {activeUser.lastName}</p>
-                                    <p className="text-xs text-muted-foreground font-normal flex items-center gap-1">
+                                    <p className="text-xs text-muted-foreground font-normal flex items-center gap-2">
                                         {isStudent ? 'Accounts Office' : 'Student'}
+                                        {/* Connection Status Indicator */}
+                                        <span className={`inline-flex items-center gap-1 ${isConnected ? 'text-green-600' : 'text-amber-500'}`} title={isConnected ? 'Connected' : 'Disconnected - retrying...'}>
+                                            <span className={`w-1.5 h-1.5 rounded-full ${isConnected ? 'bg-green-500' : 'bg-amber-500 animate-pulse'}`}></span>
+                                            {isConnected ? 'Connected' : 'Connecting...'}
+                                        </span>
                                         {isConnected && (
                                             <span className={`inline-flex items-center gap-1 ${isUserOnline(activeUser.id) ? 'text-green-600' : 'text-slate-400'}`}>
-                                                <span className={`w-1.5 h-1.5 rounded-full ${isUserOnline(activeUser.id) ? 'bg-green-500 animate-pulse' : 'bg-slate-400'}`}></span>
+                                                <span className={`w-1.5 h-1.5 rounded-full ${isUserOnline(activeUser.id) ? 'bg-green-500' : 'bg-slate-400'}`}></span>
                                                 {isUserOnline(activeUser.id) ? 'Online' : 'Offline'}
                                             </span>
                                         )}
