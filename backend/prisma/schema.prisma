@@ -270,18 +270,21 @@ model Message {
   content    String
   read       Boolean  @default(false)
   createdAt  DateTime @default(now())
-  
+
   // Reply/Quote functionality
   replyToId  String?
   replyTo    Message?  @relation("ReplyTo", fields: [replyToId], references: [id], onDelete: SetNull)
   replies    Message[] @relation("ReplyTo")
-  
+
   // File attachment
   attachmentUrl  String?
   attachmentName String?
   attachmentSize String?
   attachmentType String?
-  
+
+  // Reactions
+  reactions Reaction[]
+
   sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
   receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
 
@@ -289,4 +292,19 @@ model Message {
   @@index([receiverId])
   @@index([senderId, receiverId])
   @@index([replyToId])
+}
+
+model Reaction {
+  id        String   @id @default(cuid())
+  emoji     String
+  messageId String
+  userId    String
+  createdAt DateTime @default(now())
+
+  message Message @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId, emoji])
+  @@index([messageId])
+  @@index([userId])
 }
