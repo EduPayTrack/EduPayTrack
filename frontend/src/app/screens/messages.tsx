@@ -401,7 +401,11 @@ export function MessagesPage() {
                                     <div className="h-11 w-11 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center text-primary font-semibold text-sm ring-2 ring-background">
                                         {conv.user.firstName?.[0] || conv.user.email?.[0] || '?'}
                                     </div>
-                                    {conv.unreadCount > 0 && (
+                                    {/* Online status indicator */}
+                                    {isUserOnline(conv.user.id) && (
+                                        <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-background rounded-full"></span>
+                                    )}
+                                    {conv.unreadCount > 0 && !isUserOnline(conv.user.id) && (
                                         <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-primary border-2 border-background rounded-full"></span>
                                     )}
                                 </div>
@@ -431,6 +435,10 @@ export function MessagesPage() {
                                     <div className="h-11 w-11 rounded-full bg-gradient-to-br from-primary/30 to-primary/10 flex items-center justify-center text-primary font-semibold text-sm ring-2 ring-background">
                                         {accUser.firstName?.[0] || accUser.email?.[0] || '?'}
                                     </div>
+                                    {/* Online status indicator */}
+                                    {isUserOnline(accUser.id) && (
+                                        <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 border-2 border-background rounded-full"></span>
+                                    )}
                                 </div>
                                 <div className="flex-1 overflow-hidden min-w-0">
                                     <p className="font-medium text-sm truncate">Accounts Office</p>
