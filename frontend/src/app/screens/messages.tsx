@@ -711,7 +711,31 @@ export function MessagesPage() {
                                                     >
                                                         <Reply className="h-4 w-4 text-muted-foreground" />
                                                     </button>
-                                                    
+
+                                                    {/* Edit button (hover) - only for own non-deleted messages */}
+                                                    {isMe && !msg.deleted && editingMessage?.id !== msg.id && (
+                                                        <button
+                                                            onClick={() => handleStartEdit(msg)}
+                                                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 shrink-0 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 order-first"
+                                                        >
+                                                            <svg className="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                                            </svg>
+                                                        </button>
+                                                    )}
+
+                                                    {/* Delete button (hover) - only for own non-deleted messages */}
+                                                    {isMe && !msg.deleted && (
+                                                        <button
+                                                            onClick={() => handleDeleteMessage(msg.id)}
+                                                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 shrink-0 rounded-full hover:bg-red-100 dark:hover:bg-red-900/30 order-first"
+                                                        >
+                                                            <svg className="h-4 w-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                            </svg>
+                                                        </button>
+                                                    )}
+
                                                     <div className={`relative min-w-0 px-4 py-2.5 text-[14px] leading-snug transition-all duration-200 ${isMe 
                                                         ? `bg-[#d9fdd3] dark:bg-[#005c4b] text-[#111b21] dark:text-white shadow-sm ${getBubbleRadius()}` 
                                                         : `bg-white dark:bg-[#1f2c34] text-[#111b21] dark:text-white shadow-sm border border-slate-100 dark:border-slate-800 ${getBubbleRadius()}`
