@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../state/auth-context';
+import { useWebSocket } from '../state/websocket-context';
 import { apiFetch, API_ORIGIN } from '../lib/api';
 import { exportChatToPdf } from '../lib/chat-export';
 import { Card, CardHeader, CardTitle } from '../../components/ui/card';
@@ -10,6 +11,18 @@ import { Loader2, Send, MessageSquare, ChevronLeft, Check, CheckCheck, Paperclip
 
 export function MessagesPage() {
     const { user } = useAuth();
+    const { 
+        isConnected, 
+        joinConversation, 
+        leaveConversation, 
+        sendTypingStart, 
+        sendTypingStop, 
+        markMessagesRead,
+        onNewMessage, 
+        onMessagesRead,
+        isUserOnline,
+        isUserTyping 
+    } = useWebSocket();
     const [conversations, setConversations] = useState<any[]>([]);
     const [accountsUsers, setAccountsUsers] = useState<any[]>([]);
     const [activeUser, setActiveUser] = useState<any | null>(null);
@@ -27,6 +40,7 @@ export function MessagesPage() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const messagesEndRef = useRef<HTMLDivElement>(null);
     const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const wsTypingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const isStudent = user?.role === 'student';
 
@@ -34,13 +48,69 @@ export function MessagesPage() {
         loadInitialData();
     }, []);
 
+    // WebSocket real-time message updates - replaces polling
     useEffect(() => {
-        if (activeUser) {
-            loadMessages(activeUser.id);
-            const interval = setInterval(() => loadMessages(activeUser.id), 5000); // Polling every 5 seconds
-            return () => clearInterval(interval);
-        }
-    }, [activeUser]);
+        if (!activeUser) return;
+
+        // Load initial messages
+        loadMessages(activeUser.id);
+
+        // Join conversation room for real-time updates
+        joinConversation(activeUser.id);
+
+        // Subscribe to new messages
+        const unsubscribe = onNewMessage((message) => {
+            // Only add messages for the current conversation
+            const isRelevantMessage = 
+                (message.senderId === user?.id && message.receiverId === activeUser.id) ||
+                (message.senderId === activeUser.id && message.receiverId === user?.id);
+
+            if (isRelevantMessage) {
+                setMessages((prev) => {
+                    // Check if message already exists
+                    if (prev.some(m => m.id === message.id)) {
+                        return prev;
+                    }
+                    return [...prev, message];
+                });
+
+                // Mark as read if message is from the active user
+                if (message.senderId === activeUser.id && !message.read) {
+                    markMessagesRead(activeUser.id);
+                }
+
+                // Update conversation list
+                setConversations((prev) => {
+                    const newConvs = [...prev];
+                    const convIdx = newConvs.findIndex(c => c.user.id === activeUser.id);
+                    if (convIdx >= 0) {
+                        newConvs[convIdx].lastMessage = message;
+                        if (message.senderId === activeUser.id) {
+                            newConvs[convIdx].unreadCount = 0; // Mark as read since we're viewing
+                        }
+                    }
+                    return newConvs;
+                });
+            }
+        });
+
+        // Subscribe to read receipts
+        const unsubscribeRead = onMessagesRead((data) => {
+            if (data.byUserId === activeUser.id) {
+                setMessages((prev) =>
+                    prev.map((msg) =>
+                        msg.senderId === user?.id ? { ...msg, read: true, readAt: new Date().toISOString() } : msg
+                    )
+                );
+            }
+        });
+
+        return () => {
+            unsubscribe();
+            unsubscribeRead();
+            leaveConversation(activeUser.id);
+        };
+    }, [activeUser, user?.id, joinConversation, leaveConversation, onNewMessage, onMessagesRead, markMessagesRead]);
 
     useEffect(() => {
         // Reset lastReadMessageId when conversation changes
@@ -62,18 +132,21 @@ export function MessagesPage() {
         }
     }, [messages, user?.id, lastReadMessageId]);
 
+    // Real-time typing indicator via WebSocket
     useEffect(() => {
-        // Simulate typing indicator (would come from WebSocket in real implementation)
-        const interval = setInterval(() => {
-            // Randomly show typing indicator for demo purposes
-            // In production, this would come from the backend via WebSocket
-            if (activeUser && Math.random() < 0.05) {
-                setTyping(true);
-                setTimeout(() => setTyping(false), 2000);
-            }
-        }, 3000);
+        if (!activeUser) {
+            setTyping(false);
+            return;
+        }
+
+        const checkTyping = () => {
+            setTyping(isUserTyping(activeUser.id));
+        };
+
+        // Check typing status periodically
+        const interval = setInterval(checkTyping, 200);
         return () => clearInterval(interval);
-    }, [activeUser]);
+    }, [activeUser, isUserTyping]);
 
     useEffect(() => {
         return () => {
@@ -166,12 +239,19 @@ export function MessagesPage() {
     };
 
     const handleTyping = () => {
-        // In production, emit typing event to WebSocket
-        if (typingTimeoutRef.current) {
-            clearTimeout(typingTimeoutRef.current);
+        if (!activeUser) return;
+
+        // Send typing start to WebSocket
+        sendTypingStart(activeUser.id);
+
+        // Clear previous timeout
+        if (wsTypingTimeoutRef.current) {
+            clearTimeout(wsTypingTimeoutRef.current);
         }
-        typingTimeoutRef.current = setTimeout(() => {
-            // Stop typing indicator after delay
+
+        // Send typing stop after delay
+        wsTypingTimeoutRef.current = setTimeout(() => {
+            sendTypingStop(activeUser.id);
         }, 1000);
     };
 
