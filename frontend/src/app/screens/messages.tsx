@@ -798,20 +798,59 @@ export function MessagesPage() {
                                                         })()}
                                                         
                                                         <div className="flex flex-col min-w-[60px]">
-                                                            <span className="whitespace-pre-wrap [word-break:break-word] text-[14px] md:text-[15px] pb-0.5">{msg.content}</span>
-                                                            <div className={`flex items-center justify-end gap-1 mt-0.5 -mr-1 -mb-0.5`}>
-                                                                <span className={`text-[9px] font-medium tabular-nums ${isMe ? 'text-[#667781] dark:text-slate-400' : 'text-slate-400 dark:text-slate-500'}`}>
-                                                                    {timeStr}
-                                                                </span>
-                                                                {isMe && (
-                                                                    <span className={msg.read || msg.readAt ? "text-[#53bdeb]" : "text-[#8696a0] dark:text-slate-500"}>
-                                                                        {msg.read || msg.readAt ? (
-                                                                            <CheckCheck className="h-3.5 w-3.5" />
-                                                                        ) : (
-                                                                            <Check className="h-3.5 w-3.5" />
+                                                            {/* Inline editing interface */}
+                                                            {editingMessage?.id === msg.id ? (
+                                                                <div className="flex flex-col gap-2 min-w-[200px]">
+                                                                    <input
+                                                                        type="text"
+                                                                        value={editContent}
+                                                                        onChange={(e) => setEditContent(e.target.value)}
+                                                                        onKeyDown={(e) => {
+                                                                            if (e.key === 'Enter') handleSaveEdit();
+                                                                            if (e.key === 'Escape') handleCancelEdit();
+                                                                        }}
+                                                                        className="bg-white/50 dark:bg-slate-800/50 border border-slate-300 dark:border-slate-600 rounded px-2 py-1 text-[14px] outline-none focus:ring-2 focus:ring-primary/50"
+                                                                        autoFocus
+                                                                    />
+                                                                    <div className="flex gap-2 justify-end">
+                                                                        <button
+                                                                            onClick={handleCancelEdit}
+                                                                            className="text-xs px-2 py-1 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-400"
+                                                                        >
+                                                                            Cancel
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={handleSaveEdit}
+                                                                            className="text-xs px-2 py-1 rounded bg-primary text-white hover:bg-primary/90"
+                                                                        >
+                                                                            Save
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            ) : (
+                                                                <>
+                                                                    <span className={`whitespace-pre-wrap [word-break:break-word] text-[14px] md:text-[15px] pb-0.5 ${msg.deleted ? 'italic text-slate-400' : ''}`}>
+                                                                        {msg.content}
+                                                                        {msg.edited && !msg.deleted && (
+                                                                            <span className="text-[10px] text-slate-400 ml-1">(edited)</span>
                                                                         )}
                                                                     </span>
-                                                                )}
+                                                                    <div className={`flex items-center justify-end gap-1 mt-0.5 -mr-1 -mb-0.5`}>
+                                                                        <span className={`text-[9px] font-medium tabular-nums ${isMe ? 'text-[#667781] dark:text-slate-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                                                                            {timeStr}
+                                                                        </span>
+                                                                        {isMe && !msg.deleted && (
+                                                                            <span className={msg.read || msg.readAt ? "text-[#53bdeb]" : "text-[#8696a0] dark:text-slate-500"}>
+                                                                                {msg.read || msg.readAt ? (
+                                                                                    <CheckCheck className="h-3.5 w-3.5" />
+                                                                                ) : (
+                                                                                    <Check className="h-3.5 w-3.5" />
+                                                                                )}
+                                                                            </span>
+                                                                        )}
+                                                                    </div>
+                                                                </>
+                                                            )}
                                                             </div>
                                                         </div>
                                                     </div>
