@@ -450,23 +450,23 @@ export function MessagesPage() {
                                             )}
                                             
                                             <div className={`flex ${isMe ? 'justify-end' : 'justify-start'} ${isGroupedWithPrev ? 'mt-0.5' : 'mt-3'} group`}>
-                                                <div className="flex items-end gap-2">
+                                                <div className="flex items-end gap-2 max-w-[90%] md:max-w-[75%] min-w-0">
                                                     {/* Reply button (hover) */}
                                                     <button
                                                         onClick={() => handleReply(msg)}
-                                                        className={`opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 ${isMe ? 'order-first' : ''}`}
+                                                        className={`opacity-0 group-hover:opacity-100 transition-opacity p-1.5 shrink-0 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 ${isMe ? 'order-first' : ''}`}
                                                     >
                                                         <Reply className="h-4 w-4 text-muted-foreground" />
                                                     </button>
                                                     
-                                                    <div className={`relative max-w-[80%] md:max-w-[65%] px-4 py-2.5 text-[14px] leading-snug transition-all duration-200 ${isMe 
+                                                    <div className={`relative min-w-0 px-4 py-2.5 text-[14px] leading-snug transition-all duration-200 ${isMe 
                                                         ? `bg-[#d9fdd3] dark:bg-[#005c4b] text-[#111b21] dark:text-white shadow-sm ${getBubbleRadius()}` 
                                                         : `bg-white dark:bg-[#1f2c34] text-[#111b21] dark:text-white shadow-sm border border-slate-100 dark:border-slate-800 ${getBubbleRadius()}`
                                                     } ${searchQuery && msg.content?.toLowerCase().includes(searchQuery.toLowerCase()) ? 'ring-2 ring-primary/50' : ''}`}>
                                                         {/* Reply preview - shows the quoted message */}
                                                         {(msg.replyTo || msg.replyToId) && (
-                                                            <div className={`mb-2 pl-3 py-2 text-xs border-l-2 ${isMe ? 'border-primary/40 bg-primary/10' : 'border-slate-400 dark:border-slate-500 bg-slate-100/70 dark:bg-slate-800/70'} rounded-r-md`}>
-                                                                <p className="font-semibold text-[11px] opacity-80 mb-1">
+                                                            <div className={`mb-2 pl-3 py-2 text-xs border-l-2 ${isMe ? 'border-primary/40 bg-primary/10' : 'border-slate-400 dark:border-slate-500 bg-slate-100/70 dark:bg-slate-800/70'} rounded-r-md min-w-0`}>
+                                                                <p className="font-semibold text-[11px] opacity-80 mb-1 truncate">
                                                                     {msg.replyTo?.senderId === user?.id ? 'You' : activeUser?.firstName || 'User'}
                                                                 </p>
                                                                 <p className="truncate opacity-70 leading-relaxed">
