@@ -4,7 +4,8 @@ import { apiFetch } from '../lib/api';
 import { Card, CardHeader, CardTitle } from '../../components/ui/card';
 import { Input } from '../../components/ui/input';
 import { Button } from '../../components/ui/button';
-import { Loader2, Send, MessageSquare, ChevronLeft, Check, CheckCheck, Paperclip, Search, X, Reply, FileText, Download } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
+import { Loader2, Send, MessageSquare, ChevronLeft, Check, CheckCheck, Paperclip, Search, X, Reply, FileText, Download, Zap } from 'lucide-react';
 
 export function MessagesPage() {
     const { user } = useAuth();
