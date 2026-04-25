@@ -286,6 +286,14 @@ model Message {
   // Reactions
   reactions Reaction[]
 
+  // Edit tracking
+  edited     Boolean  @default(false)
+  editedAt   DateTime?
+
+  // Soft delete
+  deleted    Boolean  @default(false)
+  deletedAt  DateTime?
+
   sender     User     @relation("SentMessages", fields: [senderId], references: [id], onDelete: Cascade)
   receiver   User     @relation("ReceivedMessages", fields: [receiverId], references: [id], onDelete: Cascade)
 
