@@ -107,6 +107,46 @@ test('requireAuth attaches authenticated user when token and active session are 
     });
 });
 
+test('requireAuth accepts the session token from cookies', async () => {
+    const { requireAuth, prismaModule, authUtils, originalVerifyToken, originalFindUnique } = await loadDeps();
+
+    (authUtils as { verifyToken: typeof originalVerifyToken }).verifyToken = ((token: string) => {
+        assert.equal(token, 'cookie-token');
+        return {
+            userId: 'user-cookie',
+            email: 'cookie@example.com',
+            role: 'ADMIN',
+            sessionId: 'cookie-session',
+        };
+    }) as typeof originalVerifyToken;
+
+    prismaModule.prisma.user.findUnique = (async () => ({
+        id: 'user-cookie',
+        email: 'cookie@example.com',
+        role: 'ADMIN',
+        status: 'ACTIVE',
+        currentSessionId: 'cookie-session',
+        sessionExpires: new Date(Date.now() + 60_000),
+        student: null,
+    })) as unknown as typeof originalFindUnique;
+
+    const req = {
+        headers: {
+            cookie: 'theme=dark; edupaytrack_session=cookie-token',
+        },
+    } as Request;
+    const result = await runRequireAuth(requireAuth, req);
+
+    assert.equal(result.error, undefined);
+    assert.deepEqual(req.user, {
+        userId: 'user-cookie',
+        email: 'cookie@example.com',
+        role: 'ADMIN',
+        studentId: undefined,
+        sessionId: 'cookie-session',
+    });
+});
+
 test('requireAuth rejects revoked sessions with a specific error code', async () => {
     const { requireAuth, prismaModule, authUtils, originalVerifyToken, originalFindUnique } = await loadDeps();
 
