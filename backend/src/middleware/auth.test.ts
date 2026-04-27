@@ -92,7 +92,7 @@ test('requireAuth attaches authenticated user when token and active session are 
         currentSessionId: 'session-123',
         sessionExpires: new Date(Date.now() + 60_000),
         student: { id: 'student-1' },
-    })) as typeof originalFindUnique;
+    })) as unknown as typeof originalFindUnique;
 
     const req = createRequest('Bearer valid-token');
     const result = await runRequireAuth(requireAuth, req);
@@ -125,7 +125,7 @@ test('requireAuth rejects revoked sessions with a specific error code', async ()
         currentSessionId: 'different-session',
         sessionExpires: new Date(Date.now() + 60_000),
         student: null,
-    })) as typeof originalFindUnique;
+    })) as unknown as typeof originalFindUnique;
 
     const result = await runRequireAuth(requireAuth, createRequest('Bearer revoked-token'));
 
@@ -152,7 +152,7 @@ test('requireAuth rejects expired sessions even when the token parses', async ()
         currentSessionId: 'session-123',
         sessionExpires: new Date(Date.now() - 60_000),
         student: null,
-    })) as typeof originalFindUnique;
+    })) as unknown as typeof originalFindUnique;
 
     const result = await runRequireAuth(requireAuth, createRequest('Bearer expired-session-token'));
 
