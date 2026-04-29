@@ -300,6 +300,8 @@ export function StudentDashboardPage() {
 interface ReceiptOcrResult {
   amount: number | null;
   reference: string | null;
+  paymentDate?: string | null;
+  depositorName?: string | null;
   rawText?: string;
   provider?: 'GROQ' | 'PYTHON';
   confidence?: number;
@@ -374,6 +376,15 @@ export function UploadPaymentPage() {
     reference: false,
   });
   const referenceRequired = method === 'BANK_TRANSFER' || method === 'MOBILE_CREDIT_CARD';
+  const normalizedDetectedDate = useMemo(() => {
+    const rawDate = ocrResult?.paymentDate?.trim();
+    if (!rawDate) return null;
+
+    const parsed = new Date(rawDate);
+    if (Number.isNaN(parsed.getTime())) return null;
+
+    return parsed.toISOString().split('T')[0];
+  }, [ocrResult?.paymentDate]);
   const ocrStatus = useMemo(() => {
     if (isUploading) {
       return {
@@ -789,7 +800,7 @@ export function UploadPaymentPage() {
                 ) : null}
               </div>
               {ocrResult && (
-                <div className="grid grid-cols-1 gap-3 text-[12px] md:grid-cols-3">
+                <div className="grid grid-cols-1 gap-3 text-[12px] md:grid-cols-4">
                   <div className="rounded-md border border-border/70 bg-background/80 p-3 text-muted-foreground">
                     <span className="font-medium text-foreground">Amount found</span>
                     <p className="mt-1">{ocrResult.amount !== null ? formatCurrency(ocrResult.amount) : 'Not found'}</p>
@@ -799,6 +810,14 @@ export function UploadPaymentPage() {
                     <p className="mt-1">{ocrResult.reference || 'Not found'}</p>
                   </div>
                   <div className="rounded-md border border-border/70 bg-background/80 p-3 text-muted-foreground">
+                    <span className="font-medium text-foreground">Date detected</span>
+                    <p className="mt-1">{normalizedDetectedDate ? formatDate(normalizedDetectedDate) : 'Not found'}</p>
+                  </div>
+                  <div className="rounded-md border border-border/70 bg-background/80 p-3 text-muted-foreground">
+                    <span className="font-medium text-foreground">Payer name detected</span>
+                    <p className="mt-1">{ocrResult.depositorName || 'Not found'}</p>
+                  </div>
+                  <div className="rounded-md border border-border/70 bg-background/80 p-3 text-muted-foreground md:col-span-4">
                     <span className="font-medium text-foreground">Extraction confidence</span>
                     <p className="mt-1">{Math.round((ocrResult.confidence || 0) * 100)}%</p>
                   </div>
@@ -906,6 +925,20 @@ export function UploadPaymentPage() {
                   className="h-10"
                   required
                 />
+                {normalizedDetectedDate && normalizedDetectedDate !== paymentDate ? (
+                  <div className="flex items-center gap-2 text-[11px]">
+                    <span className="text-muted-foreground">Detected from receipt: {formatDate(normalizedDetectedDate)}</span>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      className="h-6 px-2 text-[11px]"
+                      onClick={() => setPaymentDate(normalizedDetectedDate)}
+                    >
+                      Use detected date
+                    </Button>
+                  </div>
+                ) : null}
               </div>
             </div>
 
@@ -920,6 +953,20 @@ export function UploadPaymentPage() {
                 autoComplete="name"
                 className="h-10"
               />
+              {ocrResult?.depositorName && ocrResult.depositorName !== payerName ? (
+                <div className="flex items-center gap-2 text-[11px]">
+                  <span className="text-muted-foreground">Detected from receipt: {ocrResult.depositorName}</span>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-6 px-2 text-[11px]"
+                    onClick={() => setPayerName(ocrResult.depositorName || '')}
+                  >
+                    Use detected name
+                  </Button>
+                </div>
+              ) : null}
             </div>
 
             <div className="space-y-1.5">
