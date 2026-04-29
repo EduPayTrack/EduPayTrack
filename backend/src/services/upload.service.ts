@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { env } from '../config/env';
 import { AppError } from '../middleware/error-handler';
 import { parseReceiptText } from '../utils/receipt-parser';
+import { isCloudinaryEnabled, uploadReceiptToCloudinary } from './cloudinary.service';
 
 type StoredFile = Express.Multer.File;
 
@@ -176,9 +177,18 @@ const scanReceiptWithGroq = async (filePath: string): Promise<ReceiptScanResult>
     };
 };
 
-export const buildUploadedReceiptResponse = (file: StoredFile) => {
+export const buildUploadedReceiptResponse = async (file: StoredFile) => {
     if (!file) {
         throw new AppError('Receipt file is required', 400);
+    }
+
+    let proofUrl = `/uploads/${file.filename}`;
+    let storageProvider: 'LOCAL' | 'CLOUDINARY' = 'LOCAL';
+
+    if (isCloudinaryEnabled()) {
+        const uploaded = await uploadReceiptToCloudinary(file.path, file.originalname, file.mimetype);
+        proofUrl = uploaded.secureUrl;
+        storageProvider = 'CLOUDINARY';
     }
 
     return {
@@ -187,7 +197,8 @@ export const buildUploadedReceiptResponse = (file: StoredFile) => {
         mimeType: file.mimetype,
         size: file.size,
         extension: path.extname(file.originalname).toLowerCase(),
-        proofUrl: `/uploads/${file.filename}`,
+        proofUrl,
+        storageProvider,
     };
 };
 

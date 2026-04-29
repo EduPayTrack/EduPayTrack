@@ -8,6 +8,9 @@ const envSchema = z.object({
     NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     CORS_ORIGINS: z.string().optional(),
     GROQ_API_KEY: z.string().min(1).optional(),
+    CLOUDINARY_CLOUD_NAME: z.string().min(1).optional(),
+    CLOUDINARY_API_KEY: z.string().min(1).optional(),
+    CLOUDINARY_API_SECRET: z.string().min(1).optional(),
     PASSWORD_RESET_MODE: z.enum(['disabled', 'insecure-demo']).default('disabled'),
 });
 

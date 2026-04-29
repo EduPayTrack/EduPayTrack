@@ -31,7 +31,7 @@ paymentRouter.post(
     requireRole(UserRole.STUDENT),
     uploadReceipt.single('receipt'),
     asyncHandler(async (req, res) => {
-        const uploadResult = buildUploadedReceiptResponse(req.file!);
+        const uploadResult = await buildUploadedReceiptResponse(req.file!);
         res.status(201).json(uploadResult);
     })
 );
