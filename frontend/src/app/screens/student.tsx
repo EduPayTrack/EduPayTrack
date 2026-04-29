@@ -373,6 +373,7 @@ export function UploadPaymentPage() {
     amount: false,
     reference: false,
   });
+  const referenceRequired = method === 'BANK_TRANSFER' || method === 'MOBILE_CREDIT_CARD';
 
   // Memoize form data to prevent infinite loop in useFormAutosave
   const formData = useMemo(() => ({ 
@@ -508,6 +509,10 @@ export function UploadPaymentPage() {
     }
     if (!amount || !method || !paymentDate) {
       toast.error('Please fill in all required fields');
+      return;
+    }
+    if (referenceRequired && !reference.trim()) {
+      toast.error('Reference number is required for bank transfer and mobile/card payments');
       return;
     }
 
@@ -801,7 +806,9 @@ export function UploadPaymentPage() {
 
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <label htmlFor="payment-reference" className="text-[12px] text-muted-foreground font-medium">Reference Number</label>
+                <label htmlFor="payment-reference" className="text-[12px] text-muted-foreground font-medium">
+                  Reference Number {referenceRequired ? '*' : ''}
+                </label>
                 {autoFilledFields.reference ? (
                   <Badge variant="outline" className="ml-2 border-success/30 bg-success/10 text-success">
                     Auto-filled
@@ -821,7 +828,13 @@ export function UploadPaymentPage() {
                     'h-10',
                     autoFilledFields.reference && 'border-success/40 bg-success/5 ring-1 ring-success/20'
                   )}
+                  required={referenceRequired}
                 />
+                <p className="text-[11px] text-muted-foreground">
+                  {referenceRequired
+                    ? 'Use the exact bank, mobile money, or card transaction reference.'
+                    : 'Optional for cash payments.'}
+                </p>
               </div>
               <div className="space-y-1.5">
                 <label htmlFor="payment-date" className="text-[12px] text-muted-foreground font-medium">Payment Date *</label>

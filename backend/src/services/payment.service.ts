@@ -5,6 +5,7 @@ import { prisma } from '../lib/prisma';
 import { AppError } from '../middleware/error-handler';
 import { writeAuditLog } from '../utils/audit-log';
 import { recalculateStudentBalance } from '../utils/balance';
+import { normalizePaymentReference, requiresPaymentReference } from '../utils/payment-reference';
 import { createNotification, createBulkNotifications } from './notification.service';
 
 const submitPaymentSchema = z.object({
@@ -20,6 +21,21 @@ const submitPaymentSchema = z.object({
     ocrText: z.string().optional().or(z.literal('')),
     ocrAmount: z.coerce.number().positive().optional(),
     ocrReference: z.string().optional().or(z.literal('')),
+}).superRefine((data, ctx) => {
+    if (!requiresPaymentReference(data.method)) {
+        return;
+    }
+
+    const normalizedReference = normalizePaymentReference(data.externalReference);
+    const normalizedReceiptNumber = normalizePaymentReference(data.receiptNumber);
+
+    if (!normalizedReference && !normalizedReceiptNumber) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            path: ['externalReference'],
+            message: 'A transaction reference is required for bank transfer and mobile/card payments',
+        });
+    }
 });
 
 const verifyPaymentSchema = z.object({
@@ -39,6 +55,9 @@ const reconcilePaymentSchema = z.object({
 
 export const submitPayment = async (userId: string, input: unknown) => {
     const data = submitPaymentSchema.parse(input);
+    const normalizedExternalReference = normalizePaymentReference(data.externalReference);
+    const normalizedReceiptNumber = normalizePaymentReference(data.receiptNumber);
+    const normalizedOcrReference = normalizePaymentReference(data.ocrReference);
 
     const user = await prisma.user.findUnique({
         where: { id: userId },
@@ -51,13 +70,13 @@ export const submitPayment = async (userId: string, input: unknown) => {
 
     const duplicateFilters = [];
 
-    if (data.externalReference) {
-        duplicateFilters.push({ externalReference: data.externalReference });
+    if (normalizedExternalReference) {
+        duplicateFilters.push({ externalReference: normalizedExternalReference });
     }
 
-    if (data.receiptNumber) {
+    if (normalizedReceiptNumber) {
         duplicateFilters.push({
-            receiptNumber: data.receiptNumber,
+            receiptNumber: normalizedReceiptNumber,
             amount: data.amount,
         });
     }
@@ -78,15 +97,15 @@ export const submitPayment = async (userId: string, input: unknown) => {
             amount: data.amount,
             currency: data.currency,
             method: data.method,
-            externalReference: data.externalReference,
-            receiptNumber: data.receiptNumber,
+            externalReference: normalizedExternalReference || undefined,
+            receiptNumber: normalizedReceiptNumber || undefined,
             paymentDate: data.paymentDate,
             proofUrl: data.proofUrl,
             payerName: data.payerName,
             notes: data.notes,
             ocrText: data.ocrText,
             ocrAmount: data.ocrAmount,
-            ocrReference: data.ocrReference,
+            ocrReference: normalizedOcrReference || undefined,
             duplicateFlag: Boolean(duplicatePayment),
             academicYear: user.student.academicYear,
             term: user.student.term,
