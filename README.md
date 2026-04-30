@@ -66,11 +66,7 @@ Recommended defaults:
 - `PASSWORD_RESET_MODE=disabled`
 - Set `GROQ_API_KEY` if you want the primary OCR path enabled
 
-## Documentation
 
-- [GLOBAL_SYSTEM_ANALYSIS.md](C:\Users\Victor Chilomo\OneDrive\Desktop\EduPayTrack\GLOBAL_SYSTEM_ANALYSIS.md)
-- [SYSTEM_DOCUMENTATION.md](C:\Users\Victor Chilomo\OneDrive\Desktop\EduPayTrack\SYSTEM_DOCUMENTATION.md)
-- [FINAL_SYSTEM_DOCUMENTATION.md](C:\Users\Victor Chilomo\OneDrive\Desktop\EduPayTrack\FINAL_SYSTEM_DOCUMENTATION.md)
 
 ## Verified Locally
 
