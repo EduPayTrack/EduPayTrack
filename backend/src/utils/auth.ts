@@ -50,7 +50,7 @@ export const extractTokenFromCookies = (cookieHeader?: string) => {
 
 const buildCookieOptions = () => ({
     httpOnly: true,
-    sameSite: 'lax' as const,
+    sameSite: env.NODE_ENV === 'production' ? ('none' as const) : ('lax' as const),
     secure: env.NODE_ENV === 'production',
     path: '/',
     maxAge: 12 * 60 * 60 * 1000,
@@ -63,7 +63,7 @@ export const attachAuthCookie = (res: Response, token: string) => {
 export const clearAuthCookie = (res: Response) => {
     res.clearCookie(AUTH_COOKIE_NAME, {
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: env.NODE_ENV === 'production' ? ('none' as const) : ('lax' as const),
         secure: env.NODE_ENV === 'production',
         path: '/',
     });
