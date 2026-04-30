@@ -56,7 +56,7 @@ notificationRouter.post(
     asyncHandler(async (req, res) => {
         const { studentIds } = req.body;
         
-        let students = [];
+        let students: any[] = [];
         if (studentIds && Array.isArray(studentIds) && studentIds.length > 0) {
             students = await prisma.student.findMany({
                 where: { id: { in: studentIds } },
