@@ -32,10 +32,10 @@
     },
     "devDependencies": {
         "@types/cors": "^2.8.17",
-        "@types/express": "^4.17.21",
-        "@types/jsonwebtoken": "^9.0.9",
+        "@types/express": "^4.17.25",
+        "@types/jsonwebtoken": "^9.0.10",
         "@types/multer": "^2.1.0",
-        "@types/node": "^20.14.9",
+        "@types/node": "^20.19.39",
         "@types/socket.io": "^3.0.2",
         "prisma": "^6.5.0",
         "ts-node-dev": "^2.0.0",
