@@ -56,13 +56,22 @@ export function StudentDashboardPage() {
     onNavigateSettings: () => navigate('/student/settings'),
   });
 
-  useEffect(() => {
+  const loadDashboard = useCallback(async () => {
     setLoading(true);
-    apiFetch('/students/me')
-      .then((res) => setData(res))
-      .catch((err) => setError(err.message || 'Failed to load dashboard'))
-      .finally(() => setLoading(false));
+    setError(null);
+    try {
+      const res = await apiFetch('/students/me');
+      setData(res);
+    } catch (err: any) {
+      setError(err.message || 'Failed to load dashboard');
+    } finally {
+      setLoading(false);
+    }
   }, []);
+
+  useEffect(() => {
+    loadDashboard();
+  }, [loadDashboard]);
 
   if (loading) {
     return (
@@ -80,12 +89,22 @@ export function StudentDashboardPage() {
 
   if (error) {
     return (
-      <div className="p-6 flex flex-col items-center justify-center gap-3 text-center">
-        <AlertCircle className="h-10 w-10 text-destructive/60" />
-        <p className="text-sm text-muted-foreground max-w-md">{error}</p>
-        <Button size="sm" variant="outline" onClick={() => window.location.reload()}>
-          Retry
-        </Button>
+      <div className="p-6 flex flex-col items-center justify-center gap-4 text-center min-h-[60vh]">
+        <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-2">
+          <AlertCircle className="h-8 w-8 text-destructive" />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-foreground mb-1">Failed to load dashboard</h3>
+          <p className="text-sm text-muted-foreground max-w-md">{error}</p>
+        </div>
+        <div className="flex gap-2">
+          <Button size="sm" variant="outline" onClick={loadDashboard}>
+            Try Again
+          </Button>
+          <Button size="sm" variant="ghost" onClick={() => window.location.reload()}>
+            Reload Page
+          </Button>
+        </div>
       </div>
     );
   }

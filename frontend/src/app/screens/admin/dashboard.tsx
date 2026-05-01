@@ -10,10 +10,10 @@ import {
   Activity, 
   CreditCard, 
   Shield, 
-  AlertCircle, 
   Target, 
   BarChart3, 
   AlertTriangle,
+  AlertCircle,
   Link2,
   NotebookPen,
   TimerReset,
@@ -76,7 +76,6 @@ export function AdminDashboardPage() {
       setLastUpdated(new Date());
       setError(null);
     } catch (err: any) {
-      toast.error('Failed to load dashboard data');
       setError(err?.message || 'Failed to load dashboard data');
     } finally {
       setLoading(false);
@@ -140,23 +139,23 @@ export function AdminDashboardPage() {
 
   if (error) {
     return (
-      <div className="p-4 md:p-6 space-y-6 max-w-[1400px]">
-        <h1 className="text-[22px] font-semibold tracking-tight text-foreground">Admin Dashboard</h1>
-        <Card className="border-destructive">
-          <CardContent className="p-6">
-            <div className="flex items-center gap-3 text-destructive">
-              <AlertTriangle className="h-6 w-6" />
-              <div>
-                <p className="font-semibold">Error loading dashboard</p>
-                <p className="text-sm">{error}</p>
-              </div>
-            </div>
-            <Button className="mt-4" variant="outline" onClick={() => loadDashboardData()}>
-              <RotateCw className="h-4 w-4 mr-2" />
-              Retry
-            </Button>
-          </CardContent>
-        </Card>
+      <div className="p-6 flex flex-col items-center justify-center gap-4 text-center min-h-[60vh]">
+        <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mb-2">
+          <AlertTriangle className="h-8 w-8 text-destructive" />
+        </div>
+        <div>
+          <h3 className="text-lg font-semibold text-foreground mb-1">Failed to load dashboard</h3>
+          <p className="text-sm text-muted-foreground max-w-md">{error}</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => loadDashboardData()}>
+            <RotateCw className="h-4 w-4 mr-2" />
+            Try Again
+          </Button>
+          <Button variant="ghost" onClick={() => window.location.reload()}>
+            Reload Page
+          </Button>
+        </div>
       </div>
     );
   }

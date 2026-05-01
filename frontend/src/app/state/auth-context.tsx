@@ -167,7 +167,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     });
     const mappedUser = mapApiUserToAppUser(payload.user);
     setUser(mappedUser);
-    toast.success(`Welcome back, ${mappedUser.name}`);
+    // Welcome message shown on dashboard instead to avoid duplicate notification
     refreshNotifications();
   }, [refreshNotifications]);
 

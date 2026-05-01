@@ -13,7 +13,7 @@ export function AppProviders({ children }: PropsWithChildren) {
         <AuthProvider>
           <WebSocketProvider>
             {children}
-            <Toaster richColors position="top-right" />
+            <Toaster richColors position="top-right" duration={4000} closeButton />
           </WebSocketProvider>
         </AuthProvider>
       </AccessibilityProvider>
