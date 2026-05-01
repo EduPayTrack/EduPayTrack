@@ -18,7 +18,6 @@ import { downloadPaymentReceipt, type ReceiptData } from '../lib/receipt-pdf';
 import { downloadStudentStatement } from '../lib/statement-pdf';
 import { PaymentDeadlineCalendar } from '../components/payment-deadline-calendar';
 import { PaymentReminders, generateRemindersFromDeadlines } from '../components/payment-reminders';
-import { useFormAutosave } from '../lib/use-form-autosave';
 import { useAppShortcuts } from '../lib/use-keyboard-shortcuts';
 import { KeyboardShortcutsHelp } from '../components/keyboard-shortcuts-help';
 import { AdvancedFilters, type AdvancedFiltersState } from '../components/advanced-filters';
@@ -448,34 +447,6 @@ export function UploadPaymentPage() {
     return null;
   }, [isUploading, isScanning, scanIssue, ocrResult, proofUrl]);
 
-  // Memoize form data to prevent infinite loop in useFormAutosave
-  const formData = useMemo(() => ({ 
-    amount, 
-    method, 
-    reference, 
-    paymentDate, 
-    payerName, 
-    notes 
-  }), [amount, method, reference, paymentDate, payerName, notes]);
-
-  // Memoize onRestore callback
-  const handleRestore = useCallback((savedData: any) => {
-    setAmount(savedData.amount || '');
-    setMethod(savedData.method || '');
-    setReference(savedData.reference || '');
-    setPaymentDate(savedData.paymentDate || new Date().toISOString().split('T')[0]);
-    setPayerName(savedData.payerName || '');
-    setNotes(savedData.notes || '');
-    toast.success('Draft restored');
-  }, []);
-
-  // Auto-save form data
-  const { hasDraft, lastSaved, restoreDraft, clearDraft } = useFormAutosave({
-    key: 'edu-pay-track-payment-draft',
-    data: formData,
-    onRestore: handleRestore,
-    debounceMs: 1500,
-  });
 
   const handleFileSelect = useCallback((selectedFile: File) => {
     setFile(selectedFile);
@@ -620,8 +591,6 @@ export function UploadPaymentPage() {
       setReference('');
       setPayerName('');
       setNotes('');
-      // Clear saved draft after successful submission
-      clearDraft();
     } catch (err: any) {
       toast.error(err.message || 'Submission failed');
     } finally {
@@ -636,39 +605,6 @@ export function UploadPaymentPage() {
         <p className="text-[13px] text-muted-foreground mt-0.5">Submit a receipt for review and approval</p>
       </div>
 
-      {/* Draft Restore Banner */}
-      {hasDraft && (
-        <Card className="border-primary/30 bg-primary/5">
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between flex-wrap gap-3">
-              <div className="flex items-center gap-2">
-                <FileImage className="h-4 w-4 text-primary" />
-                <span className="text-[13px]">
-                  You have a saved draft
-                  {lastSaved && ` (saved ${lastSaved.toLocaleTimeString()})`}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => restoreDraft()}
-                >
-                  Restore Draft
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-muted-foreground"
-                  onClick={() => clearDraft()}
-                >
-                  Discard
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         {/* File upload zone */}
