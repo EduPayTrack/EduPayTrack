@@ -1,21 +1,21 @@
 reference,name,description,amount,date
-DEMO-MM-002,Demo Guardian,Airtel Money school fees installment,100000,2026-03-10
-demo mm 002,Demo Guardian,Airtel Money school fees installment,100000.00,2026-03-10
-DEMO-MM-002,Demo Guardian,Airtel Money school fees installment,100000,2026-03-11
-DEMO-MM-002X,Demo Guardian,Airtel Money school fees installment,100000,2026-03-10
-DEMO-MM-002,Demo Guardian,Airtel Money school fees installment,95000,2026-03-10
-DEMO-MM-002,Guardian Demo,Airtel Money school fees installment,100000,2026-03-13
-DEMO-BANK-001,Demo Guardian,Old bank transfer already approved payment,150000,2026-03-01
-NBM-778231,Jane Banda,National Bank branch deposit,85000,2026-03-14
-AIRTEL-442211,John Phiri,Airtel Money tuition transfer,120000,2026-03-15
-TNM-991144,Mary Zulu,TNM Mpamba school fees payment,120000,2026-03-15
-REF-ABC-2026,Peter Mbewe,Tuition installment via mobile wallet,100000,2026-03-16
-REF-ABC-2026,Peter Mbewe,Tuition installment via mobile wallet duplicate export line,100000,2026-03-16
-RCPT-002,Demo Guardian,Manual bank posting using receipt number only,100000,2026-03-10
-,Demo Guardian,Cash deposit with missing reference,100000,2026-03-10
-   ,Unknown Payer,Statement line with blank reference and noisy name,67000,2026-03-17
-MM-2026-7788,Demo Student,Parent typed student instead of payer,100000,2026-03-10
-DEMO/MM/002,Demo Guardian,Reference contains separators but should normalize well,100000,2026-03-10
-DEMO-MM-999,Demo Guardian,Looks similar but does not exist in pending queue,100000,2026-03-10
-MOBILE-556677,Esther Kaiyatsa,Card settlement captured one day late,200000,2026-03-18
-BANK-331100,Patrick Nkhoma,Corporate sponsor transfer for fees,450000,2026-03-19
+FT26112H55VJ,Yamikan Silver,Airtel Money school fees installment,10000,22/04/2026
+50637566,Mussa,Airtel Money school fees installment,80000,04/01/2026
+50690821,Mussa,Airtel Money school fees installment,80000,05/01/2026
+TT/26070/ZR719,Innocent ,Bank,50000,11/04/2026
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
+,,,,
