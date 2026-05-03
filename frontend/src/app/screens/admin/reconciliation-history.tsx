@@ -91,6 +91,17 @@ export function ReconciliationHistoryPage() {
     );
   }, [selectedImport, search]);
 
+  const selectedImportSummary = useMemo(() => {
+    const rows = selectedImport?.rows || [];
+    return {
+      totalRows: rows.length,
+      strongMatches: rows.filter((row) => row.matchState === 'STRONG_MATCH').length,
+      possibleMatches: rows.filter((row) => row.matchState === 'POSSIBLE_MATCH').length,
+      noMatches: rows.filter((row) => row.matchState === 'NO_MATCH').length,
+      totalAmount: rows.reduce((sum, row) => sum + Number(row.amount || 0), 0),
+    };
+  }, [selectedImport]);
+
   const exportSelectedImport = () => {
     if (!selectedImport) return;
 
@@ -214,10 +225,10 @@ export function ReconciliationHistoryPage() {
           ) : selectedImport ? (
             <>
               <StatementImportSummaryCards
-                totalRows={selectedImport.summary?.totalRows || 0}
-                strongMatches={selectedImport.summary?.strongMatches || 0}
-                possibleMatches={selectedImport.summary?.possibleMatches || 0}
-                totalAmount={Number(selectedImport.totalAmount || selectedImport.summary?.totalAmount || 0)}
+                totalRows={selectedImportSummary.totalRows}
+                strongMatches={selectedImportSummary.strongMatches}
+                possibleMatches={selectedImportSummary.possibleMatches}
+                totalAmount={selectedImportSummary.totalAmount}
               />
 
               <Card>

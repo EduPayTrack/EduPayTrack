@@ -88,7 +88,6 @@ adminRouter.get(
             prisma.payment.count({
                 where: {
                     reconciliationStatus: ReconciliationStatus.MATCHED,
-                    status: PaymentStatus.PENDING,
                 },
             }),
             prisma.payment.count({
@@ -100,7 +99,6 @@ adminRouter.get(
             prisma.payment.aggregate({
                 where: {
                     reconciliationStatus: ReconciliationStatus.MATCHED,
-                    status: PaymentStatus.PENDING,
                 },
                 _sum: { amount: true },
             }),

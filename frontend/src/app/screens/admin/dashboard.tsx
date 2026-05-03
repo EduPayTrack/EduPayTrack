@@ -112,7 +112,8 @@ export function AdminDashboardPage() {
   const collectionStats = useMemo(() => {
     if (!students.length) return { rate: 0, expected: 0, collected: 0 };
     const collected = stats?.totalRevenue || 0;
-    const expected = students.reduce((sum, s) => sum + Number(s?.totalFees || 0), 0);
+    const outstanding = students.reduce((sum, s) => sum + Number(s?.currentBalance || 0), 0);
+    const expected = collected + outstanding;
     const rate = expected > 0 ? (collected / expected) * 100 : 0;
     return { rate, expected, collected };
   }, [students, stats]);

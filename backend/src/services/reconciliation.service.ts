@@ -209,16 +209,16 @@ const buildImportSummary = (rows: Array<{ amount: number; matchState: string }>)
     totalAmount: rows.reduce((sum, row) => sum + Number(row.amount || 0), 0),
 });
 
-const serializeImport = (statementImport: any) => ({
-    id: statementImport.id,
-    fileName: statementImport.fileName,
-    uploadedAt: statementImport.uploadedAt,
-    totalRows: statementImport.totalRows,
-    totalAmount: Number(statementImport.totalAmount || 0),
-    summary: statementImport.summary,
-    columnMapping: statementImport.columnMapping,
-    headers: statementImport.headers || [],
-    rows: (statementImport.rows || []).map((row: any) => ({
+const buildPersistedImportSummary = (rows: Array<{ amount?: unknown; matchState?: string }>) =>
+    buildImportSummary(
+        rows.map((row) => ({
+            amount: Number(row.amount || 0),
+            matchState: row.matchState || 'NO_MATCH',
+        }))
+    );
+
+const serializeImport = (statementImport: any) => {
+    const rows = (statementImport.rows || []).map((row: any) => ({
         id: row.id,
         rowNumber: row.rowNumber,
         reference: row.reference,
@@ -231,8 +231,21 @@ const serializeImport = (statementImport: any) => ({
         resolvedPaymentId: row.resolvedPaymentId,
         autoApprovedPaymentId: row.autoApprovedPaymentId,
         raw: row.rawData,
-    })),
-});
+    }));
+    const summary = buildPersistedImportSummary(rows);
+
+    return {
+        id: statementImport.id,
+        fileName: statementImport.fileName,
+        uploadedAt: statementImport.uploadedAt,
+        totalRows: summary.totalRows,
+        totalAmount: Number(summary.totalAmount || 0),
+        summary,
+        columnMapping: statementImport.columnMapping,
+        headers: statementImport.headers || [],
+        rows,
+    };
+};
 
 export const createStatementImport = async (userId: string, file?: Express.Multer.File) => {
     if (!file?.buffer) {
@@ -298,6 +311,12 @@ export const listStatementImports = async () => {
                     rows: true,
                 },
             },
+            rows: {
+                select: {
+                    amount: true,
+                    matchState: true,
+                },
+            },
         },
         orderBy: {
             uploadedAt: 'desc',
@@ -306,12 +325,12 @@ export const listStatementImports = async () => {
     });
 
     return imports.map((statementImport) => ({
+        summary: buildPersistedImportSummary(statementImport.rows || []),
         id: statementImport.id,
         fileName: statementImport.fileName,
         uploadedAt: statementImport.uploadedAt,
         totalRows: statementImport.totalRows,
-        totalAmount: Number(statementImport.totalAmount || 0),
-        summary: statementImport.summary,
+        totalAmount: Number(buildPersistedImportSummary(statementImport.rows || []).totalAmount || 0),
         rowCount: statementImport._count.rows,
         uploadedBy: statementImport.user,
     }));
@@ -569,17 +588,18 @@ export const listReconciliationExceptions = async () => {
                 suggestions.length > 1 &&
                 topSuggestion &&
                 secondSuggestion &&
-                Math.abs(Number(topSuggestion.score || 0) - Number(secondSuggestion.score || 0)) <= 10
+                Number(topSuggestion.score || 0) === Number(secondSuggestion.score || 0)
             ) {
                 exceptionType = 'MULTIPLE_MATCHES';
                 reason = 'Multiple student payments scored similarly and need staff judgment.';
             } else if (
                 topSuggestion &&
-                Number(topSuggestion.score || 0) >= 80 &&
+                Number(topSuggestion.score || 0) >= 40 &&
+                Number(topSuggestion.score || 0) < 100 &&
                 !topSuggestion.canAutoApprove
             ) {
                 exceptionType = 'NEAR_AUTO_APPROVE';
-                reason = 'This row is close to assisted approval but missed at least one guardrail.';
+                reason = 'This row matched either the exact reference or the exact amount, but not both yet.';
             }
 
             if (!exceptionType) return null;

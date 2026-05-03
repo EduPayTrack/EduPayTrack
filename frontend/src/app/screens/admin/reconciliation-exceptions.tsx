@@ -80,6 +80,16 @@ export function ReconciliationExceptionsPage() {
     );
   }, [data, search]);
 
+  const exceptionSummary = useMemo(() => {
+    const items = data?.items || [];
+    return {
+      total: items.length,
+      noMatch: items.filter((item) => item.exceptionType === 'NO_MATCH').length,
+      multipleMatches: items.filter((item) => item.exceptionType === 'MULTIPLE_MATCHES').length,
+      nearAutoApprove: items.filter((item) => item.exceptionType === 'NEAR_AUTO_APPROVE').length,
+    };
+  }, [data]);
+
   const exportExceptions = () => {
     const headers = [
       'Type',
@@ -194,25 +204,25 @@ export function ReconciliationExceptionsPage() {
             <Card>
               <CardContent className="p-4">
                 <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Total Exceptions</p>
-                <p className="mt-1 text-[22px] font-semibold">{data?.summary?.total || 0}</p>
+                <p className="mt-1 text-[22px] font-semibold">{exceptionSummary.total}</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4">
                 <p className="text-[10px] uppercase tracking-wide text-muted-foreground">No Match</p>
-                <p className="mt-1 text-[22px] font-semibold text-destructive">{data?.summary?.noMatch || 0}</p>
+                <p className="mt-1 text-[22px] font-semibold text-destructive">{exceptionSummary.noMatch}</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4">
                 <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Multiple Matches</p>
-                <p className="mt-1 text-[22px] font-semibold text-warning">{data?.summary?.multipleMatches || 0}</p>
+                <p className="mt-1 text-[22px] font-semibold text-warning">{exceptionSummary.multipleMatches}</p>
               </CardContent>
             </Card>
             <Card>
               <CardContent className="p-4">
                 <p className="text-[10px] uppercase tracking-wide text-muted-foreground">Near Auto-Approve</p>
-                <p className="mt-1 text-[22px] font-semibold text-primary">{data?.summary?.nearAutoApprove || 0}</p>
+                <p className="mt-1 text-[22px] font-semibold text-primary">{exceptionSummary.nearAutoApprove}</p>
               </CardContent>
             </Card>
           </div>

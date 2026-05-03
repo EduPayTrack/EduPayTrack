@@ -171,17 +171,17 @@ export function VerifyPaymentsPage() {
 
   const queueMetrics = useMemo(() => {
     const pending = payments.filter((payment) => payment.status === 'PENDING');
-    const highRisk = pending.filter(
+    const highRisk = payments.filter(
       (payment) =>
         payment.duplicateFlag || payment.verificationStatus === 'FLAGGED' || Number(payment.amount || 0) >= 100000
     );
-    const matched = pending.filter((payment) => payment.reconciliationStatus === 'MATCHED');
+    const matched = payments.filter((payment) => payment.reconciliationStatus === 'MATCHED');
 
     return {
       pending: pending.length,
       highRisk: highRisk.length,
       unverified: pending.filter((payment) => payment.verificationStatus === 'UNVERIFIED').length,
-      flagged: pending.filter((payment) => payment.verificationStatus === 'FLAGGED').length,
+      flagged: payments.filter((payment) => payment.verificationStatus === 'FLAGGED').length,
       matched: matched.length,
     };
   }, [payments]);
