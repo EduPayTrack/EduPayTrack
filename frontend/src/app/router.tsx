@@ -1,6 +1,7 @@
 import type { ReactElement } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+import { BrandMark } from '../components/BrandMark';
 import { AppLayout } from './components/layout';
 import {
   AdminDashboardPage,
@@ -37,12 +38,7 @@ function RequireAuth({ children }: { children: ReactElement }) {
         <div className="flex flex-col items-center gap-5">
           {/* Logo with rotating border */}
           <div className="relative">
-            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center">
-              <svg className="w-7 h-7 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                <path d="M6 12v5c3 3 9 3 12 0v-5" />
-              </svg>
-            </div>
+            <BrandMark className="w-14 h-14 rounded-xl bg-primary/10" iconClassName="w-7 h-7 text-primary" />
             {/* Rotating border */}
             <div className="absolute inset-0 rounded-xl border-2 border-primary/30 border-t-primary animate-spin" style={{ animationDuration: '1s' }} />
           </div>
@@ -83,12 +79,7 @@ export function AppRouter() {
         <div className="flex flex-col items-center gap-5">
           {/* Logo with rotating border */}
           <div className="relative">
-            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center">
-              <svg className="w-7 h-7 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                <path d="M6 12v5c3 3 9 3 12 0v-5" />
-              </svg>
-            </div>
+            <BrandMark className="w-14 h-14 rounded-xl bg-primary/10" iconClassName="w-7 h-7 text-primary" />
             {/* Rotating border */}
             <div className="absolute inset-0 rounded-xl border-2 border-primary/30 border-t-primary animate-spin" style={{ animationDuration: '1s' }} />
           </div>

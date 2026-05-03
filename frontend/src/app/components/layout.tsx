@@ -5,6 +5,7 @@ import { useTheme } from 'next-themes';
 
 import { useAuth } from '../state/auth-context';
 import { cn } from '../../lib/utils';
+import { BrandMark } from '../../components/BrandMark';
 import { Button } from '../../components/ui/button';
 import { Badge } from '../../components/ui/badge';
 import { Sheet, SheetContent, SheetTrigger } from '../../components/ui/sheet';
@@ -50,12 +51,7 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
     <>
       {/* Brand header */}
       <div className="flex items-center gap-2.5 px-3 h-12 border-b border-sidebar-border">
-        <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10">
-          <svg className="h-4 w-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-            <path d="M6 12v5c3 3 9 3 12 0v-5" />
-          </svg>
-        </div>
+        <BrandMark />
         <div>
           <span className="font-bold text-[13px] text-sidebar-accent-foreground tracking-tight">
             EduPayTrack
@@ -177,10 +173,7 @@ export function AppLayout() {
             </SheetContent>
           </Sheet>
           <div className="flex items-center gap-2">
-            <svg className="h-4 w-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-              <path d="M6 12v5c3 3 9 3 12 0v-5" />
-            </svg>
+            <BrandMark className="w-6 h-6 rounded-lg bg-primary/10" iconClassName="h-3.5 w-3.5 text-primary" />
             <span className="font-bold text-[13px] text-foreground tracking-tight">EduPayTrack</span>
           </div>
           <ThemeToggle />

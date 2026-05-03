@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, BarChart3, CheckCircle, Menu, Moon, Sun, Upload, X, CreditCard, TrendingUp, Clock, ShieldCheck } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import { useState } from 'react';
+import { BrandMark } from '../../components/BrandMark';
 
 
 const SLATE_HSL = '215 16% 47%';
@@ -59,12 +60,7 @@ export function LandingPage() {
       <nav className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/96 px-4 backdrop-blur md:px-6">
         <div className="mx-auto flex h-14 max-w-[1200px] items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-primary/10">
-              <svg className="h-4 w-4 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                <path d="M6 12v5c3 3 9 3 12 0v-5" />
-              </svg>
-            </div>
+            <BrandMark />
             <span className="text-[14px] font-bold uppercase tracking-[0.08em] text-foreground">EduPayTrack</span>
           </Link>
 
@@ -341,12 +337,7 @@ export function LandingPage() {
       <div className="relative z-10 border-t border-border">
         <div className="mx-auto flex max-w-[1200px] items-center justify-between px-4 py-6 md:px-6">
           <div className="flex items-center gap-2">
-            <div className="flex items-center justify-center w-6 h-6 rounded-lg bg-primary/10">
-              <svg className="h-3.5 w-3.5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                <path d="M6 12v5c3 3 9 3 12 0v-5" />
-              </svg>
-            </div>
+            <BrandMark className="w-6 h-6 rounded-lg bg-primary/10" iconClassName="h-3.5 w-3.5 text-primary" />
             <span className="text-[12px] font-bold uppercase tracking-[0.08em] text-foreground">EduPayTrack</span>
           </div>
           <span className="text-[12px] text-muted-foreground">{new Date().getFullYear()}</span>
