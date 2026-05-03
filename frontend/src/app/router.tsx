@@ -34,15 +34,11 @@ function RequireAuth({ children }: { children: ReactElement }) {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background">
-        {/* Clean centered spinner with logo */}
         <div className="flex flex-col items-center gap-5">
-          {/* Logo with rotating border */}
           <div className="relative">
             <BrandMark className="w-14 h-14 rounded-xl bg-primary/10" iconClassName="w-7 h-7 text-primary" />
-            {/* Rotating border */}
             <div className="absolute inset-0 rounded-xl border-2 border-primary/30 border-t-primary animate-spin" style={{ animationDuration: '1s' }} />
           </div>
-          {/* Simple loading text */}
           <div className="flex flex-col items-center gap-1">
             <p className="text-sm font-medium text-foreground">EduPayTrack</p>
             <p className="text-xs text-muted-foreground">Loading...</p>
@@ -75,15 +71,11 @@ export function AppRouter() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background">
-        {/* Clean centered spinner with logo */}
         <div className="flex flex-col items-center gap-5">
-          {/* Logo with rotating border */}
           <div className="relative">
             <BrandMark className="w-14 h-14 rounded-xl bg-primary/10" iconClassName="w-7 h-7 text-primary" />
-            {/* Rotating border */}
             <div className="absolute inset-0 rounded-xl border-2 border-primary/30 border-t-primary animate-spin" style={{ animationDuration: '1s' }} />
           </div>
-          {/* Simple loading text */}
           <div className="flex flex-col items-center gap-1">
             <p className="text-sm font-medium text-foreground">EduPayTrack</p>
             <p className="text-xs text-muted-foreground">Loading...</p>
