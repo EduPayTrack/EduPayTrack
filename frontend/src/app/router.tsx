@@ -56,21 +56,8 @@ export function AppRouter() {
   const { user, isLoading } = useAuth();
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-5">
-          <div className="relative">
-            <BrandMark className="w-14 h-14 rounded-xl bg-primary/10" iconClassName="w-7 h-7 text-primary" />
-            <div className="absolute inset-0 rounded-xl border-2 border-primary/30 border-t-primary animate-spin" style={{ animationDuration: '1s' }} />
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <p className="text-sm font-medium text-foreground">EduPayTrack</p>
-            <p className="text-xs text-muted-foreground">Loading...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  return <LoadingScreen />;
+}
 
   return (
     <Routes>
