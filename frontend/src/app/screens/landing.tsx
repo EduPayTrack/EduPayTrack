@@ -131,7 +131,7 @@ export function LandingPage() {
                 simplified.
               </h1>
               <p className="mt-6 max-w-[420px] text-[15px] leading-relaxed text-muted-foreground md:text-base">
-                Upload payment proof, track balances, and verify receipts, all in one place. Built for schools in
+                Upload payment proo, track balances, and verify receipts, all in one place. Built for schools in
                 Malawi and beyond.
               </p>
               <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
