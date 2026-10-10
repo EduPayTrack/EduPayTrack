@@ -1,6 +1,5 @@
 import type { ReactElement } from 'react';
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { LoadingScreen } from '../components/LoadingScreen';
 
 import { BrandMark } from '../components/BrandMark';
 import { AppLayout } from './components/layout';
